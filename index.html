@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<!--
+================================================================
+  저작물명   : CodeGame 웹 플랫폼 v1.1
+  저작물 유형 : 컴퓨터 프로그램 저작물
+================================================================
+  저작권자  : [본인 이름 입력]                ← 실명으로 변경
+  창작 완성일: 2026년 4월
+  국적      : 대한민국
+  공표 여부 : 미공표
+================================================================
+  프로그램 개요:
+    즉시 실행 가능한 자동화 코드 및 기능 모듈을 판매자와
+    구매자가 거래할 수 있는 국내 최초 코드 자산 전문
+    마켓플레이스 플랫폼.
+
+  구현 기술:
+    HTML5 / CSS3 / Vanilla JavaScript (ES2022)
+    Firebase Authentication (이메일/비밀번호 인증)
+    Firebase Cloud Firestore (실시간 데이터베이스)
+    Firebase Cloud Storage (파일 업로드/다운로드)
+    Canvas API (인트로 매트릭스 애니메이션)
+
+  핵심 기능 (본인이 직접 설계·구현):
+    1. 해커 스타일 부팅 인트로 화면 (매트릭스 효과)
+    2. 사이버펑크 HUD 바 (레벨/XP 시스템)
+    3. 코드 자산 마켓플레이스 (카테고리/언어별 필터 검색)
+    4. Firebase 기반 회원가입/로그인/로그아웃
+    5. 파일 업로드 시스템 (진행률 표시, Storage 저장)
+    6. 상품 검수 워크플로우 (pending/approved/rejected)
+    7. 구매 처리 및 구매내역 관리
+    8. 판매자 수익 통계 (판매건수, 수익 80% 계산)
+    9. XP/레벨 게임화 시스템
+    10. 관리자 승인/반려 패널
+    11. 닉네임·비밀번호 변경, 계정 삭제
+    12. 실시간 코드 프리뷰 상세 페이지
+    13. 수익 시뮬레이션 계산기
+    14. 커뮤니티 게시판 (질문/후기/자유)
+    15. 통합 코드 자산 검색 기능
+
+  Copyright (c) 2026 [본인 이름 입력]. All rights reserved.
+  본 프로그램의 무단 복제, 배포, 수정을 금합니다.
+  Unauthorized reproduction or distribution is prohibited.
+================================================================
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="[본인 이름 입력]">
+<meta name="description" content="CodeGame — 실행 가능한 코드 자산 거래 플랫폼. 자동화 워크플로우, 기능 모듈, 스크립트를 사고파는 국내 최초 코드 마켓플레이스.">
+<title>CodeGame — 코드 자산 거래 플랫폼</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+<style>
+:root{
+  --bg:#04050a;--bg2:#080c14;--bg3:#0d1220;--card:#0a0f1c;
+  --border:#0f1e36;--border2:#162a46;--border3:#1e3a5f;
+  --accent:#00f5c4;--accent2:#0ff;--purple:#7c3fff;--pink:#ff2d78;
+  --yellow:#f5c400;--red:#ff3b3b;--orange:#ff7b00;
+  --text:#cde8ff;--text2:#5a8cb0;--text3:#2a4a6a;
+  --fko:'Pretendard',sans-serif;
+  --fen:'Orbitron',monospace;
+  --fco:'Share Tech Mono','JetBrains Mono',monospace;
+  --r:8px;
+  --glow:0 0 20px rgba(0,245,196,.25);
+  --glow2:0 0 40px rgba(0,245,196,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fko);min-height:100vh;overflow-x:hidden;cursor:default;}
+
+/* 배경 그리드 효과 */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,245,196,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,196,.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(0,245,196,.06) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 90% 90%,rgba(124,63,255,.08) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+
+/* ── INTRO ── */
+#intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .8s,transform .8s;}
+#intro.out{opacity:0;transform:scale(1.05);pointer-events:none;}
+#matrixCanvas{position:absolute;inset:0;opacity:.18;}
+.scan-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
+.intro-content{position:relative;z-index:2;text-align:center;width:min(600px,90vw);}
+.intro-logo{font-family:var(--fen);font-size:clamp(28px,6vw,52px);font-weight:900;color:var(--accent);text-shadow:0 0 30px var(--accent),0 0 60px rgba(0,245,196,.4);margin-bottom:28px;letter-spacing:.1em;}
+.intro-bracket{color:rgba(0,245,196,.4);}
+#introText{color:var(--accent);}
+.intro-cursor{animation:blink .6s step-end infinite;color:var(--accent);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.intro-terminal{font-family:var(--fco);font-size:13px;color:#3a9;text-align:left;min-height:120px;line-height:1.9;padding:16px;background:rgba(0,245,196,.03);border:1px solid rgba(0,245,196,.1);border-radius:4px;margin-bottom:24px;}
+.intro-terminal .t-green{color:var(--accent);}
+.intro-terminal .t-dim{color:#1a5a3a;}
+.intro-terminal .t-white{color:var(--text);}
+.intro-terminal .t-warn{color:var(--yellow);}
+.intro-bar-wrap{margin-bottom:20px;}
+.intro-bar-label{font-family:var(--fco);font-size:11px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:6px;}
+.intro-bar{height:3px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden;}
+.intro-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;width:0%;transition:width .15s linear;box-shadow:0 0 12px var(--accent);}
+.intro-skip{font-family:var(--fco);font-size:11px;color:rgba(0,245,196,.3);cursor:pointer;letter-spacing:.15em;animation:pulse2 2s ease-in-out infinite;}
+.intro-skip:hover{color:var(--accent);}
+@keyframes pulse2{0%,100%{opacity:.3}50%{opacity:.7}}
+
+/* ── HUD BAR ── */
+.hud-bar{position:fixed;top:0;left:0;right:0;z-index:190;height:28px;background:rgba(4,5,10,.95);border-bottom:1px solid rgba(0,245,196,.12);display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:var(--fco);font-size:11px;}
+.hud-left{display:flex;align-items:center;gap:12px;}
+.hud-badge{color:var(--accent);font-weight:700;letter-spacing:.1em;text-shadow:0 0 8px var(--accent);}
+.hud-xp-track{width:80px;height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden;}
+.hud-xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width .5s ease;}
+.hud-xp-txt{color:var(--text2);font-size:10px;}
+.hud-right{display:flex;gap:16px;align-items:center;}
+.hud-stat{color:var(--text2);font-size:10px;letter-spacing:.05em;}
+.hud-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:4px;animation:pulse3 1.5s ease-in-out infinite;box-shadow:0 0 6px var(--accent);}
+@keyframes pulse3{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── NAV ── */
+nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;background:rgba(4,5,10,.92);backdrop-filter:blur(30px);border-bottom:1px solid rgba(0,245,196,.1);}
+.logo{font-family:var(--fen);font-weight:900;font-size:18px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--accent);text-shadow:0 0 16px rgba(0,245,196,.5);letter-spacing:.1em;}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 16px rgba(0,245,196,.4);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:var(--text2);font-size:13px;cursor:pointer;transition:all .18s;padding:4px 0;border-bottom:1px solid transparent;font-family:var(--fco);letter-spacing:.05em;}
+.nav-links a:hover,.nav-links a.on{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 8px var(--accent);}
+.nav-r{display:flex;gap:10px;align-items:center;}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-right:6px;}
+.nav-search input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:160px;font-family:var(--fco);}
+.nav-search input::placeholder{color:var(--text3);}
+
+/* ── BUTTONS ── */
+.bg{background:transparent;border:1px solid rgba(0,245,196,.3);color:var(--accent);padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .18s;}
+.bg:hover{border-color:var(--accent);background:rgba(0,245,196,.08);box-shadow:var(--glow);}
+.bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:7px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;border:none;transition:all .2s;}
+.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,245,196,.4);}
+.bsub{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;border-radius:6px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .2s;}
+.bsub:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,245,196,.35);}
+.blg-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:13px 28px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:var(--fco);letter-spacing:.06em;transition:all .2s;}
+.blg-p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,245,196,.4);}
+.blg-g{background:transparent;border:1px solid rgba(0,245,196,.3);color:var(--accent);padding:13px 28px;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .18s;}
+.blg-g:hover{border-color:var(--accent);background:rgba(0,245,196,.08);box-shadow:var(--glow);}
+.blg{font-family:var(--fco);}
+
+/* SEARCH BAR */
+.search-bar-wrap{max-width:1100px;margin:0 auto;padding:0 40px;overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s;opacity:0;}
+.search-bar-wrap.open{max-height:120px;opacity:1;}
+.search-bar-inner{display:flex;gap:12px;align-items:center;padding:20px 0 10px;}
+.search-big{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px 18px;transition:border-color .18s;}
+.search-big:focus-within{border-color:var(--accent);}
+.search-big input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:15px;font-family:var(--fko);}
+.search-big input::placeholder{color:var(--text3);}
+.search-big span{font-size:18px;}
+.search-go{padding:12px 24px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fko);transition:all .18s;white-space:nowrap;}
+.search-go:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.search-close{padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:6px;font-size:14px;cursor:pointer;transition:all .18s;}
+.search-close:hover{color:var(--accent);border-color:var(--accent);}
+.search-result-wrap{max-width:1100px;margin:0 auto;padding:0 40px;}
+.search-result-label{font-size:12px;color:var(--text2);margin-bottom:16px;padding-top:4px;font-family:var(--fco);}
+.search-result-label b{color:var(--accent);}
+.no-result{text-align:center;padding:40px;color:var(--text2);font-size:13px;}
+.no-result .nr-icon{font-size:40px;margin-bottom:12px;}
+
+/* PAGE */
+.page{display:none;padding-top:86px;min-height:100vh;position:relative;z-index:1;}
+.page.on{display:block;}
+
+/* HERO */
+.hero{padding:70px 40px 50px;max-width:1100px;margin:0 auto;text-align:center;}
+.hbadge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:3px;border:1px solid rgba(0,245,196,.25);background:rgba(0,245,196,.05);font-size:11px;color:var(--accent);margin-bottom:28px;font-family:var(--fco);letter-spacing:.1em;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse3 1.5s infinite;box-shadow:0 0 6px var(--accent);}
+.hero h1{font-size:clamp(36px,5vw,58px);font-weight:900;line-height:1.05;margin-bottom:20px;font-family:var(--fen);letter-spacing:-.02em;color:var(--text);}
+.hero h1 em{font-style:normal;color:var(--accent);text-shadow:0 0 30px rgba(0,245,196,.5);}
+.hero p{font-size:15px;color:var(--text2);max-width:520px;margin:0 auto 36px;line-height:1.8;}
+.hbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* STATS */
+.stats{display:flex;justify-content:center;gap:56px;padding:34px 40px;border-top:1px solid rgba(0,245,196,.08);border-bottom:1px solid rgba(0,245,196,.08);margin:0 40px;}
+.stat{text-align:center;}
+.stn{font-size:28px;font-weight:800;font-family:var(--fen);color:var(--text);letter-spacing:.05em;}
+.stn b{color:var(--accent);text-shadow:0 0 16px rgba(0,245,196,.4);}
+.stl{font-size:11px;color:var(--text2);margin-top:3px;font-family:var(--fco);letter-spacing:.08em;}
+
+/* MKT */
+.mwrap{max-width:1100px;margin:0 auto;padding:40px;}
+.mtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.mtitle{font-size:18px;font-weight:700;font-family:var(--fen);color:var(--text);letter-spacing:.08em;}
+.srt{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);padding:7px 12px;border-radius:6px;font-size:12px;font-family:var(--fco);cursor:pointer;outline:none;}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;}
+.fb{padding:6px 14px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);transition:all .18s;letter-spacing:.05em;}
+.fb:hover,.fb.on{border-color:var(--accent);color:var(--accent);background:rgba(0,245,196,.06);text-shadow:0 0 8px rgba(0,245,196,.4);}
+.fdiv{width:1px;background:var(--border2);height:28px;margin:0 2px;align-self:center;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+
+/* 카드 */
+.pc{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .25s;position:relative;}
+.pc::before{content:'';position:absolute;inset:0;border-radius:var(--r);background:linear-gradient(135deg,rgba(0,245,196,.03),transparent);opacity:0;transition:opacity .25s;}
+.pc:hover{border-color:rgba(0,245,196,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 20px rgba(0,245,196,.08);}
+.pc:hover::before{opacity:1;}
+.ctop{height:120px;padding:16px;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
+.ctop::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.1) 3px,rgba(0,0,0,.1) 4px);pointer-events:none;}
+.ctbdg{position:absolute;top:10px;right:10px;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--fco);letter-spacing:.06em;}
+.bwf{background:rgba(0,245,196,.12);color:var(--accent);border:1px solid rgba(0,245,196,.2);}
+.bfn{background:rgba(0,200,255,.12);color:var(--accent2);border:1px solid rgba(0,200,255,.2);}
+.btpl{background:rgba(255,45,120,.12);color:var(--pink);border:1px solid rgba(255,45,120,.2);}
+.btol{background:rgba(245,196,0,.12);color:var(--yellow);border:1px solid rgba(245,196,0,.2);}
+.ccode{position:relative;z-index:1;font-family:var(--fco);font-size:10px;color:var(--accent);line-height:1.65;max-height:90px;overflow:hidden;opacity:.8;}
+.cbody{padding:14px;}
+.ctags{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;}
+.tag{padding:2px 7px;border-radius:3px;font-size:10px;font-family:var(--fco);font-weight:500;letter-spacing:.04em;}
+.tpy{background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.15);}
+.tjs{background:rgba(245,196,0,.08);color:var(--yellow);border:1px solid rgba(245,196,0,.15);}
+.tsh{background:rgba(124,63,255,.08);color:#a78bff;border:1px solid rgba(124,63,255,.15);}
+.tn8{background:rgba(255,45,120,.08);color:var(--pink);border:1px solid rgba(255,45,120,.15);}
+.tgpt{background:rgba(255,59,59,.08);color:var(--red);border:1px solid rgba(255,59,59,.15);}
+.tno{background:rgba(255,123,0,.08);color:var(--orange);border:1px solid rgba(255,123,0,.15);}
+.ctitle{font-size:13px;font-weight:700;margin-bottom:5px;line-height:1.4;color:var(--text);}
+.cdesc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.cfoot{display:flex;align-items:center;justify-content:space-between;}
+.cprice{font-size:16px;font-weight:700;font-family:var(--fen);color:var(--accent);text-shadow:0 0 12px rgba(0,245,196,.3);}
+.csub{font-size:10px;color:var(--text3);font-family:var(--fco);}
+.cmeta{font-size:11px;color:var(--text2);font-family:var(--fco);}
+
+/* DETAIL */
+.dwrap{max-width:980px;margin:0 auto;padding:36px 40px;}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--text2);cursor:pointer;font-size:12px;margin-bottom:26px;transition:color .18s;font-family:var(--fco);letter-spacing:.06em;}
+.back:hover{color:var(--accent);}
+.dgrid{display:grid;grid-template-columns:1fr 300px;gap:30px;}
+.dcode{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:20px;font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.8;overflow-x:auto;}
+.dtitle{font-size:22px;font-weight:800;margin-bottom:10px;font-family:var(--fen);letter-spacing:.05em;}
+.dtags{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
+.ddesc{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px;}
+.dsec{margin-bottom:20px;}
+.dsec h3{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.6px;font-family:var(--fco);}
+.fi{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px;font-size:13px;color:var(--text2);}
+.fck{color:var(--accent);flex-shrink:0;}
+.bcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:22px;position:sticky;top:94px;}
+.bprice{font-size:28px;font-weight:700;font-family:var(--fen);color:var(--accent);margin-bottom:16px;text-shadow:0 0 16px rgba(0,245,196,.3);}
+.bprice small{font-size:12px;color:var(--text2);font-weight:400;}
+.brows{margin-bottom:16px;}
+.brow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.brow:last-child{border:none;}
+.brow span:first-child{color:var(--text2);}
+.bbuy{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fko);margin-bottom:8px;transition:all .2s;}
+.bbuy:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,245,196,.3);}
+.bprev{width:100%;padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--fco);transition:all .2s;}
+.bprev:hover{color:var(--accent);border-color:var(--accent);}
+.sbox{margin-top:18px;padding-top:18px;border-top:1px solid var(--border2);}
+.sbox h4{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:var(--fco);}
+.srow{display:flex;align-items:center;gap:10px;}
+.savt{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
+.snm{font-size:13px;font-weight:600;}
+.sgd{font-size:11px;color:var(--accent);}
+
+/* SELL */
+.swrap{max-width:1080px;margin:0 auto;padding:40px;}
+.shero{background:linear-gradient(135deg,rgba(0,245,196,.06),rgba(0,200,255,.04));border:1px solid rgba(0,245,196,.15);border-radius:var(--r);padding:32px;margin-bottom:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.shero h1{font-size:24px;font-weight:800;margin-bottom:7px;font-family:var(--fen);letter-spacing:.05em;}
+.shero p{font-size:13px;color:var(--text2);line-height:1.7;max-width:460px;}
+.ssteps{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:32px;}
+.ssb{padding:10px 22px;background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;white-space:nowrap;letter-spacing:.05em;}
+.ssb.on{color:var(--accent);border-bottom-color:var(--accent);}
+.spanel{display:none;}
+.spanel.on{display:block;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.fg{margin-bottom:20px;}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;font-family:var(--fco);}
+.fi2,.fsel,.fta{width:100%;padding:11px 15px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;font-family:var(--fco);transition:border-color .18s;outline:none;}
+.fi2:focus,.fsel:focus,.fta:focus{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,245,196,.1);}
+.fta{min-height:110px;resize:vertical;line-height:1.7;}
+.fsel option{background:var(--bg2);}
+.fhint{font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--fco);}
+.uzone{border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:44px;text-align:center;cursor:pointer;transition:all .2s;}
+.uzone:hover{border-color:var(--accent);background:rgba(0,245,196,.03);}
+.uicon{font-size:36px;margin-bottom:12px;}
+.uzone p{font-size:13px;color:var(--text2);}
+.uzone strong{color:var(--accent);}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.lo{padding:14px;border:1px solid var(--border2);border-radius:6px;cursor:pointer;transition:all .18s;}
+.lo:hover,.lo.on{border-color:var(--accent);background:rgba(0,245,196,.04);}
+.lt{font-size:13px;font-weight:700;margin-bottom:3px;}
+.ld{font-size:11px;color:var(--text2);line-height:1.5;}
+.pgrid2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.ptier{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:16px;}
+.ptier.rec{border-color:rgba(0,245,196,.4);background:rgba(0,245,196,.04);}
+.ptl{font-size:10px;color:var(--text2);margin-bottom:5px;font-family:var(--fco);}
+.ptn{font-size:13px;font-weight:700;margin-bottom:8px;}
+.pti{font-size:11px;color:var(--text2);line-height:1.8;}
+.ecalc{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;margin-top:20px;}
+.ecalc h3{font-size:13px;font-weight:700;margin-bottom:16px;font-family:var(--fen);letter-spacing:.05em;}
+.eslider{width:100%;margin:12px 0;accent-color:var(--accent);}
+.eres{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.eitem{background:var(--bg3);border-radius:6px;padding:14px;text-align:center;border:1px solid var(--border2);}
+.enum{font-size:20px;font-weight:700;font-family:var(--fen);color:var(--accent);text-shadow:0 0 12px rgba(0,245,196,.3);}
+.elbl{font-size:10px;color:var(--text2);margin-top:3px;font-family:var(--fco);}
+
+/* GUIDE */
+.gwrap{max-width:1080px;margin:0 auto;padding:40px;}
+.ghero{text-align:center;padding:36px 0 44px;}
+.ghero h1{font-size:30px;font-weight:800;margin-bottom:10px;font-family:var(--fen);letter-spacing:.05em;}
+.ghero p{font-size:14px;color:var(--text2);max-width:460px;margin:0 auto;}
+.ggrid{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start;}
+.gnav{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:8px;position:sticky;top:94px;}
+.gni{padding:10px 14px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--text2);transition:all .18s;display:flex;align-items:center;gap:8px;font-family:var(--fco);}
+.gni:hover,.gni.on{background:rgba(0,245,196,.06);color:var(--accent);}
+.gsec{display:none;}
+.gsec.on{display:block;}
+.gcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:26px;margin-bottom:18px;}
+.gcard h2{font-size:17px;font-weight:700;margin-bottom:8px;font-family:var(--fen);letter-spacing:.04em;}
+.gcard p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px;}
+.gcard ul{padding-left:0;list-style:none;}
+.gcard ul li{font-size:13px;color:var(--text2);padding:4px 0 4px 18px;position:relative;line-height:1.7;}
+.gcard ul li::before{content:'›';position:absolute;left:0;color:var(--accent);}
+.gstep{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;}
+.gsn{width:32px;height:32px;border-radius:4px;background:rgba(0,245,196,.12);border:1px solid rgba(0,245,196,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:var(--accent);font-family:var(--fen);}
+.gsb h3{font-size:13px;font-weight:700;margin-bottom:4px;}
+.gsb p{font-size:13px;color:var(--text2);line-height:1.7;}
+.cex{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:16px;font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.8;margin:12px 0;overflow-x:auto;}
+.gtip{background:rgba(0,245,196,.04);border:1px solid rgba(0,245,196,.15);border-radius:6px;padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+.faq{border-bottom:1px solid var(--border2);padding:14px 0;cursor:pointer;}
+.faqq{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;}
+.faqa{font-size:13px;color:var(--text2);line-height:1.75;margin-top:10px;display:none;}
+.faqa.on{display:block;}
+
+/* COMMUNITY */
+.cwrap{max-width:1080px;margin:0 auto;padding:40px;}
+.chero{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;gap:16px;flex-wrap:wrap;}
+.chero h1{font-size:24px;font-weight:800;margin-bottom:4px;font-family:var(--fen);letter-spacing:.05em;}
+.chero p{font-size:13px;color:var(--text2);}
+.clayout{display:grid;grid-template-columns:1fr 290px;gap:26px;align-items:start;}
+.ctabs{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:20px;}
+.ctb{padding:9px 18px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;letter-spacing:.05em;}
+.ctb.on{color:var(--accent);border-bottom-color:var(--accent);}
+.plist{display:flex;flex-direction:column;gap:12px;}
+.pcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .18s;}
+.pcard:hover{border-color:rgba(0,245,196,.3);transform:translateX(3px);box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.ph{display:flex;gap:12px;margin-bottom:10px;}
+.pavt{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+.pi h3{font-size:13px;font-weight:700;margin-bottom:2px;}
+.pi p{font-size:11px;color:var(--text2);font-family:var(--fco);}
+.ptgs{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
+.ptg{padding:2px 8px;border-radius:3px;font-size:10px;background:rgba(0,245,196,.06);color:var(--accent);border:1px solid rgba(0,245,196,.12);font-family:var(--fco);}
+.pex{font-size:12px;color:var(--text2);line-height:1.65;}
+.pft{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--fco);}
+.cside{}
+.scard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:16px;}
+.scard h3{font-size:11px;font-weight:700;margin-bottom:14px;color:var(--text2);font-family:var(--fco);letter-spacing:.08em;text-transform:uppercase;}
+.ritem{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.rnum{width:22px;height:22px;border-radius:3px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0;font-family:var(--fco);}
+.rnum.top{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;}
+.rinf{flex:1;}
+.rn{font-size:13px;font-weight:500;}
+.rs{font-size:11px;color:var(--text2);font-family:var(--fco);}
+.rv{font-size:12px;font-weight:700;color:var(--accent);font-family:var(--fen);}
+.nitem{padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;cursor:pointer;color:var(--text2);transition:color .18s;}
+.nitem:hover{color:var(--accent);}
+.nitem:last-child{border:none;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.overlay.on{display:flex;}
+.modal{background:var(--bg2);border:1px solid rgba(0,245,196,.2);border-radius:10px;padding:28px;width:100%;max-width:390px;position:relative;box-shadow:0 0 40px rgba(0,245,196,.08);}
+.mx{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;font-family:var(--fco);transition:color .18s;}
+.mx:hover{color:var(--accent);}
+.mtitle{font-size:18px;font-weight:800;margin-bottom:4px;font-family:var(--fen);color:var(--accent);letter-spacing:.05em;}
+.msub{font-size:12px;color:var(--text2);margin-bottom:20px;font-family:var(--fco);}
+.mtabs{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:18px;}
+.mtb{padding:7px 18px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;letter-spacing:.06em;}
+.mtb.on{color:var(--accent);border-bottom-color:var(--accent);}
+.modal .fi2{margin-bottom:10px;}
+.msocial{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.socb{padding:9px;border:1px solid var(--border2);border-radius:6px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--fco);transition:all .18s;text-align:center;}
+.socb:hover{border-color:var(--accent);color:var(--accent);}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--card);border:1px solid rgba(0,245,196,.3);border-radius:6px;padding:12px 18px;font-size:12px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,196,.1);transform:translateY(70px);opacity:0;transition:all .28s;font-family:var(--fco);}
+.toast.on{transform:translateY(0);opacity:1;}
+
+@media(max-width:768px){
+  nav{padding:0 16px;}
+  .nav-links,.nav-search{display:none;}
+  .hero{padding:50px 16px 40px;}
+  .hero h1{font-size:30px;}
+  .stats{flex-wrap:wrap;gap:24px;margin:0 16px;padding:22px 16px;}
+  .mwrap,.swrap,.gwrap,.cwrap,.dwrap{padding:20px 16px;}
+  .dgrid,.ggrid,.clayout{grid-template-columns:1fr;}
+  .frow,.frow3,.pgrid2,.lgrid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- HACKER INTRO -->
+<div id="intro">
+  <canvas id="matrixCanvas"></canvas>
+  <div class="intro-content">
+    <div class="intro-logo">
+      <span class="intro-bracket">[</span><span id="introText"></span><span class="intro-cursor" id="introCursor">█</span><span class="intro-bracket">]</span>
+    </div>
+    <div class="intro-terminal" id="introTerminal"></div>
+    <div class="intro-bar-wrap">
+      <div class="intro-bar-label">SYSTEM BOOT <span id="introPct">0%</span></div>
+      <div class="intro-bar"><div class="intro-bar-fill" id="introFill"></div></div>
+    </div>
+    <div class="intro-skip" onclick="skipIntro()">[ PRESS ANY KEY TO SKIP ]</div>
+  </div>
+  <div class="scan-lines"></div>
+</div>
+
+<!-- XP HUD -->
+<div class="hud-bar" id="hudBar">
+  <div class="hud-left">
+    <span class="hud-badge">LV.<span id="hudLvl">01</span></span>
+    <div class="hud-xp-track"><div class="hud-xp-fill" id="hudXpFill" style="width:12%"></div></div>
+    <span class="hud-xp-txt">XP <span id="hudXpVal">12</span>/100</span>
+  </div>
+  <div class="hud-right">
+    <span class="hud-stat"><span class="hud-dot"></span>LIVE</span>
+    <span class="hud-stat">💾 2,400 ASSETS</span>
+    <span class="hud-stat">⚡ 1,800 DEVS</span>
+  </div>
+</div>
+
+<nav>
+  <div class="logo" onclick="go('home')"><div class="logo-icon">⚡</div>CodeGame</div>
+  <div class="nav-links">
+    <a id="n-home" class="on" onclick="go('home')">마켓플레이스</a>
+    <a id="n-sell" onclick="go('sell')">판매하기</a>
+    <a id="n-req" onclick="go('req')">요청하기</a>
+    <a id="n-guide" onclick="go('guide')">가이드</a>
+    <a id="n-comm" onclick="go('comm')">커뮤니티</a>
+  </div>
+  <div class="nav-r">
+    <button class="bg" onclick="toggleSearch()" id="searchBtn">🔍 검색</button>
+    <button class="bg" onclick="openL('login')">로그인</button>
+    <button class="bp" onclick="openL('register')">무료 시작</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page on">
+  <div class="hero">
+    <div class="hbadge"><div class="dot"></div>Beta · 지금 무료로 시작하세요</div>
+    <h1>코드를 <em>자산</em>으로<br>바꾸는 마켓플레이스</h1>
+    <p>즉시 실행 가능한 자동화 워크플로우와 기능 모듈을 사고팔아요. 완성된 코드를 바로 실행해보세요.</p>
+    <div class="hbtns">
+      <button class="blg blg-p" onclick="document.getElementById('ms').scrollIntoView({behavior:'smooth'})">마켓 둘러보기 →</button>
+      <button class="blg blg-g" onclick="go('sell')">내 코드 판매하기</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stn"><b>2,400</b>+</div><div class="stl">등록 자산</div></div>
+    <div class="stat"><div class="stn"><b>1,800</b>+</div><div class="stl">활성 판매자</div></div>
+    <div class="stat"><div class="stn">₩<b>48M</b>+</div><div class="stl">누적 거래액</div></div>
+    <div class="stat"><div class="stn"><b>4.9</b>★</div><div class="stl">평균 평점</div></div>
+  </div>
+
+  <!-- 검색 바 -->
+  <div class="search-bar-wrap" id="searchBarWrap">
+    <div class="search-bar-inner">
+      <div class="search-big">
+        <span>🔍</span>
+        <input id="searchInput" placeholder="스마트스토어, 유튜브 자동화, GPT API..." onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <button class="search-go" onclick="doSearch()">검색하기</button>
+      <button class="search-close" onclick="closeSearch()">✕</button>
+    </div>
+  </div>
+  <!-- 검색 결과 -->
+  <div class="search-result-wrap" id="searchResultWrap" style="display:none;">
+    <div class="search-result-label" id="searchLabel"></div>
+    <div class="pgrid" id="searchGrid"></div>
+  </div>
+  <div class="mwrap" id="ms">
+    <div class="mtop"><div class="mtitle">전체 자산 <span style="color:var(--text2);font-size:14px;font-weight:400;">· 2,400+</span></div><select class="srt" onchange="toast('정렬 적용됨','✓')"><option>인기순</option><option>최신순</option><option>낮은 가격순</option><option>높은 평점순</option></select></div>
+    <div class="filters">
+      <button class="fb on" onclick="filt(this,'all')">전체</button>
+      <div class="fdiv"></div>
+      <button class="fb" onclick="filt(this,'workflow')">🔄 자동화 워크플로우</button>
+      <button class="fb" onclick="filt(this,'function')">🧩 기능 모듈</button>
+      <button class="fb" onclick="filt(this,'template')">📋 템플릿</button>
+      <button class="fb" onclick="filt(this,'tool')">🛠 도구</button>
+      <div class="fdiv"></div>
+      <button class="fb" onclick="filt(this,'py')">Python</button>
+      <button class="fb" onclick="filt(this,'js')">JavaScript</button>
+      <button class="fb" onclick="filt(this,'n8')">n8n</button>
+      <button class="fb" onclick="filt(this,'gpt')">GPT API</button>
+      <button class="fb" onclick="filt(this,'no')">노코드</button>
+    </div>
+    <div class="pgrid" id="pg"></div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <div class="dwrap">
+    <div class="back" onclick="go('home')">← 마켓으로 돌아가기</div>
+    <div class="dgrid">
+      <div>
+        <div class="dcode" id="dc"></div>
+        <div class="dtags" id="dtg"></div>
+        <div class="dtitle" id="dti"></div>
+        <div class="ddesc" id="dds"></div>
+        <div class="dsec"><h3>포함 기능</h3><div id="dft"></div></div>
+        <div class="dsec"><h3>실행 요구사항</h3><div id="drq"></div></div>
+      </div>
+      <div>
+        <div class="bcard">
+          <div class="bprice" id="dpr"></div>
+          <div class="brows" id="drw"></div>
+          <button class="bbuy" onclick="toast('결제 기능 준비 중! (MVP)','💳')" style="font-family:var(--fco);letter-spacing:.06em">지금 구매하기</button>
+          <button class="bprev" id="dPreviewBtn" style="font-family:var(--fco);letter-spacing:.06em">💻 코드 미리보기</button>
+          <div class="sbox"><h4>판매자</h4><div class="srow"><div class="savt" id="dsa"></div><div><div class="snm" id="dsn"></div><div class="sgd">⭐ 인증 판매자</div></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SELL -->
+<div id="page-sell" class="page">
+  <div class="swrap">
+    <div class="shero">
+      <div>
+        <h1>💰 코드 자산 판매하기</h1>
+        <p>완성된 자동화 코드와 기능 모듈을 등록하고 수익을 만들어보세요. 판매 수익의 80%는 바로 정산돼요.</p>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <div style="text-align:center;background:rgba(124,111,255,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)">80%</div><div style="font-size:11px;color:var(--text2)">판매자 수익</div></div>
+        <div style="text-align:center;background:rgba(0,212,170,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)">2~3일</div><div style="font-size:11px;color:var(--text2)">검수 기간</div></div>
+        <div style="text-align:center;background:rgba(255,107,157,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)">무료</div><div style="font-size:11px;color:var(--text2)">등록 비용</div></div>
+      </div>
+    </div>
+    <div class="ssteps">
+      <button class="ssb on" onclick="stab(this,'s1')">① 기본 정보</button>
+      <button class="ssb" onclick="stab(this,'s2')">② 파일 업로드</button>
+      <button class="ssb" onclick="stab(this,'s3')">③ 가격 설정</button>
+      <button class="ssb" onclick="stab(this,'s4')">④ 수익 계산기</button>
+    </div>
+    <div id="s1" class="spanel on">
+      <div class="fg"><label class="fl">상품명 *</label><input class="fi2" placeholder="예: 스마트스토어 주문 자동 처리 스크립트 v2.0"><div class="fhint">검색에 잘 걸리는 구체적인 이름을 써주세요</div></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">자산 유형 *</label><select class="fsel"><option>🔄 자동화 워크플로우</option><option>🧩 기능 모듈</option><option>📋 템플릿</option><option>🛠 도구/유틸리티</option></select></div>
+        <div class="fg"><label class="fl">카테고리 *</label><select class="fsel"><option>스마트스토어 / 커머스</option><option>유튜브 / 쇼츠</option><option>GPT / AI</option><option>Google Sheets</option><option>n8n / Make</option><option>크롤링</option><option>데이터 처리</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">상품 설명 *</label><textarea class="fta" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 구체적으로 설명해주세요. 실제 사용 예시를 함께 쓰면 판매율이 3배 올라요."></textarea></div>
+      <div class="frow3">
+        <div class="fg"><label class="fl">언어/도구</label><input class="fi2" placeholder="예: Python 3.11"></div>
+        <div class="fg"><label class="fl">실행 환경</label><select class="fsel"><option>Windows</option><option>Mac</option><option>Linux</option><option>웹브라우저</option><option>모두 가능</option></select></div>
+        <div class="fg"><label class="fl">난이도</label><select class="fsel"><option>누구나 가능</option><option>기본 지식 필요</option><option>개발자 전용</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">라이선스 *</label>
+        <div class="lgrid">
+          <div class="lo on" onclick="slic(this)"><div class="lt">일반 상업용</div><div class="ld">1인 사용, 수정 가능, 재판매 불가</div></div>
+          <div class="lo" onclick="slic(this)"><div class="lt">완전 독점</div><div class="ld">구매 후 마켓에서 삭제, 1인 소유</div></div>
+          <div class="lo" onclick="slic(this)"><div class="lt">팀 라이선스</div><div class="ld">최대 10인 팀 내 사용</div></div>
+          <div class="lo" onclick="slic(this)"><div class="lt">오픈소스 (MIT)</div><div class="ld">자유롭게 수정·배포 가능</div></div>
+        </div>
+      </div>
+      <button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[1],'s2');toast('저장됨!','✅')">다음 단계 →</button>
+    </div>
+    <div id="s2" class="spanel">
+      <div class="fg"><label class="fl">메인 파일 *</label><div class="uzone" onclick="toast('파일 업로드 준비 중!','📁')"><div class="uicon">📦</div><p><strong>클릭 또는 드래그</strong>해서 파일 업로드</p><p style="font-size:12px;color:var(--text3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
+      <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서가 친절할수록 별점이 올라가요.</div></div>
+      <div class="fg"><label class="fl">스크린샷 (선택)</label><div class="uzone" onclick="toast('이미지 업로드 준비 중!','🖼')"><div class="uicon">🖼</div><p><strong>실행 화면 캡처</strong>를 올리면 판매율이 올라가요</p><p style="font-size:12px;color:var(--text3);margin-top:5px">PNG, JPG · 최대 5장</p></div></div>
+      <div style="display:flex;gap:10px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[0],'s1')">← 이전</button><button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[2],'s3');toast('저장됨!','✅')">다음 단계 →</button></div>
+    </div>
+    <div id="s3" class="spanel">
+      <div class="fg"><label class="fl">판매 방식</label>
+        <div class="pgrid2">
+          <div class="ptier rec"><div class="ptl">⭐ 추천</div><div class="ptn">단건 판매</div><div class="pti">• 1회 구매, 영구 사용<br>• 가장 일반적인 방식<br>• 즉시 다운로드</div></div>
+          <div class="ptier"><div class="ptl">준비 중</div><div class="ptn">구독형</div><div class="pti">• 월 정기 결제<br>• 업데이트 자동 제공<br>• 지속 수익 모델</div></div>
+          <div class="ptier"><div class="ptl">준비 중</div><div class="ptn">기업 바운티</div><div class="pti">• 기업이 의뢰<br>• 완성 후 지급<br>• 높은 단가</div></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="pi" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
+        <div class="fg"><label class="fl">할인 이벤트 (선택)</label><input class="fi2" placeholder="예: 출시 기념 20% 할인"></div>
+      </div>
+      <div id="ep" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:none;">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:12px">수익 예상</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)" id="ep1">-</div><div style="font-size:11px;color:var(--text2)">건당 수익(80%)</div></div>
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)" id="ep10">-</div><div style="font-size:11px;color:var(--text2)">10건 판매시</div></div>
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)" id="ep100">-</div><div style="font-size:11px;color:var(--text2)">100건 판매시</div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button><button class="bsub" onclick="toast('검수 신청 완료! 1~2일 내 검토 후 승인돼요 🚀','📤')">검수 신청하기 🚀</button></div>
+    </div>
+    <div id="s4" class="spanel">
+      <div class="ecalc">
+        <h3>💰 월 수익 시뮬레이션</h3>
+        <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
+        <div class="fg"><label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent)">50건</span></label><input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()"></div>
+        <div class="eres">
+          <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
+          <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
+          <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px 16px;background:rgba(0,212,170,.07);border-radius:8px;font-size:12.5px;color:var(--text2)">💡 <strong style="color:var(--teal)">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--teal)">₩2,400,000</strong> 이상 수익을 올리고 있어요.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GUIDE -->
+<div id="page-guide" class="page">
+  <div class="gwrap">
+    <div class="ghero"><h1>📚 가이드 센터</h1><p>CodeGame을 200% 활용하는 방법을 알려드려요</p></div>
+    <div class="ggrid">
+      <div class="gnav">
+        <div class="gni on" onclick="gtab(this,'g1')">🚀 시작하기</div>
+        <div class="gni" onclick="gtab(this,'g2')">💰 판매자 가이드</div>
+        <div class="gni" onclick="gtab(this,'g3')">🛒 구매자 가이드</div>
+        <div class="gni" onclick="gtab(this,'g4')">📝 코드 작성 팁</div>
+        <div class="gni" onclick="gtab(this,'g5')">⚖️ 라이선스 안내</div>
+        <div class="gni" onclick="gtab(this,'g6')">❓ 자주 묻는 질문</div>
+      </div>
+      <div>
+        <div id="g1" class="gsec on">
+          <div class="gcard"><h2>🚀 CodeGame 시작하기</h2><p>CodeGame은 즉시 실행 가능한 코드 자산을 거래하는 국내 최초 플랫폼이에요. 자동화 스크립트부터 기능 모듈까지, 완성된 코드를 사고팔아요.</p><div class="gtip"><span>💡</span><span>CodeGame의 핵심 철학: <strong>코드 조각이 아닌 완성된 기능</strong>을 거래해요. 구매 즉시 실행 가능해야 하며, 환경설정 가이드가 포함되어야 해요.</span></div></div>
+          <div class="gcard"><h2>5분 만에 시작하기</h2>
+            <div class="gstep"><div class="gsn">1</div><div class="gsb"><h3>회원가입</h3><p>이메일 또는 카카오/구글 소셜 로그인으로 30초 만에 가입할 수 있어요.</p></div></div>
+            <div class="gstep"><div class="gsn">2</div><div class="gsb"><h3>마켓 둘러보기</h3><p>카테고리나 검색으로 원하는 코드 자산을 찾아보세요.</p></div></div>
+            <div class="gstep"><div class="gsn">3</div><div class="gsb"><h3>구매 또는 판매</h3><p>구매자라면 결제 후 즉시 다운로드, 판매자라면 코드를 업로드하고 검수를 기다려요.</p></div></div>
+            <div class="gstep"><div class="gsn">4</div><div class="gsb"><h3>실행 및 리뷰</h3><p>구매한 코드를 실행해보고 별점과 리뷰를 남겨주세요.</p></div></div>
+          </div>
+        </div>
+        <div id="g2" class="gsec">
+          <div class="gcard"><h2>💰 판매자 가이드</h2><p>잘 팔리는 코드 자산을 만들기 위한 핵심 원칙이에요.</p><div class="gtip"><span>🔥</span><span>인기 판매자들의 공통점: 구체적인 문제를 해결하고, README가 친절하며, 빠른 업데이트를 해요.</span></div></div>
+          <div class="gcard"><h2>잘 팔리는 코드의 조건</h2><ul><li>즉시 실행 가능 — pip install 한 줄로 환경 세팅 완료</li><li>명확한 문제 해결 — "스마트스토어 주문 자동화"처럼 구체적</li><li>친절한 README — 설치법, 사용법, 주의사항 포함</li><li>에러 처리 포함 — 예외상황에도 안 멈추는 코드</li><li>업데이트 제공 — API 변경 시 빠른 패치</li></ul>
+          <div class="cex"><span style="color:var(--text3)"># ✅ 좋은 예 — 명확한 함수명과 에러처리</span>
+def process_order(order_id: str) -> dict:
+    try:
+        order = fetch_order(order_id)
+        result = update_tracking(order)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        logger.error(f"주문 처리 실패: {e}")
+        return {"status": "error", "message": str(e)}</div></div>
+          <div class="gcard"><h2>수익 정산 안내</h2><ul><li>판매 수수료: 20% (플랫폼 운영비)</li><li>판매자 수익: 80% 지급</li><li>정산 주기: 매월 말 (최소 출금액 10,000원)</li><li>정산 방법: 계좌이체</li></ul></div>
+        </div>
+        <div id="g3" class="gsec">
+          <div class="gcard"><h2>🛒 구매자 가이드</h2><p>CodeGame에서 구매한 코드는 영구 소유예요. 업데이트가 있으면 무료로 받을 수 있어요.</p></div>
+          <div class="gcard"><h2>구매 후 사용 방법</h2>
+            <div class="gstep"><div class="gsn">1</div><div class="gsb"><h3>다운로드</h3><p>결제 완료 후 마이페이지에서 즉시 다운로드 가능해요.</p></div></div>
+            <div class="gstep"><div class="gsn">2</div><div class="gsb"><h3>환경 설정</h3><p>README를 먼저 읽어보세요. requirements.txt로 한 번에 설치 가능해요.</p></div></div>
+            <div class="gstep"><div class="gsn">3</div><div class="gsb"><h3>실행</h3><p>config.json에 API 키 등을 입력하고 실행하면 돼요.</p></div></div>
+          </div>
+          <div class="gcard"><h2>환불 정책</h2><ul><li>구매 후 24시간 이내 — 전액 환불 가능</li><li>코드가 설명과 다를 경우 — 전액 환불</li><li>실행 오류 발생 시 — 판매자 수정 요청 또는 환불</li><li>단순 변심 — 환불 불가 (미리보기 활용 권장)</li></ul></div>
+        </div>
+        <div id="g4" class="gsec">
+          <div class="gcard"><h2>📝 잘 팔리는 코드 작성 팁</h2><p>실제 판매 데이터를 기반으로 분석한 핵심 팁이에요.</p></div>
+          <div class="gcard"><h2>코드 품질 체크리스트</h2><ul><li>함수/변수명은 영어로, 주석은 한국어로</li><li>requirements.txt 또는 package.json 포함</li><li>config 파일 분리 (하드코딩 금지)</li><li>로그 출력 포함 (실행 중 상태 확인 가능)</li><li>예외처리 필수 (try/except, try/catch)</li><li>테스트 코드 또는 샘플 데이터 포함</li></ul>
+          <div class="cex"><span style="color:var(--text3)"># config.json — 하드코딩 대신 설정 파일 분리</span>
+{
+  "api_key": "여기에_API키_입력",
+  "store_id": "여기에_스토어ID",
+  "interval_seconds": 30,
+  "max_retries": 3
+}</div></div>
+        </div>
+        <div id="g5" class="gsec">
+          <div class="gcard"><h2>⚖️ 라이선스 안내</h2><p>CodeGame에서는 4가지 라이선스를 지원해요.</p></div>
+          <div class="gcard"><h2>라이선스 종류</h2><ul><li><strong style="color:var(--accent)">일반 상업용</strong> — 1인이 상업적으로 사용 가능. 수정 가능. 재배포/재판매 불가</li><li><strong style="color:var(--pink)">완전 독점</strong> — 구매 즉시 마켓에서 삭제. 구매자만 소유</li><li><strong style="color:var(--teal)">팀 라이선스</strong> — 최대 10인 팀 내 사용 가능</li><li><strong style="color:var(--yellow)">오픈소스 (MIT)</strong> — 자유롭게 수정·배포 가능. 저작자 표기 필요</li></ul><div class="gtip" style="margin-top:16px"><span>⚠️</span><span>AI로 생성한 코드를 판매할 경우 반드시 <strong>AI 생성 코드 포함</strong> 표기를 해야 해요.</span></div></div>
+        </div>
+        <div id="g6" class="gsec">
+          <div class="gcard"><h2>❓ 자주 묻는 질문</h2><div id="faqL"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div id="page-comm" class="page">
+  <div class="cwrap">
+    <div class="chero"><div><h1>💬 커뮤니티</h1><p>판매자·구매자가 함께 성장하는 공간이에요</p></div><button class="bp" onclick="openWriteModal()">+ 글쓰기</button></div>
+    <div class="clayout">
+      <div>
+        <div class="ctabs">
+          <button class="ctb on" onclick="ctab(this,'ct1')">전체</button>
+          <button class="ctb" onclick="ctab(this,'ct2')">질문·답변</button>
+          <button class="ctb" onclick="ctab(this,'ct3')">후기 공유</button>
+          <button class="ctb" onclick="ctab(this,'ct4')">자유게시판</button>
+        </div>
+        <div id="ct1"><div class="plist" id="pl1"></div></div>
+        <div id="ct2" style="display:none"><div class="plist" id="pl2"></div></div>
+        <div id="ct3" style="display:none"><div class="plist" id="pl3"></div></div>
+        <div id="ct4" style="display:none"><div class="plist" id="pl4"></div></div>
+      </div>
+      <div class="cside">
+        <div class="scard"><h3>🏆 이달의 판매왕</h3><div id="rkL"></div></div>
+        <div class="scard"><h3>📢 공지사항</h3><div id="ntL"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REQUEST PAGE -->
+<div id="page-req" class="page">
+  <div class="mwrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px">
+      <div>
+        <h1 style="font-family:var(--fen);font-size:22px;letter-spacing:.06em;margin-bottom:6px">💡 코드 요청하기</h1>
+        <p style="font-size:13px;color:var(--text2)">원하는 코드가 없다면 직접 요청하세요. 판매자가 제작해드려요.</p>
+      </div>
+      <button class="bp" onclick="openRequestModal()" style="font-family:var(--fco);letter-spacing:.06em">+ 요청 올리기</button>
+    </div>
+
+    <!-- 필터 -->
+    <div class="filters" id="reqFilters">
+      <button class="fb on" onclick="filterReq(this,'all')">전체</button>
+      <button class="fb" onclick="filterReq(this,'스마트스토어')">스마트스토어</button>
+      <button class="fb" onclick="filterReq(this,'GPT/AI')">GPT/AI</button>
+      <button class="fb" onclick="filterReq(this,'유튜브/쇼츠')">유튜브/쇼츠</button>
+      <button class="fb" onclick="filterReq(this,'크롤링')">크롤링</button>
+      <button class="fb" onclick="filterReq(this,'기타')">기타</button>
+    </div>
+
+    <!-- 요청 목록 -->
+    <div id="reqList">
+      <div style="text-align:center;padding:60px;color:var(--text2);font-family:var(--fco)">
+        <div style="font-size:48px;margin-bottom:14px">💡</div>
+        <p>아직 요청이 없어요. 첫 번째 요청자가 되어보세요!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 요청 작성 모달 -->
+<div class="overlay" id="reqModal">
+  <div class="modal" style="max-width:500px">
+    <button class="mx" onclick="document.getElementById('reqModal').classList.remove('on')">✕</button>
+    <div class="mtitle" style="margin-bottom:4px">💡 코드 요청하기</div>
+    <div class="msub">원하는 기능을 구체적으로 적어주세요</div>
+    <div style="display:grid;gap:14px;margin-top:16px">
+      <div>
+        <label class="fl">요청 제목 *</label>
+        <input class="fi2" type="text" id="reqTitle" placeholder="예: 쿠팡 리뷰 자동 수집 스크립트">
+      </div>
+      <div>
+        <label class="fl">카테고리</label>
+        <select class="fi2" id="reqCat">
+          <option>스마트스토어</option><option>GPT/AI</option><option>유튜브/쇼츠</option>
+          <option>크롤링</option><option>Google Sheets</option><option>n8n/Make</option><option>기타</option>
+        </select>
+      </div>
+      <div>
+        <label class="fl">상세 요구사항 *</label>
+        <textarea class="fi2" id="reqDesc" rows="4" placeholder="어떤 기능이 필요한지, 어떤 환경에서 사용할지 자세히 적어주세요" style="resize:vertical"></textarea>
+      </div>
+      <div>
+        <label class="fl">희망 예산 (원)</label>
+        <input class="fi2" type="number" id="reqBudget" placeholder="예: 30000 (없으면 비워두세요)">
+      </div>
+      <button class="bsub" onclick="submitRequest()" style="font-family:var(--fco);letter-spacing:.06em">요청 등록하기 💡</button>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+  import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment, setDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // ══════════════════════════════════════════
+  // ⚠️ Firebase 설정 — 본인 프로젝트 값으로 교체
+  // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
+  // ══════════════════════════════════════════
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3T1TyPq5iRNzLU5ATzaem4yZamYWKQhU",
+    authDomain: "codegame-75c54.firebaseapp.com",
+    projectId: "codegame-75c54",
+    storageBucket: "codegame-75c54.firebasestorage.app",
+    messagingSenderId: "63875927338",
+    appId: "1:63875927338:web:375fc9bf52e8939138e253"
+  };
+
+  // ══════════════════════════════════════════
+  // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
+  // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
+  // ══════════════════════════════════════════
+  window.ADMIN_EMAIL = "sogare_@naver.com"; // ← 본인 이메일로 교체
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const storage = getStorage(app);
+  const db = getFirestore(app);
+
+  window._fb = {
+    auth, storage, db,
+    // Auth
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, onAuthStateChanged, updateProfile,
+    deleteUser, EmailAuthProvider, reauthenticateWithCredential,
+    // Storage
+    ref, uploadBytesResumable, getDownloadURL, deleteObject,
+    // Firestore
+    collection, addDoc, getDocs, getDoc, doc, updateDoc,
+    deleteDoc, query, where, orderBy, serverTimestamp,
+    increment, setDoc, arrayUnion, arrayRemove, limit,
+    currentUser: auth.currentUser
+  };
+
+  // ── 로그인 상태 감지 ──
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const nick = user.displayName || user.email.split('@')[0];
+      const initial = nick[0].toUpperCase();
+      const isAdmin = user.email === window.ADMIN_EMAIL;
+      document.querySelector('.nav-r').innerHTML = `
+        <button class="bg" onclick="toggleSearch()" id="searchBtn" style="font-size:12px;padding:5px 12px">🔍</button>
+        <span style="font-size:12px;color:var(--text2);font-family:var(--fco)">${nick}</span>
+        <div onclick="openMyPage()" style="width:30px;height:30px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;cursor:pointer;color:#000;font-family:var(--fen);box-shadow:0 0 12px rgba(0,245,196,.3)">${initial}</div>
+        <button class="bg" style="font-size:11px;padding:5px 12px" onclick="doLogout()">LOGOUT</button>`;
+      // 관리자 탭 표시 여부
+      const adminTab = document.getElementById('mpT5');
+      if (adminTab) adminTab.style.display = isAdmin ? 'block' : 'none';
+      loadUserStats(user.uid);
+      setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
+    } else {
+      document.querySelector('.nav-r').innerHTML = `
+        <button class="bg" onclick="openL('login')">로그인</button>
+        <button class="bp" onclick="openL('register')">무료 시작</button>`;
+      // 관리자 탭 숨기기
+      const adminTab = document.getElementById('mpT5');
+      if (adminTab) adminTab.style.display = 'none';
+      setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
+    }
+  });
+
+  // ── 유저 통계 로드 ──
+  async function loadUserStats(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (snap.exists()) {
+        const d = snap.data();
+        const xp = d.xp || 0;
+        const lv = Math.floor(xp / 100) + 1;
+        const xpInLevel = xp % 100;
+        document.getElementById('hudLvl').textContent = String(lv).padStart(2,'0');
+        document.getElementById('hudXpFill').style.width = xpInLevel + '%';
+        document.getElementById('hudXpVal').textContent = xp;
+      }
+    } catch(e) {}
+  }
+  window._loadUserStats = loadUserStats;
+</script>
+
+<!-- 로그인/회원가입 모달 -->
+<div class="overlay" id="lo">
+  <div class="modal" style="max-width:420px">
+    <button class="mx" onclick="closeL()">✕</button>
+    <div class="mtitle">⚡ CodeGame</div>
+    <div class="msub">코드 자산을 사고파는 마켓플레이스</div>
+    <div class="mtabs">
+      <button class="mtb on" id="mtbLogin" onclick="switchAuthTab('login')">로그인</button>
+      <button class="mtb" id="mtbReg" onclick="switchAuthTab('register')">회원가입</button>
+    </div>
+
+    <!-- 로그인 -->
+    <div id="authLogin">
+      <input class="fi2" type="email" id="loginEmail" placeholder="이메일 주소">
+      <input class="fi2" type="password" id="loginPw" placeholder="비밀번호" style="margin-top:10px" onkeydown="if(event.key==='Enter')fbLogin()">
+      <button class="bsub" style="width:100%;margin-top:12px" onclick="fbLogin()" id="btnLogin">로그인</button>
+      <div id="loginErr" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;border-radius:8px;font-size:13px;"></div>
+    </div>
+
+    <!-- 회원가입 -->
+    <div id="authReg" style="display:none">
+      <input class="fi2" type="text" id="regNick" placeholder="닉네임">
+      <input class="fi2" type="email" id="regEmail" placeholder="이메일 주소" style="margin-top:10px">
+      <input class="fi2" type="password" id="regPw" placeholder="비밀번호 (6자 이상)" style="margin-top:10px" onkeydown="if(event.key==='Enter')fbRegister()">
+      <button class="bsub" style="width:100%;margin-top:12px" onclick="fbRegister()" id="btnReg">회원가입</button>
+      <div id="regErr" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;border-radius:8px;font-size:13px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 마이페이지 모달 — 풀 기능 -->
+<div class="overlay" id="myPageModal">
+  <div class="modal" style="max-width:680px;width:95vw;max-height:88vh;overflow-y:auto;padding:0">
+
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:0">
+      <div style="font-family:var(--fen);font-size:16px;color:var(--accent);letter-spacing:.08em">PLAYER DASHBOARD</div>
+      <button class="mx" onclick="document.getElementById('myPageModal').classList.remove('on')" style="position:static">✕</button>
+    </div>
+
+    <!-- XP / 레벨 카드 -->
+    <div id="mpXpCard" style="margin:16px 24px 0;background:linear-gradient(135deg,rgba(0,245,196,.06),rgba(0,200,255,.04));border:1px solid rgba(0,245,196,.2);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="mpAvatarBig" style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#000;font-family:var(--fen);flex-shrink:0">K</div>
+        <div>
+          <div id="mpNickBig" style="font-size:15px;font-weight:700;margin-bottom:2px"></div>
+          <div id="mpEmailBig" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="font-family:var(--fen);font-size:13px;color:var(--accent);font-weight:700">LV.<span id="mpLvBig">01</span></span>
+          <span style="font-size:11px;color:var(--text2);font-family:var(--fco)">XP <span id="mpXpBig">0</span> / <span id="mpXpNext">100</span></span>
+        </div>
+        <div style="height:6px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden">
+          <div id="mpXpBarBig" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;width:0%;transition:width .6s ease;box-shadow:0 0 8px var(--accent)"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fco);margin-top:4px" id="mpXpDesc">다음 레벨까지 0 XP</div>
+      </div>
+      <div style="display:flex;gap:12px;flex-shrink:0">
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="mpStatUp">0</div>
+          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">업로드</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--yellow)" id="mpStatSale">0</div>
+          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">판매</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--pink)" id="mpStatRev">₩0</div>
+          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">수익</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 탭 -->
+    <div style="display:flex;border-bottom:1px solid rgba(0,245,196,.1);padding:0 24px">
+      <button class="mtb on" id="mpT1" onclick="mpTab('upload')">📤 업로드</button>
+      <button class="mtb" id="mpT2" onclick="mpTab('myfiles')">📁 내 판매</button>
+      <button class="mtb" id="mpT3" onclick="mpTab('purchases')">🛒 구매내역</button>
+      <button class="mtb" id="mpT4" onclick="mpTab('settings')">⚙️ 설정</button>
+      <button class="mtb" id="mpT5" onclick="mpTab('admin')" style="color:var(--yellow)">🔧 관리자</button>
+    </div>
+
+    <div style="padding:20px 24px">
+
+      <!-- ── 업로드 탭 ── -->
+      <div id="mpPanel_upload">
+        <div style="background:rgba(245,196,0,.05);border:1px solid rgba(245,196,0,.15);border-radius:6px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.9;font-family:var(--fco)">
+          <span style="color:var(--yellow)">⚙️ FIREBASE SETUP REQUIRED</span><br>
+          1. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a> → 새 프로젝트 생성<br>
+          2. Authentication → Email/Password 사용 설정<br>
+          3. Storage → 규칙: <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;color:var(--accent)">allow read,write: if request.auth!=null;</code><br>
+          4. Firestore → 테스트 모드로 데이터베이스 생성<br>
+          5. 프로젝트 설정 → SDK 설정값 → 상단 firebaseConfig에 붙여넣기
+        </div>
+
+        <div style="display:grid;gap:14px">
+          <div>
+            <label class="fl">상품명 *</label>
+            <input class="fi2" type="text" id="upTitle" placeholder="예: 스마트스토어 주문 자동 처리 봇">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label class="fl">카테고리</label>
+              <select class="fi2" id="upCat">
+                <option>스마트스토어/커머스</option><option>유튜브/쇼츠</option>
+                <option>GPT/AI</option><option>Google Sheets</option>
+                <option>n8n/Make</option><option>크롤링</option>
+                <option>데이터 처리</option><option>기타</option>
+              </select>
+            </div>
+            <div>
+              <label class="fl">판매가격 (원)</label>
+              <input class="fi2" type="number" id="upPrice" placeholder="29000">
+            </div>
+          </div>
+          <div>
+            <label class="fl">상품 설명</label>
+            <textarea class="fi2" id="upDesc" rows="3" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 설명해주세요" style="resize:vertical"></textarea>
+          </div>
+          <div>
+            <label class="fl">라이선스</label>
+            <select class="fi2" id="upLic">
+              <option>일반 상업용</option><option>완전 독점</option>
+              <option>팀 라이선스</option><option>오픈소스(MIT)</option>
+            </select>
+          </div>
+          <div>
+            <label class="fl">파일 선택 *</label>
+            <div id="dropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s"
+              ondragover="event.preventDefault();document.getElementById('dropZ').style.borderColor='var(--accent)'"
+              ondragleave="document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)'"
+              ondrop="handleDrop2(event)">
+              <input type="file" id="upFile" accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="setUpFile(this.files[0])">
+              <div style="font-size:28px;margin-bottom:8px">📦</div>
+              <p style="font-size:12px;color:var(--text2);font-family:var(--fco)"><span style="color:var(--accent)">CLICK OR DRAG</span> FILE HERE</p>
+              <p style="font-size:10px;color:var(--text3);margin-top:4px;font-family:var(--fco)">.py .js .json .zip .ipynb · MAX 50MB</p>
+            </div>
+            <div id="upFileInfo" style="display:none;margin-top:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
+              <div><div id="upFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="upFileSize" style="font-size:11px;color:var(--text2)"></div></div>
+              <button onclick="clearUpFile()" style="background:none;border:none;color:var(--text2);cursor:pointer">✕</button>
+            </div>
+          </div>
+          <div id="upProgress" style="display:none">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
+            <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
+          </div>
+          <div id="upSuccess" style="display:none;background:rgba(0,245,196,.06);border:1px solid rgba(0,245,196,.2);border-radius:6px;padding:12px">
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:var(--fco)">✅ UPLOAD COMPLETE</div>
+            <div style="font-size:11px;color:var(--text2)"><a id="upLink" href="#" target="_blank" style="color:var(--accent)">다운로드 링크 확인 →</a></div>
+          </div>
+          <button class="bsub" onclick="doUpload2()" id="btnUpload" style="font-family:var(--fco);letter-spacing:.08em">SUBMIT FOR REVIEW 🚀</button>
+        </div>
+      </div>
+
+      <!-- ── 내 판매 탭 ── -->
+      <div id="mpPanel_myfiles" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--text2);font-family:var(--fco)">내가 등록한 코드 자산</div>
+          <div id="myStats" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+        </div>
+        <div id="myFilesList">
+          <div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">
+            <div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 구매내역 탭 ── -->
+      <div id="mpPanel_purchases" style="display:none">
+        <div style="font-size:12px;color:var(--text2);font-family:var(--fco);margin-bottom:16px">구매한 코드 자산 (다운로드 가능)</div>
+        <div id="purchasesList">
+          <div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">
+            <div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 설정 탭 ── -->
+      <div id="mpPanel_settings" style="display:none">
+        <div style="display:grid;gap:20px">
+
+          <!-- 프로필 -->
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">프로필 수정</div>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+              <div id="settingsAvatar" style="width:48px;height:48px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#000;font-family:var(--fen)">K</div>
+              <div>
+                <div id="settingsNickDisplay" style="font-size:14px;font-weight:700"></div>
+                <div id="settingsEmailDisplay" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+              </div>
+            </div>
+            <label class="fl">닉네임 변경</label>
+            <input class="fi2" type="text" id="newNick" placeholder="새 닉네임" style="margin-bottom:10px">
+            <button class="bsub" onclick="updateNick()" style="font-family:var(--fco);font-size:12px;letter-spacing:.06em;padding:10px 20px">저장하기</button>
+          </div>
+
+          <!-- 비밀번호 변경 -->
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">비밀번호 변경</div>
+            <input class="fi2" type="password" id="currPw" placeholder="현재 비밀번호" style="margin-bottom:10px">
+            <input class="fi2" type="password" id="newPw" placeholder="새 비밀번호 (6자 이상)">
+            <button class="bsub" onclick="changePw()" style="font-family:var(--fco);font-size:12px;letter-spacing:.06em;padding:10px 20px;margin-top:10px">변경하기</button>
+            <div id="pwMsg" style="display:none;margin-top:8px;font-size:12px;font-family:var(--fco)"></div>
+          </div>
+
+          <!-- 판매 통계 -->
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">내 판매 통계</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="myStatsGrid">
+              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+                <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statUploads">0</div>
+                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">업로드</div>
+              </div>
+              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+                <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statSales">0</div>
+                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">총 판매</div>
+              </div>
+              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+                <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statRevenue">₩0</div>
+                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">총 수익(80%)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 계정 삭제 -->
+          <div style="background:rgba(255,59,59,.04);border:1px solid rgba(255,59,59,.15);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:10px">⚠️ 위험 구역</div>
+            <p style="font-size:12px;color:var(--text2);margin-bottom:12px">계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.</p>
+            <button onclick="deleteAccount()" style="background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.3);border-radius:6px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:var(--fco)">계정 삭제</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 관리자 탭 ── -->
+      <div id="mpPanel_admin" style="display:none">
+        <div style="background:rgba(245,196,0,.04);border:1px solid rgba(245,196,0,.15);border-radius:6px;padding:12px;margin-bottom:16px;font-size:11px;color:var(--yellow);font-family:var(--fco)">
+          ⚠️ ADMIN PANEL — 검수 대기 중인 파일을 승인/반려할 수 있어요
+        </div>
+        <div style="margin-bottom:12px;display:flex;gap:8px">
+          <button onclick="loadAdminQueue('pending')" class="bg" style="font-size:11px;font-family:var(--fco)">대기중</button>
+          <button onclick="loadAdminQueue('approved')" class="bg" style="font-size:11px;font-family:var(--fco)">승인됨</button>
+          <button onclick="loadAdminQueue('rejected')" class="bg" style="font-size:11px;font-family:var(--fco)">반려됨</button>
+        </div>
+        <div id="adminQueue">
+          <div style="text-align:center;padding:32px;color:var(--text2);font-family:var(--fco)">위 버튼을 눌러 목록을 불러오세요</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 코드 라이브 프리뷰 모달 -->
+<div class="overlay" id="codePreviewModal">
+  <div class="modal" style="max-width:720px;width:95vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border-color:rgba(0,245,196,.3)">
+    <button class="mx" onclick="document.getElementById('codePreviewModal').classList.remove('on')">✕</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div>
+      <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e"></div>
+      <div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div>
+      <span id="codePreviewTitle" style="font-family:var(--fco);font-size:12px;color:var(--text2);margin-left:6px"></span>
+    </div>
+    <pre id="codePreviewContent" style="font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.9;overflow-x:auto;white-space:pre-wrap;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:20px;margin:0"></pre>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button onclick="copyCode()" style="background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;padding:7px 14px;font-size:11px;cursor:pointer;font-family:var(--fco)">📋 복사하기</button>
+      <button onclick="document.getElementById('codePreviewModal').classList.remove('on')" style="background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:4px;padding:7px 14px;font-size:11px;cursor:pointer;font-family:var(--fco)">닫기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="tk"><span id="ti"></span><span id="tm"></span></div>
+
+<script>
+const P=[
+  {id:1,type:'workflow',ti:'스마트스토어 주문 자동 처리 봇',ds:'하루 100건+ 주문을 자동 처리해요. 운송장 입력, 재고 차감, 이메일 알림까지.',pr:29000,tags:['py'],tb:'bwf',tl:'자동화 워크플로우',lang:'Python 3.11',env:'Windows/Mac',lv:'누구나',lic:'일반 상업용',sl:'dev_kim',sc:'#7c6fff',rt:4.9,ss:142,em:'🤖',
+   cd:`def process_orders():\n    orders = get_pending_orders()\n    for order in orders:\n        update_tracking(order)\n        notify_buyer(order)\n    return {"done": len(orders)}`,
+   ft:['주문 자동 분류 및 처리','운송장 번호 자동 입력','재고 수량 자동 차감','구매자 이메일 자동 발송','에러 시 Slack 알림'],rq:['Python 3.8 이상','스마트스토어 API 키','requests, selenium']},
+  {id:2,type:'workflow',ti:'유튜브 쇼츠 자동 업로드 스크립트',ds:'영상 파일만 넣으면 제목·태그·썸네일 자동 설정 후 예약 업로드.',pr:19000,tags:['py'],tb:'bwf',tl:'자동화 워크플로우',lang:'Python 3.11',env:'모두',lv:'기본 지식 필요',lic:'일반 상업용',sl:'youtube_pro',sc:'#ff6b6b',rt:4.8,ss:89,em:'🎬',
+   cd:`def auto_upload(video_path):\n    meta = ai_generate_meta(video_path)\n    uploader = YouTubeUploader()\n    uploader.set_metadata(meta)\n    return uploader.publish()`,
+   ft:['AI 자동 제목/태그 생성','썸네일 자동 생성','예약 업로드 지원','여러 채널 동시 업로드','업로드 성과 리포트'],rq:['Python 3.8 이상','YouTube Data API v3 키','Pillow, google-auth']},
+  {id:3,type:'workflow',ti:'n8n 인스타그램 자동 포스팅',ds:'블로그 RSS → AI 카드뉴스 변환 → 인스타그램 예약 포스팅 전자동.',pr:22000,tags:['n8'],tb:'bwf',tl:'자동화 워크플로우',lang:'n8n Workflow',env:'웹브라우저',lv:'누구나',lic:'일반 상업용',sl:'flow_wizard',sc:'#ff6b9d',rt:4.6,ss:55,em:'📱',
+   cd:`{\n  "nodes": [\n    {"type": "RSS Feed"},\n    {"type": "OpenAI Chat"},\n    {"type": "Instagram Post"}\n  ]\n}`,
+   ft:['RSS 피드 자동 수집','GPT-4o 카드뉴스 변환','예약 포스팅','해시태그 자동 최적화','성과 분석'],rq:['n8n 계정 (무료)','OpenAI API 키','Instagram Graph API']},
+  {id:4,type:'function',ti:'GPT-4o 고객 응대 챗봇 모듈',ds:'쇼핑몰에 바로 붙이는 GPT-4o 기반 고객 응대 모듈. FAQ 학습 기능 포함.',pr:49000,tags:['js','gpt'],tb:'bfn',tl:'기능 모듈',lang:'JavaScript (Node.js)',env:'서버/Vercel',lv:'기본 지식 필요',lic:'일반 상업용',sl:'ai_builder',sc:'#00d4aa',rt:5.0,ss:203,em:'💬',
+   cd:`class ShopChatbot {\n  constructor(apiKey, faqData) {\n    this.openai = new OpenAI({apiKey});\n    this.faq = embedFAQ(faqData);\n  }\n  async chat(msg) {\n    const ctx = await this.faq.search(msg);\n    return this.openai.chat(ctx, msg);\n  }\n}`,
+   ft:['GPT-4o-mini 기반 응답','FAQ 벡터 임베딩','멀티턴 대화 지원','REST API 연동','대화 로그 저장'],rq:['Node.js 18 이상','OpenAI API 키','Express.js']},
+  {id:5,type:'function',ti:'Google Sheets 재고 관리 자동화',ds:'구글 시트 ↔ 스마트스토어 실시간 재고 동기화. 품절 자동 처리.',pr:15000,tags:['sh'],tb:'bfn',tl:'기능 모듈',lang:'Google Apps Script',env:'웹브라우저',lv:'누구나',lic:'오픈소스',sl:'sheets_master',sc:'#ffd166',rt:4.7,ss:67,em:'📊',
+   cd:`function syncInventory() {\n  const data = getInventoryData();\n  data.forEach(([sku, qty]) => {\n    if (qty <= 0) setSoldOut(sku);\n    else if (qty < 5) alertLowStock(sku);\n  });\n}`,
+   ft:['실시간 재고 동기화','자동 품절 처리','재고 5개 미만 알림','월별 판매량 집계','여러 쇼핑몰 연동'],rq:['Google 계정','스마트스토어 API 키','설치 불필요']},
+  {id:6,type:'function',ti:'이미지 자동 리사이징 + 워터마크',ds:'상품 이미지 업로드 시 자동 리사이징, 워터마크 삽입, WebP 변환.',pr:12000,tags:['py'],tb:'bfn',tl:'기능 모듈',lang:'Python 3.11',env:'모두',lv:'누구나',lic:'일반 상업용',sl:'image_dev',sc:'#ff6b9d',rt:4.5,ss:44,em:'🖼',
+   cd:`def process_image(path, cfg):\n    img = Image.open(path)\n    img = img.resize(cfg['size'])\n    img = add_watermark(img, cfg['text'])\n    img.save(path+'.webp', 'WebP', quality=85)`,
+   ft:['자동 리사이징 (여러 사이즈)','텍스트/이미지 워터마크','WebP 자동 변환','EXIF 데이터 처리','배치 처리'],rq:['Python 3.8 이상','Pillow 라이브러리','config.json']},
+  {id:7,type:'template',ti:'쇼핑몰 일일 매출 리포트 템플릿',ds:'쿠팡/스마트스토어 데이터를 구글 시트에 자동 정리하는 리포트 템플릿.',pr:9000,tags:['sh','no'],tb:'btpl',tl:'템플릿',lang:'Google Sheets',env:'웹브라우저',lv:'누구나',lic:'일반 상업용',sl:'report_king',sc:'#7c6fff',rt:4.6,ss:112,em:'📈',
+   cd:`function dailyReport() {\n  const sales = fetchSalesData();\n  updateDashboard(sales);\n  sendEmailSummary(sales);\n}`,
+   ft:['일별/주별/월별 집계','플랫폼별 비교 차트','반품률 자동 계산','이메일 자동 발송','커스텀 KPI 설정'],rq:['Google 계정','쇼핑몰 API 키 (선택)','설치 불필요']},
+  {id:8,type:'template',ti:'크리에이터 수익 관리 Excel 템플릿',ds:'유튜브/인스타/쇼핑몰 수익을 한 곳에서 관리하는 엑셀 자동화 템플릿.',pr:7000,tags:['no'],tb:'btpl',tl:'템플릿',lang:'Microsoft Excel',env:'Windows/Mac',lv:'누구나',lic:'일반 상업용',sl:'excel_pro',sc:'#00d4aa',rt:4.4,ss:88,em:'💹',
+   cd:`Sub UpdateRevenue()\n    ImportYouTubeData\n    ImportInstagramData\n    CalculateTax ' 3.3%\n    UpdateDashboard\nEnd Sub`,
+   ft:['플랫폼별 수익 집계','세금 자동 계산 (3.3%)','월별 트렌드 차트','목표 달성률 표시','PDF 내보내기'],rq:['Excel 2016 이상','VBA 매크로 허용','설치 불필요']},
+  {id:9,type:'tool',ti:'쿠팡 파트너스 수익 크롤러',ds:'쿠팡 파트너스 수익을 자동 집계해 구글 시트에 저장. 일간/월간 리포트.',pr:14000,tags:['py'],tb:'btol',tl:'도구',lang:'Python 3.11',env:'Windows',lv:'기본 지식 필요',lic:'일반 상업용',sl:'coupang_dev',sc:'#ff6b6b',rt:4.5,ss:38,em:'💰',
+   cd:`def collect_revenue(date_range):\n    driver = setup_driver()\n    login(driver)\n    data = scrape_dashboard(driver, date_range)\n    save_to_sheets(data)\n    return summarize(data)`,
+   ft:['자동 로그인 (2FA 지원)','일간/월간 수익 집계','구글 시트 자동 기록','이메일 리포트 발송','수익 추이 그래프'],rq:['Python 3.8 이상','Chrome 브라우저','쿠팡 파트너스 계정']},
+  {id:10,type:'tool',ti:'네이버 블로그 SEO 자동 분석 도구',ds:'경쟁 블로그 키워드, 발행 시간, 조회수 패턴을 자동 분석해 인사이트 제공.',pr:18000,tags:['py'],tb:'btol',tl:'도구',lang:'Python 3.11',env:'모두',lv:'기본 지식 필요',lic:'일반 상업용',sl:'seo_master',sc:'#7c6fff',rt:4.7,ss:61,em:'🔍',
+   cd:`def analyze_blog(blog_id, keywords):\n    posts = scrape_posts(blog_id)\n    return {\n        "best_time": find_peak_hour(posts),\n        "top_kw": extract_keywords(posts),\n        "avg_views": calc_avg(posts)\n    }`,
+   ft:['경쟁 블로그 키워드 분석','최적 발행 시간 추출','조회수 패턴 분석','SEO 개선 추천','CSV 리포트 내보내기'],rq:['Python 3.8 이상','BeautifulSoup4, pandas','네이버 API 키 (선택)']},
+];
+
+const FAQS=[
+  {q:'구매한 코드가 실행이 안 돼요',a:'먼저 README의 환경 설정 가이드를 확인해주세요. 그래도 안 된다면 판매자에게 1:1 문의를 보내주세요. 48시간 내 응답이 없으면 환불 처리해드려요.'},
+  {q:'AI가 만든 코드도 판매할 수 있나요?',a:'네, 가능해요. 단 상품 설명에 "AI 생성 코드 포함" 표기를 반드시 해야 해요. 미표기 시 판매 취소 및 계정 제재를 받을 수 있어요.'},
+  {q:'구매 후 코드를 수정해서 팔 수 있나요?',a:'불가능해요. 일반 상업용 라이선스는 재판매를 금지하고 있어요. 오픈소스(MIT) 라이선스 제품은 저작자 표기 후 수정 배포가 가능해요.'},
+  {q:'정산은 언제 되나요?',a:'매월 말일에 정산되며, 최소 출금금액은 10,000원이에요.'},
+  {q:'코드 검수는 어떻게 하나요?',a:'전문 개발자가 실제로 코드를 실행해서 설명과 일치하는지, 악성 코드가 없는지 확인해요. 보통 1~2일 소요돼요.'},
+];
+
+const POSTS=[
+  {ti:'n8n으로 인스타 자동 포스팅 세팅하면서 막혔던 점 공유해요',us:'flow_wizard',tm:'2시간 전',tgs:['질문','n8n'],ex:'인증 토큰 갱신 주기가 60일이라 자동 갱신 로직을 따로 만들어야 했어요...',lk:24,cm:8,vw:342,cl:'#ff6b9d'},
+  {ti:'스마트스토어 자동화 구매 후기 — 월 30시간 절약',us:'seller_kim',tm:'5시간 전',tgs:['후기','스마트스토어'],ex:'처음엔 반신반의했는데 주문처리 시간이 3시간에서 10분으로 줄었어요.',lk:67,cm:22,vw:891,cl:'#7c6fff'},
+  {ti:'GPT API 챗봇 구매했는데 토큰 비용 절감 팁 질문드려요',us:'shop_owner',tm:'어제',tgs:['질문','GPT API'],ex:'gpt-4o-mini로 바꾸니 비용이 10분의 1로 줄었다는데 어떻게 설정하는 건가요?',lk:15,cm:11,vw:234,cl:'#00d4aa'},
+  {ti:'처음 코드 올렸는데 첫 주에 12건 팔렸어요!',us:'new_seller',tm:'2일 전',tgs:['후기','판매자'],ex:'두렵게 올렸는데 README를 친절하게 써서인지 문의도 거의 없이 팔리네요.',lk:103,cm:34,vw:1204,cl:'#ffd166'},
+  {ti:'쿠팡 파트너스 크롤러 — 셀레니움 버전 충돌 해결법',us:'coupang_dev',tm:'3일 전',tgs:['팁','Python'],ex:'Chrome 134 업데이트 이후 selenium 4.18 이하에서 오류 나는 분들 보세요.',lk:89,cm:28,vw:1567,cl:'#ff6b6b'},
+];
+
+const RANKS=[{nm:'ai_builder',sb:'GPT 전문 모듈',vl:'₩2.4M',top:true},{nm:'dev_kim',sb:'스마트스토어 자동화',vl:'₩1.8M',top:true},{nm:'flow_wizard',sb:'n8n 워크플로우',vl:'₩1.2M',top:true},{nm:'seo_master',sb:'SEO 분석 도구',vl:'₩890K',top:false},{nm:'sheets_master',sb:'Google Sheets',vl:'₩650K',top:false}];
+const NOTICES=['🎉 CodeGame 베타 오픈 — 첫 등록 수수료 면제','📢 4월 판매왕 이벤트 — 1등 상금 10만원','🔧 검수 기준 업데이트 안내 (2026.03)','💡 AI 코드 표기 의무화 안내'];
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function tname(t){return{py:'Python',js:'JavaScript',sh:'Sheets',n8:'n8n',gpt:'GPT',no:'노코드'}[t]||t;}
+function tcls(t){return{py:'tpy',js:'tjs',sh:'tsh',n8:'tn8',gpt:'tgpt',no:'tno'}[t]||'tpy';}
+function gcol(t){return{py:'#00d4aa',js:'#ffd166',sh:'#7c6fff',n8:'#ff6b9d',gpt:'#ff6b6b',no:'#ff6b9d'}[t]||'#7c6fff';}
+
+function rend(data){
+  document.getElementById('pg').innerHTML=data.map(p=>`
+    <div class="pc">
+      <div class="ctop" style="background:linear-gradient(135deg,${gcol(p.tags[0])}22,${gcol(p.tags[0])}08)" onclick="det(${p.id})">
+        <div class="ctbdg ${p.tb}">${p.tl}</div>
+        <div class="ccode">${esc(p.cd).split('\n').slice(0,4).join('\n')}</div>
+      </div>
+      <div class="cbody">
+        <div class="ctags">${p.tags.map(t=>`<span class="tag ${tcls(t)}">${tname(t)}</span>`).join('')}</div>
+        <div class="ctitle" onclick="det(${p.id})" style="cursor:pointer">${p.em} ${p.ti}</div>
+        <div class="cdesc" onclick="det(${p.id})" style="cursor:pointer">${p.ds}</div>
+        <div class="cfoot">
+          <div onclick="det(${p.id})" style="cursor:pointer"><div class="cprice">₩${p.pr.toLocaleString()}</div><div class="csub">${p.lic}</div></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="cmeta">⭐${p.rt} · ${p.ss}판매</span>
+            <button onclick="event.stopPropagation();previewById(${p.id})" style="background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:3px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:var(--fco)">미리보기</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function det(id){
+  const p=P.find(x=>x.id===id);if(!p)return;
+  document.getElementById('dc').innerHTML=`<span style="color:var(--accent)">${esc(p.cd)}</span>`;
+  document.getElementById('dtg').innerHTML=p.tags.map(t=>`<span class="tag ${tcls(t)}">${tname(t)}</span>`).join('')+`<span class="tag" style="background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.15)">${p.tl}</span>`;
+  document.getElementById('dti').textContent=p.em+' '+p.ti;
+  document.getElementById('dds').textContent=p.ds;
+  document.getElementById('dft').innerHTML=p.ft.map(f=>`<div class="fi"><span class="fck">✓</span><span>${f}</span></div>`).join('');
+  document.getElementById('drq').innerHTML=p.rq.map(r=>`<div class="fi"><span style="color:var(--text3)">•</span><span>${r}</span></div>`).join('');
+  document.getElementById('dpr').innerHTML=`₩${p.pr.toLocaleString()} <small style="font-size:12px;color:var(--text2);font-weight:400">일회성 구매</small>`;
+  document.getElementById('drw').innerHTML=[['언어/도구',p.lang],['실행 환경',p.env],['난이도',p.lv],['라이선스',p.lic],['평점',`⭐ ${p.rt} (${p.ss}건)`]].map(([k,v])=>`<div class="brow"><span>${k}</span><span>${v}</span></div>`).join('');
+  const av=document.getElementById('dsa');av.textContent=p.sl.slice(0,2).toUpperCase();av.style.background=`linear-gradient(135deg,${p.sc},${p.sc}88)`;
+  document.getElementById('dsn').textContent=p.sl;
+  // 미리보기 버튼 추가
+  const previewBtn = document.getElementById('dPreviewBtn');
+  if(previewBtn) previewBtn.onclick = ()=>openCodePreview(p.cd, p.ti);
+  go('detail');
+}
+
+function filt(btn,cat){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  rend(cat==='all'?P:P.filter(p=>p.type===cat||p.tags.includes(cat)));
+}
+
+function go(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-'+pg).classList.add('on');
+  ['home','sell','guide','comm','req'].forEach(n=>{const el=document.getElementById('n-'+n);if(el)el.classList.remove('on');});
+  const nm={'home':'n-home','sell':'n-sell','guide':'n-guide','comm':'n-comm','req':'n-req'};
+  if(nm[pg])document.getElementById(nm[pg])?.classList.add('on');
+  if(pg==='req') loadRequests();
+  window.scrollTo(0,0);
+}
+
+// ── 코드 라이브 프리뷰 모달 ──
+function openCodePreview(code, title){
+  const m = document.getElementById('codePreviewModal');
+  document.getElementById('codePreviewTitle').textContent = title || 'CODE PREVIEW';
+  document.getElementById('codePreviewContent').textContent = code;
+  m.classList.add('on');
+}
+
+function previewById(id){
+  const p = P.find(x=>x.id===id);
+  if(p) openCodePreview(p.cd, p.ti);
+}
+
+// ── 요청하기 ──
+function openRequestModal(){
+  const user = window._fb?.auth?.currentUser;
+  if(!user){ openL('login'); toast('로그인이 필요해요','⚠️'); return; }
+  document.getElementById('reqModal').classList.add('on');
+}
+
+async function submitRequest(){
+  const fb = window._fb;
+  const user = fb?.auth?.currentUser;
+  const title = document.getElementById('reqTitle').value.trim();
+  const desc = document.getElementById('reqDesc').value.trim();
+  if(!title||!desc){ toast('제목과 상세 내용을 입력해주세요','⚠️'); return; }
+  try{
+    await fb.addDoc(fb.collection(fb.db,'requests'),{
+      uid: user.uid,
+      nickname: user.displayName||user.email,
+      title,
+      description: desc,
+      category: document.getElementById('reqCat').value,
+      budget: parseInt(document.getElementById('reqBudget').value)||0,
+      status: 'open',  // open / in_progress / completed
+      likes: 0,
+      createdAt: fb.serverTimestamp()
+    });
+    await addXP(user.uid, 5);
+    document.getElementById('reqModal').classList.remove('on');
+    ['reqTitle','reqDesc','reqBudget'].forEach(id=>{ document.getElementById(id).value=''; });
+    toast('요청이 등록됐어요! +5 XP 💡','✅');
+    loadRequests();
+  }catch(e){ toast('등록 실패: '+e.message,'❌'); }
+}
+
+async function loadRequests(cat='all'){
+  const fb = window._fb;
+  const el = document.getElementById('reqList');
+  if(!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  try{
+    const q = fb.query(fb.collection(fb.db,'requests'), fb.orderBy('createdAt','desc'));
+    const snap = await fb.getDocs(q);
+    let docs = snap.docs;
+    if(cat !== 'all') docs = docs.filter(d => d.data().category === cat);
+    if(!docs.length){
+      el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text2);font-family:var(--fco)"><div style="font-size:48px;margin-bottom:14px">💡</div><p>요청이 없어요. 첫 번째 요청자가 되어보세요!</p></div>';
+      return;
+    }
+    const stColor = {'open':'var(--accent)','in_progress':'var(--yellow)','completed':'var(--text2)'};
+    const stLabel = {'open':'모집중','in_progress':'진행중','completed':'완료'};
+    el.innerHTML = docs.map(d=>{
+      const v = d.data();
+      const dt = v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
+      return `<div style="background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:18px;margin-bottom:12px;transition:all .18s" onmouseover="this.style.borderColor='rgba(0,245,196,.3)'" onmouseout="this.style.borderColor='var(--border2)'">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:10px;color:${stColor[v.status]||'var(--accent)'};background:rgba(0,245,196,.08);border:1px solid rgba(0,245,196,.2);padding:2px 8px;border-radius:3px;font-family:var(--fco);letter-spacing:.06em">${stLabel[v.status]||v.status}</span>
+              <span style="font-size:10px;color:var(--text2);background:var(--bg3);padding:2px 8px;border-radius:3px;font-family:var(--fco)">${v.category}</span>
+              ${v.budget?`<span style="font-size:10px;color:var(--yellow);font-family:var(--fco)">예산 ₩${v.budget.toLocaleString()}</span>`:''}
+            </div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px">${v.title}</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7">${v.description}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)">
+          <div style="font-size:11px;color:var(--text3);font-family:var(--fco)">${v.nickname} · ${dt}</div>
+          <button onclick="likeRequest('${d.id}',${v.likes||0})" style="background:rgba(0,245,196,.06);color:var(--accent);border:1px solid rgba(0,245,196,.15);border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--fco)">👍 ${v.likes||0}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);font-family:var(--fco)">불러오기 실패 — Firebase 설정 확인</div>';
+  }
+}
+
+function filterReq(btn, cat){
+  document.querySelectorAll('#reqFilters .fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  loadRequests(cat);
+}
+
+async function likeRequest(docId, current){
+  const fb = window._fb;
+  const user = fb?.auth?.currentUser;
+  if(!user){ toast('로그인이 필요해요','⚠️'); return; }
+  try{
+    await fb.updateDoc(fb.doc(fb.db,'requests',docId),{likes: fb.increment(1)});
+    loadRequests();
+  }catch(e){}
+}
+
+function stab(btn,id){document.querySelectorAll('.ssb').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));btn.classList.add('on');document.getElementById(id)?.classList.add('on');}
+function slic(el){document.querySelectorAll('.lo').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
+function ce(){const v=parseInt(document.getElementById('pi')?.value||0);if(!v){document.getElementById('ep').style.display='none';return;}const e=Math.round(v*.8);document.getElementById('ep1').textContent='₩'+e.toLocaleString();document.getElementById('ep10').textContent='₩'+(e*10).toLocaleString();document.getElementById('ep100').textContent='₩'+(e*100).toLocaleString();document.getElementById('ep').style.display='block';}
+function uc(){const p=parseInt(document.getElementById('cp')?.value||29000);const q=parseInt(document.getElementById('cq')?.value||50);document.getElementById('ql').textContent=q+'건';const e=Math.round(p*.8);document.getElementById('c1').textContent='₩'+(e*q).toLocaleString();document.getElementById('c2').textContent='₩'+(e*q*12).toLocaleString();document.getElementById('c3').textContent='₩'+e.toLocaleString();}
+
+function gtab(el,id){document.querySelectorAll('.gni').forEach(i=>i.classList.remove('on'));document.querySelectorAll('.gsec').forEach(s=>s.classList.remove('on'));el.classList.add('on');document.getElementById(id)?.classList.add('on');}
+function ctab(btn,id){document.querySelectorAll('.ctb').forEach(b=>b.classList.remove('on'));['ct1','ct2','ct3','ct4'].forEach(i=>{const el=document.getElementById(i);if(el)el.style.display='none';});btn.classList.add('on');document.getElementById(id).style.display='block';}
+
+function rcComm(){
+  const html=POSTS.map(p=>`<div class="pcard" onclick="toast('게시글 상세 준비 중!','📄')"><div class="ph"><div class="pavt" style="background:linear-gradient(135deg,${p.cl},${p.cl}88)">${p.us.slice(0,2).toUpperCase()}</div><div class="pi"><h3>${p.ti}</h3><p>${p.us} · ${p.tm}</p></div></div><div class="ptgs">${p.tgs.map(t=>`<span class="ptg">${t}</span>`).join('')}</div><div class="pex">${p.ex}</div><div class="pft"><span>👍 ${p.lk}</span><span>💬 ${p.cm}</span><span>👁 ${p.vw}</span></div></div>`).join('');
+  ['pl1','pl2','pl3','pl4'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+  document.getElementById('rkL').innerHTML=RANKS.map((r,i)=>`<div class="ritem"><div class="rnum ${r.top?'top':''}">${i+1}</div><div class="rinf"><div class="rn">${r.nm}</div><div class="rs">${r.sb}</div></div><div class="rv">${r.vl}</div></div>`).join('');
+  document.getElementById('ntL').innerHTML=NOTICES.map(n=>`<div class="nitem" onclick="toast('공지사항 준비 중!','📢')">${n}</div>`).join('');
+}
+
+function rcFAQ(){document.getElementById('faqL').innerHTML=FAQS.map(f=>`<div class="faq" onclick="tfaq(this)"><div class="faqq"><span>${f.q}</span><span>+</span></div><div class="faqa">${f.a}</div></div>`).join('');}
+function tfaq(el){const a=el.querySelector('.faqa');const s=el.querySelector('.faqq span:last-child');a.classList.toggle('on');s.textContent=a.classList.contains('on')?'−':'+';}
+
+// ── 모달 열기/닫기 ──
+function openL(mode){
+  switchAuthTab(mode||'login');
+  document.getElementById('lo').classList.add('on');
+}
+function closeL(){document.getElementById('lo').classList.remove('on');}
+document.getElementById('lo').addEventListener('click',function(e){if(e.target===this)closeL();});
+document.getElementById('myPageModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+
+// ── 로그인/회원가입 탭 전환 ──
+function switchAuthTab(mode){
+  const isLogin=mode==='login';
+  document.getElementById('authLogin').style.display=isLogin?'block':'none';
+  document.getElementById('authReg').style.display=isLogin?'none':'block';
+  document.getElementById('mtbLogin').classList.toggle('on',isLogin);
+  document.getElementById('mtbReg').classList.toggle('on',!isLogin);
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('regErr').style.display='none';
+}
+
+// ── 에러 코드 한국어 ──
+function authErrMsg(code){
+  return({'auth/email-already-in-use':'이미 사용 중인 이메일이에요','auth/weak-password':'비밀번호는 6자 이상이어야 해요','auth/user-not-found':'존재하지 않는 계정이에요','auth/wrong-password':'비밀번호가 틀렸어요','auth/invalid-email':'올바른 이메일 형식이 아니에요','auth/invalid-credential':'이메일 또는 비밀번호가 틀렸어요','auth/too-many-requests':'잠시 후 다시 시도해주세요','auth/requires-recent-login':'보안을 위해 다시 로그인해주세요'}[code]||'오류가 발생했어요. 다시 시도해주세요.');
+}
+
+// ── Firebase 로그인 ──
+async function fbLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pw=document.getElementById('loginPw').value;
+  const btn=document.getElementById('btnLogin');
+  const err=document.getElementById('loginErr');
+  err.style.display='none';
+  if(!email||!pw){err.textContent='이메일과 비밀번호를 입력해주세요';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='LOGGING IN...';
+  try{
+    const cred=await window._fb.signInWithEmailAndPassword(window._fb.auth,email,pw);
+    await addXP(cred.user.uid,5);
+    closeL();toast('로그인 완료! 환영해요 👾','✅');
+  }catch(e){err.textContent=authErrMsg(e.code);err.style.display='block';}
+  finally{btn.disabled=false;btn.textContent='로그인';}
+}
+
+// ── Firebase 회원가입 ──
+async function fbRegister(){
+  const nick=document.getElementById('regNick').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const pw=document.getElementById('regPw').value;
+  const btn=document.getElementById('btnReg');
+  const err=document.getElementById('regErr');
+  err.style.display='none';
+  if(!nick||!email||!pw){err.textContent='모든 항목을 입력해주세요';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='CREATING...';
+  try{
+    const cred=await window._fb.createUserWithEmailAndPassword(window._fb.auth,email,pw);
+    await window._fb.updateProfile(cred.user,{displayName:nick});
+    await window._fb.setDoc(window._fb.doc(window._fb.db,'users',cred.user.uid),{
+      nickname:nick,email,xp:10,level:1,
+      totalUploads:0,totalSales:0,totalRevenue:0,
+      createdAt:window._fb.serverTimestamp()
+    });
+    closeL();toast('가입 완료! +10 XP 획득! 🎉','✅');
+  }catch(e){err.textContent=authErrMsg(e.code);err.style.display='block';}
+  finally{btn.disabled=false;btn.textContent='회원가입';}
+}
+
+// ── 로그아웃 ──
+async function doLogout(){
+  await window._fb.signOut(window._fb.auth);
+  toast('로그아웃됐어요 👋','');
+}
+
+// ── XP 추가 ──
+async function addXP(uid,amount){
+  try{
+    await window._fb.updateDoc(window._fb.doc(window._fb.db,'users',uid),{xp:window._fb.increment(amount)});
+    if(window._loadUserStats) window._loadUserStats(uid);
+  }catch(e){}
+}
+
+// ── 마이페이지 열기 ──
+function openMyPage(){
+  document.getElementById('myPageModal').classList.add('on');
+  mpTab('upload');
+  const user=window._fb?.auth?.currentUser;
+  if(user){
+    const nick=user.displayName||user.email.split('@')[0];
+    const initial=nick[0].toUpperCase();
+    document.getElementById('mpAvatarBig').textContent=initial;
+    document.getElementById('mpNickBig').textContent=nick;
+    document.getElementById('mpEmailBig').textContent=user.email;
+    document.getElementById('settingsNickDisplay').textContent=nick;
+    document.getElementById('settingsEmailDisplay').textContent=user.email;
+    document.getElementById('settingsAvatar').textContent=initial;
+    loadMpXp(user.uid);
+  }
+}
+
+async function loadMpXp(uid){
+  const fb=window._fb;
+  try{
+    const snap=await fb.getDoc(fb.doc(fb.db,'users',uid));
+    if(snap.exists()){
+      const d=snap.data();
+      const xp=d.xp||0;
+      const lv=Math.floor(xp/100)+1;
+      const xpInLv=xp%100;
+      const xpNext=100;
+      document.getElementById('mpLvBig').textContent=String(lv).padStart(2,'0');
+      document.getElementById('mpXpBig').textContent=xp;
+      document.getElementById('mpXpNext').textContent=lv*100;
+      document.getElementById('mpXpBarBig').style.width=xpInLv+'%';
+      document.getElementById('mpXpDesc').textContent=`다음 레벨까지 ${xpNext-xpInLv} XP`;
+      document.getElementById('mpStatUp').textContent=d.totalUploads||0;
+      document.getElementById('mpStatSale').textContent=d.totalSales||0;
+      document.getElementById('mpStatRev').textContent='₩'+(d.totalRevenue||0).toLocaleString();
+      // 설정 탭 통계도 업데이트
+      document.getElementById('statUploads').textContent=d.totalUploads||0;
+      document.getElementById('statSales').textContent=d.totalSales||0;
+      document.getElementById('statRevenue').textContent='₩'+(d.totalRevenue||0).toLocaleString();
+    }
+  }catch(e){}
+}
+
+// ── 코드 복사 ──
+function copyCode(){
+  const code=document.getElementById('codePreviewContent').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast('복사됐어요!','📋')).catch(()=>toast('복사 실패','❌'));
+}
+
+// ── 마이페이지 탭 전환 ──
+function mpTab(name){
+  ['upload','myfiles','purchases','settings','admin'].forEach((t,i)=>{
+    document.getElementById('mpPanel_'+t).style.display=t===name?'block':'none';
+    document.getElementById('mpT'+(i+1)).classList.toggle('on',t===name);
+  });
+  if(name==='myfiles') loadMyFiles();
+  if(name==='purchases') loadPurchases();
+}
+
+// ─────────────────────────────────────
+// 파일 업로드
+// ─────────────────────────────────────
+let _upFile=null;
+function setUpFile(file){
+  if(file.size>50*1024*1024){toast('50MB 이하 파일만 가능해요','⚠️');return;}
+  _upFile=file;
+  document.getElementById('upFileName').textContent=file.name;
+  document.getElementById('upFileSize').textContent=fmtSz(file.size);
+  document.getElementById('upFileInfo').style.display='flex';
+  document.getElementById('upSuccess').style.display='none';
+}
+function clearUpFile(){_upFile=null;document.getElementById('upFileInfo').style.display='none';document.getElementById('upFile').value='';}
+function handleDrop2(e){e.preventDefault();document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)';if(e.dataTransfer.files[0])setUpFile(e.dataTransfer.files[0]);}
+function fmtSz(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+
+async function doUpload2(){
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  const title=document.getElementById('upTitle').value.trim();
+  if(!user){toast('로그인이 필요해요','⚠️');return;}
+  if(!_upFile){toast('파일을 선택해주세요','⚠️');return;}
+  if(!title){toast('상품명을 입력해주세요','⚠️');return;}
+  const btn=document.getElementById('btnUpload');
+  btn.disabled=true;btn.textContent='UPLOADING...';
+  document.getElementById('upProgress').style.display='block';
+  document.getElementById('upSuccess').style.display='none';
+  try{
+    const path=`uploads/${user.uid}/${Date.now()}_${_upFile.name}`;
+    const task=fb.uploadBytesResumable(fb.ref(fb.storage,path),_upFile);
+    task.on('state_changed',
+      snap=>{const p=Math.round(snap.bytesTransferred/snap.totalBytes*100);document.getElementById('upBar').style.width=p+'%';document.getElementById('upPct').textContent=p+'%';},
+      err=>{toast('업로드 실패: '+err.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';},
+      async()=>{
+        const url=await fb.getDownloadURL(task.snapshot.ref);
+        await fb.addDoc(fb.collection(fb.db,'uploads'),{
+          uid:user.uid,nickname:user.displayName||user.email,
+          title,description:document.getElementById('upDesc').value,
+          category:document.getElementById('upCat').value,
+          license:document.getElementById('upLic').value,
+          price:parseInt(document.getElementById('upPrice').value)||0,
+          fileName:_upFile.name,fileSize:_upFile.size,fileUrl:url,
+          storagePath:path,status:'pending',salesCount:0,revenue:0,
+          createdAt:fb.serverTimestamp()
+        });
+        try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
+        await addXP(user.uid,20);
+        document.getElementById('upLink').href=url;
+        document.getElementById('upSuccess').style.display='block';
+        document.getElementById('upProgress').style.display='none';
+        toast('업로드 완료! +20 XP 획득! 🚀','✅');
+        clearUpFile();['upTitle','upDesc','upPrice'].forEach(id=>{document.getElementById(id).value='';});
+        btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
+      }
+    );
+  }catch(e){toast('오류: '+e.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';}
+}
+
+// ─────────────────────────────────────
+// 내 판매 목록
+// ─────────────────────────────────────
+async function loadMyFiles(){
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  if(!user)return;
+  const el=document.getElementById('myFilesList');
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  try{
+    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',user.uid),fb.orderBy('createdAt','desc'));
+    const snap=await fb.getDocs(q);
+    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p></div>';return;}
+    const stBadge={'pending':'<span style="color:var(--yellow)">⏳ 검수중</span>','approved':'<span style="color:var(--accent)">✅ 승인</span>','rejected':'<span style="color:var(--red)">❌ 반려</span>'};
+    let tRev=0,tSales=0;
+    el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';tRev+=v.revenue||0;tSales+=v.salesCount||0;
+      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${v.category} · ${fmtSz(v.fileSize)} · ${dt} · ${stBadge[v.status]||v.status}</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--fco);margin-top:2px">판매 ${v.salesCount||0}건 · 수익 ₩${(v.revenue||0).toLocaleString()}</div></div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+          <span style="font-size:13px;font-weight:700;font-family:var(--fen);color:var(--accent)">₩${(v.price||0).toLocaleString()}</span>
+          <a href="${v.fileUrl}" target="_blank" style="padding:5px 10px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco)">DL</a>
+          <button onclick="deleteUpload('${d.id}','${v.storagePath}')" style="padding:5px 10px;background:rgba(255,59,59,.08);color:var(--red);border:1px solid rgba(255,59,59,.2);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">DEL</button>
+        </div>
+      </div>`;}).join('');
+    document.getElementById('myStats').innerHTML=`총 ${snap.docs.length}개 · 판매 ${tSales}건 · 수익 ₩${tRev.toLocaleString()}`;
+  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fco)">불러오기 실패 — Firebase 설정 확인</div>';}
+}
+
+async function deleteUpload(docId,storagePath){
+  if(!confirm('정말 삭제할까요?'))return;
+  const fb=window._fb;
+  try{
+    await fb.deleteDoc(fb.doc(fb.db,'uploads',docId));
+    if(storagePath){try{await fb.deleteObject(fb.ref(fb.storage,storagePath));}catch(e){}}
+    const user=fb.auth.currentUser;
+    if(user)try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(-1)});}catch(e){}
+    toast('삭제됐어요','✅');loadMyFiles();
+  }catch(e){toast('삭제 실패: '+e.message,'❌');}
+}
+
+// ─────────────────────────────────────
+// 구매 처리 & 내역
+// ─────────────────────────────────────
+async function buyAsset(uploadId,price,title,fileUrl){
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  if(!user){openL('login');toast('로그인이 필요해요','⚠️');return;}
+  if(!confirm(`₩${price.toLocaleString()}에 구매할까요?`))return;
+  try{
+    await fb.addDoc(fb.collection(fb.db,'purchases'),{
+      buyerUid:user.uid,buyerNick:user.displayName||user.email,
+      uploadId,title,price,fileUrl,purchasedAt:fb.serverTimestamp()
+    });
+    const uploadRef=fb.doc(fb.db,'uploads',uploadId);
+    const uploadSnap=await fb.getDoc(uploadRef);
+    if(uploadSnap.exists()){
+      const d=uploadSnap.data();
+      await fb.updateDoc(uploadRef,{salesCount:fb.increment(1),revenue:fb.increment(Math.round(price*0.8))});
+      await addXP(d.uid,10);
+    }
+    await addXP(user.uid,5);
+    toast('구매 완료! 마이페이지에서 다운로드하세요 🎉','✅');
+  }catch(e){toast('구매 실패: '+e.message,'❌');}
+}
+
+async function loadPurchases(){
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  if(!user)return;
+  const el=document.getElementById('purchasesList');
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  try{
+    const q=fb.query(fb.collection(fb.db,'purchases'),fb.where('buyerUid','==',user.uid),fb.orderBy('purchasedAt','desc'));
+    const snap=await fb.getDocs(q);
+    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p></div>';return;}
+    el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.purchasedAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
+      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${dt} · ₩${(v.price||0).toLocaleString()}</div></div>
+        <a href="${v.fileUrl}" target="_blank" style="padding:6px 12px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco);flex-shrink:0">⬇ DOWNLOAD</a>
+      </div>`;}).join('');
+  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fco)">불러오기 실패</div>';}
+}
+
+// ─────────────────────────────────────
+// 설정
+// ─────────────────────────────────────
+async function updateNick(){
+  const nick=document.getElementById('newNick').value.trim();
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  if(!nick){toast('닉네임을 입력해주세요','⚠️');return;}
+  if(!user)return;
+  await fb.updateProfile(user,{displayName:nick});
+  try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{nickname:nick});}catch(e){}
+  document.getElementById('settingsNickDisplay').textContent=nick;
+  toast('닉네임이 변경됐어요 ✅','');
+}
+
+async function changePw(){
+  const fb=window._fb;const user=fb?.auth?.currentUser;
+  const curr=document.getElementById('currPw').value;
+  const next=document.getElementById('newPw').value;
+  const msgEl=document.getElementById('pwMsg');
+  if(!curr||!next){msgEl.textContent='모든 항목을 입력해주세요';msgEl.style.color='var(--red)';msgEl.style.display='block';return;}
+  try{
+    const cred=fb.EmailAuthProvider.credential(user.email,curr);
+    await fb.reauthenticateWithCredential(user,cred);
+    const {updatePassword}=await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js');
+    await updatePassword(user,next);
+    msgEl.textContent='비밀번호가 변경됐어요';msgEl.style.color='var(--accent)';msgEl.style.display='block';
+    ['currPw','newPw'].forEach(id=>{document.getElementById(id).value='';});
+  }catch(e){msgEl.textContent=authErrMsg(e.code);msgEl.style.color='var(--red)';msgEl.style.display='block';}
+}
+
+async function deleteAccount(){
+  const fb=window._fb;const user=fb?.auth?.currentUser;if(!user)return;
+  const pw=prompt('계정을 삭제하려면 비밀번호를 입력하세요:');if(!pw)return;
+  try{
+    const cred=fb.EmailAuthProvider.credential(user.email,pw);
+    await fb.reauthenticateWithCredential(user,cred);
+    try{await fb.deleteDoc(fb.doc(fb.db,'users',user.uid));}catch(e){}
+    await fb.deleteUser(user);
+    document.getElementById('myPageModal').classList.remove('on');
+    toast('계정이 삭제됐어요','👋');
+  }catch(e){toast('삭제 실패: '+authErrMsg(e.code),'❌');}
+}
+
+async function loadMyStats(uid){
+  const fb=window._fb;
+  try{
+    const snap=await fb.getDoc(fb.doc(fb.db,'users',uid));
+    if(snap.exists()){const d=snap.data();
+      document.getElementById('statUploads').textContent=d.totalUploads||0;
+      document.getElementById('statSales').textContent=d.totalSales||0;
+      document.getElementById('statRevenue').textContent='₩'+(d.totalRevenue||0).toLocaleString();
+    }
+  }catch(e){}
+}
+
+// ─────────────────────────────────────
+// 관리자 패널
+// ─────────────────────────────────────
+async function loadAdminQueue(status='pending'){
+  const fb=window._fb;const el=document.getElementById('adminQueue');
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  try{
+    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('status','==',status),fb.orderBy('createdAt','desc'));
+    const snap=await fb.getDocs(q);
+    if(!snap.docs.length){el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text2);font-family:var(--fco)">${status} 항목이 없어요</div>`;return;}
+    el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
+      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <div><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
+          <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${v.nickname} · ${v.category} · ₩${(v.price||0).toLocaleString()} · ${dt}</div></div>
+          <a href="${v.fileUrl}" target="_blank" style="padding:5px 10px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco);flex-shrink:0">파일 확인</a>
+        </div>
+        ${v.description?`<div style="font-size:11px;color:var(--text2);margin-bottom:8px;padding:8px;background:var(--bg3);border-radius:4px;font-family:var(--fco)">${v.description}</div>`:''}
+        <div style="display:flex;gap:6px">
+          <button onclick="adminAction('${d.id}','${v.uid}','approved')" style="padding:5px 12px;background:rgba(0,245,196,.1);color:var(--accent);border:1px solid rgba(0,245,196,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">✅ 승인</button>
+          <button onclick="adminAction('${d.id}','${v.uid}','rejected')" style="padding:5px 12px;background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">❌ 반려</button>
+        </div>
+      </div>`;}).join('');
+  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fco)">불러오기 실패</div>';}
+}
+
+async function adminAction(docId,sellerUid,action){
+  const fb=window._fb;
+  try{
+    await fb.updateDoc(fb.doc(fb.db,'uploads',docId),{status:action,reviewedAt:fb.serverTimestamp(),reviewedBy:fb.auth.currentUser?.uid});
+    if(action==='approved') await addXP(sellerUid,30);
+    toast(action==='approved'?'승인됐어요 ✅':'반려됐어요 ❌','');
+    loadAdminQueue('pending');
+  }catch(e){toast('처리 실패: '+e.message,'❌');}
+}
+
+function toast(msg,icon){
+  const el=document.getElementById('tk');
+  document.getElementById('ti').textContent=icon||'⚡';
+  document.getElementById('tm').textContent=msg;
+  el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),3000);
+}
+
+// ── 검색 ──
+let searchOpen = false;
+function toggleSearch() {
+  if (searchOpen) { closeSearch(); return; }
+  searchOpen = true;
+  // 홈 페이지로 이동
+  go('home');
+  const wrap = document.getElementById('searchBarWrap');
+  wrap.classList.add('open');
+  document.getElementById('searchBtn').textContent = '🔍 검색 닫기';
+  setTimeout(() => document.getElementById('searchInput').focus(), 350);
+}
+function closeSearch() {
+  searchOpen = false;
+  document.getElementById('searchBarWrap').classList.remove('open');
+  document.getElementById('searchResultWrap').style.display = 'none';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchBtn').textContent = '🔍 검색';
+  // 마켓 원상복구
+  document.getElementById('ms').style.display = 'block';
+}
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { toast('검색어를 입력해주세요!', '⚠️'); return; }
+  // 마켓 숨기기
+  document.getElementById('ms').style.display = 'none';
+  // 검색
+  const kw = q.toLowerCase();
+  const results = P.filter(p =>
+    p.ti.toLowerCase().includes(kw) ||
+    p.ds.toLowerCase().includes(kw) ||
+    p.tl.toLowerCase().includes(kw) ||
+    p.tags.some(t => tname(t).toLowerCase().includes(kw)) ||
+    p.lang.toLowerCase().includes(kw)
+  );
+  const rw = document.getElementById('searchResultWrap');
+  const label = document.getElementById('searchLabel');
+  const grid = document.getElementById('searchGrid');
+  rw.style.display = 'block';
+  if (results.length === 0) {
+    label.innerHTML = `<b>"${q}"</b> 검색 결과가 없어요`;
+    grid.innerHTML = `<div class="no-result" style="grid-column:1/-1"><div class="nr-icon">🔎</div><p><b>"${q}"</b>에 맞는 코드 자산이 없어요.<br>다른 키워드로 검색해보세요.</p></div>`;
+  } else {
+    label.innerHTML = `<b>"${q}"</b> 검색 결과 · <b style="color:var(--text)">${results.length}개</b>`;
+    grid.innerHTML = results.map(p=>`
+      <div class="pc" onclick="det(${p.id})">
+        <div class="ctop" style="background:linear-gradient(135deg,${gcol(p.tags[0])}22,${gcol(p.tags[0])}08)">
+          <div class="ctbdg ${p.tb}">${p.tl}</div>
+          <div class="ccode">${esc(p.cd).split('\n').slice(0,4).join('\n')}</div>
+        </div>
+        <div class="cbody">
+          <div class="ctags">${p.tags.map(t=>`<span class="tag ${tcls(t)}">${tname(t)}</span>`).join('')}</div>
+          <div class="ctitle">${p.em} ${p.ti}</div>
+          <div class="cdesc">${p.ds}</div>
+          <div class="cfoot"><div><div class="cprice">₩${p.pr.toLocaleString()}</div><div class="csub">${p.lic}</div></div><div class="cmeta">⭐${p.rt} · ${p.ss}판매</div></div>
+        </div>
+      </div>`).join('');
+  }
+  rw.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+rend(P);rcComm();rcFAQ();uc();
+
+// ══════════════════════════════════════════
+// HACKER INTRO ANIMATION
+// ══════════════════════════════════════════
+(function(){
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[];,./|\\!@#$%^&*';
+  const fontSize = 13;
+  const cols = Math.floor(canvas.width / fontSize);
+  const drops = Array(cols).fill(1);
+
+  function drawMatrix(){
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font = fontSize+'px Share Tech Mono, monospace';
+    for(let i=0;i<drops.length;i++){
+      ctx.fillStyle = `rgba(0,245,196,${Math.random()*.8+.2})`;
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, drops[i]*fontSize);
+      if(drops[i]*fontSize > canvas.height && Math.random() > .975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  const matrixInterval = setInterval(drawMatrix, 50);
+
+  // 타이핑 애니메이션
+  const titleText = 'CODEGAME';
+  let tIdx = 0;
+  const typeTitle = setInterval(()=>{
+    document.getElementById('introText').textContent = titleText.slice(0,tIdx);
+    tIdx++;
+    if(tIdx > titleText.length) clearInterval(typeTitle);
+  }, 100);
+
+  // 터미널 메시지
+  const lines = [
+    {cls:'t-dim',    t:'> INITIALIZING CODEGAME SYSTEM v1.0...'},
+    {cls:'t-green',  t:'> [OK] CODE ASSET MARKETPLACE ENGINE LOADED'},
+    {cls:'t-green',  t:'> [OK] MARKETPLACE DATABASE CONNECTED'},
+    {cls:'t-white',  t:'> SCANNING AVAILABLE CODE ASSETS...'},
+    {cls:'t-warn',   t:'> WARNING: 2,400 ASSETS DETECTED — LOADING'},
+    {cls:'t-green',  t:'> [OK] AUTHENTICATION MODULE READY'},
+    {cls:'t-green',  t:'> [OK] FIREBASE BACKEND CONNECTED'},
+    {cls:'t-white',  t:'> WELCOME, DEVELOPER. READY TO TRADE CODE.'},
+  ];
+
+  let lIdx = 0;
+  const terminal = document.getElementById('introTerminal');
+  const fill = document.getElementById('introFill');
+  const pct = document.getElementById('introPct');
+
+  function addLine(){
+    if(lIdx >= lines.length) return;
+    const div = document.createElement('div');
+    div.className = lines[lIdx].cls;
+    div.textContent = '';
+    terminal.appendChild(div);
+    let cIdx = 0;
+    const typeChar = setInterval(()=>{
+      div.textContent = lines[lIdx].t.slice(0,cIdx);
+      cIdx++;
+      if(cIdx > lines[lIdx].t.length){
+        clearInterval(typeChar);
+        lIdx++;
+        const p = Math.round((lIdx/lines.length)*100);
+        fill.style.width = p+'%';
+        pct.textContent = p+'%';
+        if(lIdx < lines.length) setTimeout(addLine, 200);
+        else setTimeout(launchApp, 600);
+      }
+    }, 18);
+  }
+
+  setTimeout(addLine, 900);
+
+  function launchApp(){
+    clearInterval(matrixInterval);
+    const intro = document.getElementById('intro');
+    intro.classList.add('out');
+    document.getElementById('hudBar').style.display='flex';
+    setTimeout(()=>{intro.style.display='none';}, 900);
+    // XP 올라가는 효과
+    let xp = 0;
+    const xpTimer = setInterval(()=>{
+      xp = Math.min(xp+2, 12);
+      document.getElementById('hudXpFill').style.width = xp+'%';
+      document.getElementById('hudXpVal').textContent = xp;
+      if(xp>=12) clearInterval(xpTimer);
+    }, 40);
+  }
+
+  function skipIntro(){
+    clearInterval(matrixInterval);
+    clearInterval(typeTitle);
+    const intro = document.getElementById('intro');
+    intro.classList.add('out');
+    document.getElementById('hudBar').style.display='flex';
+    setTimeout(()=>{intro.style.display='none';}, 500);
+  }
+  window.skipIntro = skipIntro;
+  document.addEventListener('keydown', skipIntro, {once:true});
+})();
+</script>
+
+<!-- ================================================================
+     저작권 등록 안내 (한국저작권위원회 cros.or.kr)
+     ----------------------------------------------------------------
+     등록 절차:
+     1. cros.or.kr 접속 → 회원가입
+     2. 저작물 등록 신청 → 컴퓨터 프로그램 선택
+     3. 저작물명: "CodeGame 웹 플랫폼"
+     4. 창작 완성일: 2026년 4월
+     5. 본 HTML 파일 업로드
+     6. 등록 수수료 납부 (약 2~3만원)
+     7. 등록증 발급 (2~4주 소요)
+     ================================================================ -->
+
+<!-- ══════════════════════════════════════
+     글쓰기 모달
+══════════════════════════════════════ -->
+<div id="writeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:560px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeWriteModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+    <h2 style="font-family:var(--fen);font-size:18px;margin-bottom:20px;color:var(--acc)">✏️ 글쓰기</h2>
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">카테고리</label>
+      <select id="wCat" style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px">
+        <option value="질문">질문·답변</option>
+        <option value="후기">후기 공유</option>
+        <option value="자유">자유게시판</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">제목</label>
+      <input id="wTitle" type="text" placeholder="제목을 입력하세요" maxlength="60"
+        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">내용</label>
+      <textarea id="wContent" placeholder="내용을 입력하세요 (최대 2000자)" maxlength="2000" rows="8"
+        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box;resize:vertical;font-family:inherit"></textarea>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">태그 (쉼표로 구분, 최대 3개)</label>
+      <input id="wTags" type="text" placeholder="예: 파이썬, 자동화, 스마트스토어"
+        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
+    </div>
+
+    <div id="wErr" style="display:none;color:#ff6b6b;font-size:13px;margin-bottom:12px"></div>
+    <button id="wBtn" onclick="submitPost()"
+      style="width:100%;background:var(--acc);color:#000;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fen)">게시하기</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     게시글 상세 모달
+══════════════════════════════════════ -->
+<div id="postDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:640px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closePostDetail()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+    <div id="postDetailContent"></div>
+
+    <!-- 댓글 영역 -->
+    <div style="margin-top:24px;border-top:1px solid var(--acc3);padding-top:20px">
+      <h3 style="font-size:14px;margin-bottom:16px;color:var(--text1)">💬 댓글</h3>
+      <div id="commentList" style="margin-bottom:16px"></div>
+      <div id="commentWrite" style="display:none">
+        <textarea id="cmtInput" placeholder="댓글을 입력하세요" rows="3" maxlength="500"
+          style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
+        <button onclick="submitComment()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
+      </div>
+      <div id="cmtLoginMsg" style="font-size:13px;color:var(--text2)">댓글을 달려면 <span onclick="openL('login')" style="color:var(--acc);cursor:pointer">로그인</span>해주세요.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// 글쓰기 모달
+// ══════════════════════════════════════
+let _currentPostId = null;
+
+function openWriteModal(){
+  if(!window._fb?.auth?.currentUser){ openL('login'); return; }
+  document.getElementById('wTitle').value='';
+  document.getElementById('wContent').value='';
+  document.getElementById('wTags').value='';
+  document.getElementById('wErr').style.display='none';
+  const m=document.getElementById('writeModal');
+  m.style.display='flex';
+}
+function closeWriteModal(){
+  document.getElementById('writeModal').style.display='none';
+}
+document.getElementById('writeModal').addEventListener('click',function(e){if(e.target===this)closeWriteModal();});
+
+async function submitPost(){
+  const user=window._fb?.auth?.currentUser;
+  if(!user){toast('로그인이 필요해요','⚠️');return;}
+  const title=document.getElementById('wTitle').value.trim();
+  const content=document.getElementById('wContent').value.trim();
+  const cat=document.getElementById('wCat').value;
+  const tagsRaw=document.getElementById('wTags').value;
+  const tags=tagsRaw.split(',').map(t=>t.trim()).filter(t=>t).slice(0,3);
+  const err=document.getElementById('wErr');
+  err.style.display='none';
+  if(!title){err.textContent='제목을 입력해주세요';err.style.display='block';return;}
+  if(!content){err.textContent='내용을 입력해주세요';err.style.display='block';return;}
+  const btn=document.getElementById('wBtn');
+  btn.disabled=true;btn.textContent='게시 중...';
+  try{
+    const db=window._fb.db;
+    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nick||user.email.split('@')[0];
+    await window._fb.addDoc(window._fb.collection(db,'posts'),{
+      title,content,cat,tags,
+      uid:user.uid,
+      author:nick,
+      likes:[],
+      commentCount:0,
+      views:0,
+      createdAt:window._fb.serverTimestamp()
+    });
+    await addXP(user.uid,3);
+    closeWriteModal();
+    toast('게시글이 등록됐어요! +3XP','✅');
+    loadFirestorePosts();
+  }catch(e){
+    err.textContent='등록 중 오류가 발생했어요: '+e.message;
+    err.style.display='block';
+  }finally{btn.disabled=false;btn.textContent='게시하기';}
+}
+
+// ══════════════════════════════════════
+// Firestore 게시글 불러오기
+// ══════════════════════════════════════
+async function loadFirestorePosts(){
+  const db=window._fb?.db;
+  if(!db) return;
+  try{
+    const snap=await window._fb.getDocs(
+      window._fb.query(window._fb.collection(db,'posts'),window._fb.orderBy('createdAt','desc'),window._fb.limit(50))
+    );
+    const posts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderFirestorePosts(posts);
+  }catch(e){console.log('게시글 로드 오류:',e);}
+}
+
+function renderFirestorePosts(posts){
+  const catMap={'질문':'ct2','후기':'ct3','자유':'ct4'};
+  const colors=['#00f5c4','#7c5cbf','#ff6b6b','#ffd93d','#6bcb77'];
+  function timeAgo(ts){
+    if(!ts)return '방금 전';
+    const sec=Math.floor((Date.now()-ts.toMillis())/1000);
+    if(sec<60)return '방금 전';
+    if(sec<3600)return Math.floor(sec/60)+'분 전';
+    if(sec<86400)return Math.floor(sec/3600)+'시간 전';
+    return Math.floor(sec/86400)+'일 전';
+  }
+  function card(p){
+    const cl=colors[Math.abs(p.id.charCodeAt(0))%colors.length];
+    const av=(p.author||'익명').slice(0,2).toUpperCase();
+    const tags=(p.tags||[]).map(t=>`<span class="ptg">${t}</span>`).join('');
+    const excerpt=(p.content||'').slice(0,80)+(p.content?.length>80?'...':'');
+    return `<div class="pcard" onclick="openPostDetail('${p.id}')">
+      <div class="ph">
+        <div class="pavt" style="background:linear-gradient(135deg,${cl},${cl}88)">${av}</div>
+        <div class="pi"><h3>${p.title||'제목 없음'}</h3><p>${p.author||'익명'} · ${timeAgo(p.createdAt)}</p></div>
+      </div>
+      ${tags?`<div class="ptgs">${tags}</div>`:''}
+      <div class="pex">${excerpt}</div>
+      <div class="pft"><span>👍 ${(p.likes||[]).length}</span><span>💬 ${p.commentCount||0}</span><span>👁 ${p.views||0}</span></div>
+    </div>`;
+  }
+
+  const allHtml=posts.map(card).join('');
+  document.getElementById('pl1').innerHTML=allHtml||'<p style="color:var(--text2);text-align:center;padding:40px">아직 게시글이 없어요. 첫 글을 작성해보세요!</p>';
+
+  ['ct2','ct3','ct4'].forEach(ct=>{
+    const catKey=ct==='ct2'?'질문':ct==='ct3'?'후기':'자유';
+    const filtered=posts.filter(p=>p.cat===catKey);
+    const el=document.getElementById(ct.replace('ct','pl'));
+    if(el)el.innerHTML=filtered.map(card).join('')||'<p style="color:var(--text2);text-align:center;padding:40px">게시글이 없어요</p>';
+  });
+}
+
+// ══════════════════════════════════════
+// 게시글 상세 + 댓글
+// ══════════════════════════════════════
+async function openPostDetail(postId){
+  _currentPostId=postId;
+  const db=window._fb?.db;
+  if(!db) return;
+  const modal=document.getElementById('postDetailModal');
+  modal.style.display='flex';
+  document.getElementById('postDetailContent').innerHTML='<p style="text-align:center;padding:40px;color:var(--text2)">불러오는 중...</p>';
+
+  try{
+    // 조회수 증가
+    const ref=window._fb.doc(db,'posts',postId);
+    await window._fb.updateDoc(ref,{views:window._fb.increment(1)});
+    const snap=await window._fb.getDoc(ref);
+    if(!snap.exists()){toast('게시글을 찾을 수 없어요','❌');closePostDetail();return;}
+    const p={id:snap.id,...snap.data()};
+    const user=window._fb?.auth?.currentUser;
+    const liked=(p.likes||[]).includes(user?.uid);
+    const tags=(p.tags||[]).map(t=>`<span class="ptg">${t}</span>`).join('');
+    const catLabel=p.cat==='질문'?'질문·답변':p.cat==='후기'?'후기 공유':'자유게시판';
+
+    document.getElementById('postDetailContent').innerHTML=`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="background:var(--acc3);color:var(--acc);font-size:11px;padding:2px 8px;border-radius:99px">${catLabel}</span>
+        ${tags}
+      </div>
+      <h2 style="font-size:18px;margin:10px 0 6px;line-height:1.4">${p.title}</h2>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:20px">${p.author||'익명'} · ${p.views||0}회 조회</p>
+      <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:20px">${p.content||''}</div>
+      <button onclick="toggleLike('${postId}')"
+        style="background:${liked?'var(--acc)':'var(--bg3)'};color:${liked?'#000':'var(--text1)'};border:1px solid var(--acc3);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px" id="likeBtn">
+        👍 좋아요 ${(p.likes||[]).length}
+      </button>
+    `;
+
+    // 댓글 영역 처리
+    const cmtLogin=document.getElementById('cmtLoginMsg');
+    const cmtWrite=document.getElementById('commentWrite');
+    if(user){cmtWrite.style.display='block';cmtLogin.style.display='none';}
+    else{cmtWrite.style.display='none';cmtLogin.style.display='block';}
+
+    // 댓글 불러오기
+    loadComments(postId);
+  }catch(e){
+    document.getElementById('postDetailContent').innerHTML='<p style="color:#ff6b6b">불러오기 실패: '+e.message+'</p>';
+  }
+}
+
+function closePostDetail(){
+  document.getElementById('postDetailModal').style.display='none';
+  _currentPostId=null;
+  loadFirestorePosts(); // 새로고침
+}
+document.getElementById('postDetailModal').addEventListener('click',function(e){if(e.target===this)closePostDetail();});
+
+async function toggleLike(postId){
+  const user=window._fb?.auth?.currentUser;
+  if(!user){toast('로그인이 필요해요','⚠️');return;}
+  const db=window._fb.db;
+  const ref=window._fb.doc(db,'posts',postId);
+  const snap=await window._fb.getDoc(ref);
+  const likes=snap.data()?.likes||[];
+  const already=likes.includes(user.uid);
+  await window._fb.updateDoc(ref,{
+    likes:already?window._fb.arrayRemove(user.uid):window._fb.arrayUnion(user.uid)
+  });
+  // 버튼 즉시 업데이트
+  const newLikes=already?likes.filter(id=>id!==user.uid):[...likes,user.uid];
+  const btn=document.getElementById('likeBtn');
+  if(btn){
+    btn.style.background=already?'var(--bg3)':'var(--acc)';
+    btn.style.color=already?'var(--text1)':'#000';
+    btn.textContent='👍 좋아요 '+newLikes.length;
+  }
+}
+
+async function loadComments(postId){
+  const db=window._fb?.db;
+  if(!db)return;
+  const list=document.getElementById('commentList');
+  list.innerHTML='<p style="color:var(--text2);font-size:13px">댓글 불러오는 중...</p>';
+  try{
+    const snap=await window._fb.getDocs(
+      window._fb.query(window._fb.collection(db,'posts',postId,'comments'),window._fb.orderBy('createdAt','asc'))
+    );
+    if(snap.empty){list.innerHTML='<p style="color:var(--text2);font-size:13px">아직 댓글이 없어요. 첫 댓글을 달아보세요!</p>';return;}
+    function timeAgo(ts){if(!ts)return '방금 전';const sec=Math.floor((Date.now()-ts.toMillis())/1000);if(sec<60)return '방금 전';if(sec<3600)return Math.floor(sec/60)+'분 전';if(sec<86400)return Math.floor(sec/3600)+'시간 전';return Math.floor(sec/86400)+'일 전';}
+    list.innerHTML=snap.docs.map(d=>{
+      const c=d.data();
+      return `<div style="border-bottom:1px solid var(--acc3);padding:12px 0">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:13px;font-weight:700;color:var(--acc)">${c.author||'익명'}</span>
+          <span style="font-size:11px;color:var(--text2)">${timeAgo(c.createdAt)}</span>
+        </div>
+        <p style="font-size:13px;line-height:1.6;white-space:pre-wrap">${c.content}</p>
+      </div>`;
+    }).join('');
+  }catch(e){list.innerHTML='<p style="color:#ff6b6b;font-size:13px">댓글 로드 실패</p>';}
+}
+
+async function submitComment(){
+  const user=window._fb?.auth?.currentUser;
+  if(!user){toast('로그인이 필요해요','⚠️');return;}
+  if(!_currentPostId)return;
+  const content=document.getElementById('cmtInput').value.trim();
+  if(!content){toast('댓글을 입력해주세요','⚠️');return;}
+  const db=window._fb.db;
+  try{
+    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nick||user.email.split('@')[0];
+    await window._fb.addDoc(window._fb.collection(db,'posts',_currentPostId,'comments'),{
+      content,uid:user.uid,author:nick,createdAt:window._fb.serverTimestamp()
+    });
+    // 댓글 수 증가
+    await window._fb.updateDoc(window._fb.doc(db,'posts',_currentPostId),{commentCount:window._fb.increment(1)});
+    document.getElementById('cmtInput').value='';
+    toast('댓글이 등록됐어요!','✅');
+    loadComments(_currentPostId);
+  }catch(e){toast('댓글 등록 실패: '+e.message,'❌');}
+}
+
+// 페이지 로드 시 게시글 불러오기
+setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
+</script>
+</body>
+</html>
