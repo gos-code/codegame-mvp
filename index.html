@@ -4,10 +4,10 @@
   저작물명   : CodeGame 웹 플랫폼 v1.1
   저작물 유형 : 컴퓨터 프로그램 저작물
 ================================================================
-  저작권자  : [본인 이름 입력]                ← 실명으로 변경
+  저작권자  : [고수환]                ← 실명으로 변경
   창작 완성일: 2026년 4월
   국적      : 대한민국
-  공표 여부 : 미공표
+  공표 여부 : 공표
 ================================================================
   프로그램 개요:
     즉시 실행 가능한 자동화 코드 및 기능 모듈을 판매자와
@@ -38,7 +38,7 @@
     14. 커뮤니티 게시판 (질문/후기/자유)
     15. 통합 코드 자산 검색 기능
 
-  Copyright (c) 2026 [본인 이름 입력]. All rights reserved.
+  Copyright (c) 2026 [고수환]. All rights reserved.
   본 프로그램의 무단 복제, 배포, 수정을 금합니다.
   Unauthorized reproduction or distribution is prohibited.
 ================================================================
@@ -557,8 +557,33 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
       <button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[1],'s2');toast('저장됨!','✅')">다음 단계 →</button>
     </div>
     <div id="s2" class="spanel">
-      <div class="fg"><label class="fl">메인 파일 *</label><div class="uzone" onclick="toast('파일 업로드 준비 중!','📁')"><div class="uicon">📦</div><p><strong>클릭 또는 드래그</strong>해서 파일 업로드</p><p style="font-size:12px;color:var(--text3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
-      <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서가 친절할수록 별점이 올라가요.</div></div>
+      <div class="fg"><label class="fl">메인 파일 *</label>
+        <div id="dropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s"
+  ondragover="event.preventDefault();document.getElementById('dropZ').style.borderColor='var(--accent)'"
+  ondragleave="document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)'"
+  ondrop="handleDrop2(event)">
+  
+  <input type="file" id="upFile"
+    accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt"
+    style="position:absolute;inset:0;opacity:0;cursor:pointer"
+    onchange="setUpFile(this.files[0])">
+
+  <div style="font-size:28px;margin-bottom:8px">📦</div>
+  <p><strong>클릭 또는 드래그</strong>해서 파일 업로드</p>
+  <p style="font-size:12px;color:var(--text3);margin-top:5px">
+    .py .js .json .zip .ipynb 지원 · 최대 50MB
+  </p>
+</div>
+
+<div id="upFileInfo" style="display:none;margin-top:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
+  <div>
+    <div id="upFileName" style="font-size:12px;font-weight:600"></div>
+    <div id="upFileSize" style="font-size:11px;color:var(--text2)"></div>
+  </div>
+</div>
+          <p style="font-size:12px;color:var(--text3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
+
+      <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서는 초보를 위해 자세하게 설명해주세요.</div></div>
       <div class="fg"><label class="fl">스크린샷 (선택)</label><div class="uzone" onclick="toast('이미지 업로드 준비 중!','🖼')"><div class="uicon">🖼</div><p><strong>실행 화면 캡처</strong>를 올리면 판매율이 올라가요</p><p style="font-size:12px;color:var(--text3);margin-top:5px">PNG, JPG · 최대 5장</p></div></div>
       <div style="display:flex;gap:10px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[0],'s1')">← 이전</button><button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[2],'s3');toast('저장됨!','✅')">다음 단계 →</button></div>
     </div>
@@ -767,7 +792,7 @@ def process_order(order_id: str) -> dict:
   // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
   // ══════════════════════════════════════════
   const firebaseConfig = {
-    apiKey: "AIzaSyD3T1TyPq5iRNzLU5ATzaem4yZamYWKQhU",
+    apiKey: "-",
     authDomain: "codegame-75c54.firebaseapp.com",
     projectId: "codegame-75c54",
     storageBucket: "codegame-75c54.firebasestorage.app",
@@ -779,7 +804,7 @@ def process_order(order_id: str) -> dict:
   // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
   // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
   // ══════════════════════════════════════════
-  window.ADMIN_EMAIL = "sogare_@naver.com"; // ← 본인 이메일로 교체
+  window.ADMIN_EMAIL = "-" // ← 이메일
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -989,6 +1014,9 @@ def process_order(order_id: str) -> dict:
               <div><div id="upFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="upFileSize" style="font-size:11px;color:var(--text2)"></div></div>
               <button onclick="clearUpFile()" style="background:none;border:none;color:var(--text2);cursor:pointer">✕</button>
             </div>
+            <button class="bsub" onclick="doUpload2()" id="btnUpload">
+            SUBMIT FOR REVIEW 🚀
+            </button>
           </div>
           <div id="upProgress" style="display:none">
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
