@@ -804,7 +804,7 @@ def process_order(order_id: str) -> dict:
   // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
   // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
   // ══════════════════════════════════════════
-  window.ADMIN_EMAIL = "-" // ← 이메일
+  window.ADMIN_EMAIL = "CodeGame" // ← 이메일
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -1018,6 +1018,13 @@ def process_order(order_id: str) -> dict:
             SUBMIT FOR REVIEW 🚀
             </button>
           </div>
+          <div style="margin-top:14px">
+  <label class="fl">실행 화면 캡처 *</label>
+  <input type="file" id="upShot" accept="image/*" onchange="setShotFile(this.files[0])">
+  <div id="shotPreview" style="display:none;margin-top:8px">
+    <img id="shotImg" style="max-width:260px;border-radius:8px;border:1px solid var(--border2)">
+  </div>
+</div>
           <div id="upProgress" style="display:none">
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
             <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
@@ -1534,6 +1541,14 @@ function setUpFile(file){
   document.getElementById('upFileInfo').style.display='flex';
   document.getElementById('upSuccess').style.display='none';
 }
+let _shotFile = null;
+
+function setShotFile(file){
+  _shotFile = file;
+  const img = document.getElementById('shotImg');
+  img.src = URL.createObjectURL(file);
+  document.getElementById('shotPreview').style.display = 'block';
+}
 function clearUpFile(){_upFile=null;document.getElementById('upFileInfo').style.display='none';document.getElementById('upFile').value='';}
 function handleDrop2(e){e.preventDefault();document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)';if(e.dataTransfer.files[0])setUpFile(e.dataTransfer.files[0]);}
 function fmtSz(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
@@ -1569,8 +1584,17 @@ async function doUpload2(){
         try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
         await addXP(user.uid,20);
         document.getElementById('upLink').href=url;
-        document.getElementById('upSuccess').style.display='block';
-        document.getElementById('upProgress').style.display='none';
+        document.getElementById('upSuccess').innerHTML = `
+  <div style="padding:18px;text-align:center">
+    <div style="font-size:42px">✅</div>
+    <h3 style="margin:10px 0">검수 신청이 완료되었습니다</h3>
+    <p style="font-size:12px;color:var(--text2)">
+      관리자 검토 후 승인되면 판매 목록에 자동 등록됩니다.
+    </p>
+  </div>
+`;
+document.getElementById('upSuccess').style.display='block';
+document.getElementById('upProgress').style.display='none';
         toast('업로드 완료! +20 XP 획득! 🚀','✅');
         clearUpFile();['upTitle','upDesc','upPrice'].forEach(id=>{document.getElementById(id).value='';});
         btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
