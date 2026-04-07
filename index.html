@@ -81,6 +81,7 @@ body::after{content:'';position:fixed;inset:0;
 
 /* ── INTRO ── */
 #intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .8s,transform .8s;}
+#intro.hidden-on-reload{display:none!important;}
 #intro.out{opacity:0;transform:scale(1.05);pointer-events:none;}
 #matrixCanvas{position:absolute;inset:0;opacity:.18;}
 .scan-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
@@ -387,6 +388,18 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
 </head>
 <body>
 
+<!-- ✅ FIX #4: 새로고침 시 인트로 스킵 (최초 방문에만 표시) -->
+<script>
+  if(sessionStorage.getItem('cg_intro_shown')){
+    document.addEventListener('DOMContentLoaded',function(){
+      var intro=document.getElementById('intro');
+      if(intro){intro.classList.add('hidden-on-reload');}
+      var hud=document.getElementById('hudBar');
+      if(hud){hud.style.display='flex';}
+    });
+  }
+</script>
+
 <!-- HACKER INTRO -->
 <div id="intro">
   <canvas id="matrixCanvas"></canvas>
@@ -469,20 +482,34 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
     <div class="pgrid" id="searchGrid"></div>
   </div>
   <div class="mwrap" id="ms">
-    <div class="mtop"><div class="mtitle">전체 자산 <span style="color:var(--text2);font-size:14px;font-weight:400;">· 2,400+</span></div><select class="srt" onchange="toast('정렬 적용됨','✓')"><option>인기순</option><option>최신순</option><option>낮은 가격순</option><option>높은 평점순</option></select></div>
-    <div class="filters">
-      <button class="fb on" onclick="filt(this,'all')">전체</button>
-      <div class="fdiv"></div>
-      <button class="fb" onclick="filt(this,'workflow')">🔄 자동화 워크플로우</button>
-      <button class="fb" onclick="filt(this,'function')">🧩 기능 모듈</button>
-      <button class="fb" onclick="filt(this,'template')">📋 템플릿</button>
-      <button class="fb" onclick="filt(this,'tool')">🛠 도구</button>
-      <div class="fdiv"></div>
-      <button class="fb" onclick="filt(this,'py')">Python</button>
-      <button class="fb" onclick="filt(this,'js')">JavaScript</button>
-      <button class="fb" onclick="filt(this,'n8')">n8n</button>
-      <button class="fb" onclick="filt(this,'gpt')">GPT API</button>
-      <button class="fb" onclick="filt(this,'no')">노코드</button>
+    <div class="mtop">
+      <div class="mtitle">전체 자산 <span style="color:var(--text2);font-size:14px;font-weight:400;">· 2,400+</span></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <!-- ✅ FIX #7: 기업 문의 버튼 추가 -->
+        <button onclick="openEnterpriseModal()" style="padding:7px 14px;background:rgba(124,63,255,.12);border:1px solid rgba(124,63,255,.3);color:#a78bff;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--fco);letter-spacing:.04em">🏢 기업 문의</button>
+        <select class="srt" onchange="toast('정렬 적용됨','✓')"><option>인기순</option><option>최신순</option><option>낮은 가격순</option><option>높은 평점순</option></select>
+      </div>
+    </div>
+    <!-- ✅ FIX #7: 카테고리 두 줄로 분리 — 타입/언어 구분 -->
+    <div style="margin-bottom:8px">
+      <div style="font-size:10px;color:var(--text3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">유형</div>
+      <div class="filters" style="margin-bottom:0">
+        <button class="fb on" onclick="filt(this,'all')">전체</button>
+        <button class="fb" onclick="filt(this,'workflow')">🔄 자동화 워크플로우</button>
+        <button class="fb" onclick="filt(this,'function')">🧩 기능 모듈</button>
+        <button class="fb" onclick="filt(this,'template')">📋 템플릿</button>
+        <button class="fb" onclick="filt(this,'tool')">🛠 도구</button>
+      </div>
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:10px;color:var(--text3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">언어 / 플랫폼</div>
+      <div class="filters" style="margin-bottom:0">
+        <button class="fb" onclick="filt(this,'py')">🐍 Python</button>
+        <button class="fb" onclick="filt(this,'js')">🟨 JavaScript</button>
+        <button class="fb" onclick="filt(this,'n8')">⚡ n8n</button>
+        <button class="fb" onclick="filt(this,'gpt')">🤖 GPT API</button>
+        <button class="fb" onclick="filt(this,'no')">🎨 노코드</button>
+      </div>
     </div>
     <div class="pgrid" id="pg"></div>
   </div>
@@ -505,7 +532,10 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
         <div class="bcard">
           <div class="bprice" id="dpr"></div>
           <div class="brows" id="drw"></div>
-          <button class="bbuy" onclick="toast('결제 기능 준비 중! (MVP)','💳')" style="font-family:var(--fco);letter-spacing:.06em">지금 구매하기</button>
+          <button class="bbuy" id="dBuyBtn" onclick="toast('결제 기능 준비 중! (MVP)','💳')" style="font-family:var(--fco);letter-spacing:.06em">
+            <!-- ✅ FIX #7: 구매 버튼 직관화 — 가격 인라인 표시 -->
+            🛒 지금 구매하기 <span id="dBuyPrice" style="opacity:.8;font-size:11px"></span>
+          </button>
           <button class="bprev" id="dPreviewBtn" style="font-family:var(--fco);letter-spacing:.06em">💻 코드 미리보기</button>
           <div class="sbox"><h4>판매자</h4><div class="srow"><div class="savt" id="dsa"></div><div><div class="snm" id="dsn"></div><div class="sgd">⭐ 인증 판매자</div></div></div></div>
         </div>
@@ -1247,6 +1277,9 @@ function det(id){
   document.getElementById('drw').innerHTML=[['언어/도구',p.lang],['실행 환경',p.env],['난이도',p.lv],['라이선스',p.lic],['평점',`⭐ ${p.rt} (${p.ss}건)`]].map(([k,v])=>`<div class="brow"><span>${k}</span><span>${v}</span></div>`).join('');
   const av=document.getElementById('dsa');av.textContent=p.sl.slice(0,2).toUpperCase();av.style.background=`linear-gradient(135deg,${p.sc},${p.sc}88)`;
   document.getElementById('dsn').textContent=p.sl;
+  // ✅ FIX #7: 구매 버튼에 가격 표시
+  const buyPriceEl=document.getElementById('dBuyPrice');
+  if(buyPriceEl) buyPriceEl.textContent=`— ₩${p.pr.toLocaleString()}`;
   // 미리보기 버튼 추가
   const previewBtn = document.getElementById('dPreviewBtn');
   if(previewBtn) previewBtn.onclick = ()=>openCodePreview(p.cd, p.ti);
@@ -1396,7 +1429,8 @@ function openL(mode){
   document.getElementById('lo').classList.add('on');
 }
 function closeL(){document.getElementById('lo').classList.remove('on');}
-document.getElementById('lo').addEventListener('click',function(e){if(e.target===this)closeL();});
+// ✅ 외부 클릭으로 로그인 모달 닫기 완전 비활성화 — X 버튼으로만 닫힘
+// document.getElementById('lo').addEventListener('click', ...) 제거됨
 document.getElementById('myPageModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
 
 // ── 로그인/회원가입 탭 전환 ──
@@ -1927,6 +1961,7 @@ rend(P);rcComm();rcFAQ();uc();
 
   function launchApp(){
     clearInterval(matrixInterval);
+    sessionStorage.setItem('cg_intro_shown','1'); // ✅ FIX #4
     const intro = document.getElementById('intro');
     intro.classList.add('out');
     document.getElementById('hudBar').style.display='flex';
@@ -1944,6 +1979,7 @@ rend(P);rcComm();rcFAQ();uc();
   function skipIntro(){
     clearInterval(matrixInterval);
     clearInterval(typeTitle);
+    sessionStorage.setItem('cg_intro_shown','1'); // ✅ FIX #4
     const intro = document.getElementById('intro');
     intro.classList.add('out');
     document.getElementById('hudBar').style.display='flex';
@@ -2078,7 +2114,7 @@ async function submitPost(){
     });
     await addXP(user.uid,3);
     closeWriteModal();
-    toast('게시글이 등록됐어요! +3XP','✅');
+    toast('게시글이 등록됐어요! +5XP','✅');
     loadFirestorePosts();
   }catch(e){
     err.textContent='등록 중 오류가 발생했어요: '+e.message;
@@ -2263,6 +2299,153 @@ async function submitComment(){
 
 // 페이지 로드 시 게시글 불러오기
 setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
+</script>
+
+<!-- ✅ FIX #7: 기업 문의 모달 -->
+<div class="overlay" id="enterpriseModal" onclick="if(event.target===this)closeEnterpriseModal()">
+  <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
+    <button class="mx" onclick="closeEnterpriseModal()">✕</button>
+    <div class="mtitle" style="color:#a78bff">🏢 기업 문의</div>
+    <div class="msub">대량 라이선스, 맞춤 개발, 파트너십 문의</div>
+    <div style="display:grid;gap:12px;margin-top:4px">
+      <div>
+        <label class="fl">회사명 *</label>
+        <input class="fi2" id="ent_company" placeholder="예: (주) 스마트커머스">
+      </div>
+      <div>
+        <label class="fl">담당자명 *</label>
+        <input class="fi2" id="ent_name" placeholder="홍길동">
+      </div>
+      <div>
+        <label class="fl">연락처 (이메일) *</label>
+        <input class="fi2" type="email" id="ent_email" placeholder="contact@company.com">
+      </div>
+      <div>
+        <label class="fl">문의 유형</label>
+        <select class="fi2" id="ent_type">
+          <option>대량 라이선스 구매</option>
+          <option>맞춤 코드 개발 의뢰</option>
+          <option>파트너십 / 제휴</option>
+          <option>광고 / 마케팅</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div>
+        <label class="fl">문의 내용 *</label>
+        <textarea class="fi2" id="ent_msg" rows="4" placeholder="구체적인 요구사항을 적어주세요" style="resize:vertical"></textarea>
+      </div>
+      <button class="bsub" onclick="submitEnterprise()" style="font-family:var(--fco);letter-spacing:.06em;background:linear-gradient(135deg,#7c3fff,#a78bff);color:#fff;border:none">
+        📨 문의 접수하기
+      </button>
+      <p style="font-size:11px;color:var(--text3);text-align:center;font-family:var(--fco)">영업일 기준 1~2일 내 담당자가 연락드려요</p>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ FIX #1: 소셜 로그인 UI (구글만 실제 연동 가능, 나머지는 준비중 안내) -->
+<!-- 로그인 모달에 소셜 버튼 추가는 JS로 처리 -->
+
+<script>
+// ── 기업 문의 모달 ──
+function openEnterpriseModal(){
+  document.getElementById('enterpriseModal').classList.add('on');
+}
+function closeEnterpriseModal(){
+  document.getElementById('enterpriseModal').classList.remove('on');
+}
+async function submitEnterprise(){
+  const company=document.getElementById('ent_company').value.trim();
+  const name=document.getElementById('ent_name').value.trim();
+  const email=document.getElementById('ent_email').value.trim();
+  const msg=document.getElementById('ent_msg').value.trim();
+  if(!company||!name||!email||!msg){toast('필수 항목을 모두 입력해주세요','⚠️');return;}
+  const db=window._fb?.db;
+  if(!db){toast('서버 연결 중... 잠시 후 다시 시도해주세요','⚠️');return;}
+  try{
+    await window._fb.addDoc(window._fb.collection(db,'enterprise_inquiries'),{
+      company,name,email,
+      type:document.getElementById('ent_type').value,
+      message:msg,
+      createdAt:window._fb.serverTimestamp(),
+      status:'pending'
+    });
+    closeEnterpriseModal();
+    toast('문의가 접수됐어요! 영업일 1~2일 내 연락드려요 🏢','✅');
+    ['ent_company','ent_name','ent_email','ent_msg'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('접수 실패: '+e.message,'❌');}
+}
+
+// ✅ FIX #1/#6: 소셜 로그인 UI를 로그인 모달에 동적 삽입
+// 구글 로그인은 Firebase GoogleAuthProvider로 실제 연동 가능
+// 카카오/네이버는 백엔드 필요 → UI만 표시 + 안내 토스트
+document.addEventListener('DOMContentLoaded', function(){
+  const authLoginDiv = document.getElementById('authLogin');
+  if(authLoginDiv){
+    const socialHtml = `
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,245,196,.1)">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fco);text-align:center;margin-bottom:10px;letter-spacing:.08em">소셜 로그인</div>
+        <div class="msocial">
+          <button class="socb" onclick="socialLogin('google')" style="border-color:rgba(66,133,244,.3);color:#4285f4">
+            <div style="font-size:16px;margin-bottom:2px">G</div>구글
+          </button>
+          <button class="socb" onclick="socialLogin('kakao')" style="border-color:rgba(254,229,0,.3);color:#3c1e1e;background:rgba(254,229,0,.08)">
+            <div style="font-size:16px;margin-bottom:2px">💬</div>카카오
+          </button>
+          <button class="socb" onclick="socialLogin('naver')" style="border-color:rgba(3,199,90,.3);color:#03c75a">
+            <div style="font-size:16px;margin-bottom:2px">N</div>네이버
+          </button>
+        </div>
+      </div>`;
+    authLoginDiv.insertAdjacentHTML('beforeend', socialHtml);
+  }
+});
+
+async function socialLogin(provider){
+  if(provider==='google'){
+    // ✅ 구글 로그인 실제 구현 (Firebase GoogleAuthProvider)
+    // TODO: Firebase 콘솔 → Authentication → 로그인 방법 → Google 활성화 필요
+    try{
+      const {GoogleAuthProvider, signInWithPopup} = await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js');
+      const gProvider = new GoogleAuthProvider();
+      const result = await signInWithPopup(window._fb.auth, gProvider);
+      const user = result.user;
+      // Firestore에 유저 없으면 생성
+      const db = window._fb.db;
+      const snap = await window._fb.getDoc(window._fb.doc(db,'users',user.uid));
+      if(!snap.exists()){
+        await window._fb.setDoc(window._fb.doc(db,'users',user.uid),{
+          nickname: user.displayName||user.email.split('@')[0],
+          email: user.email,
+          xp:10, level:1,
+          totalUploads:0, totalSales:0, totalRevenue:0,
+          createdAt: window._fb.serverTimestamp()
+        });
+      }
+      closeL();
+      toast('구글 로그인 완료! 환영해요 👾','✅');
+    }catch(e){
+      if(e.code!=='auth/popup-closed-by-user')
+        toast('구글 로그인 실패: '+e.message,'❌');
+    }
+  } else if(provider==='kakao'){
+    // TODO: 카카오 로그인은 Kakao SDK + 백엔드 서버 필요
+    // 1. https://developers.kakao.com 에서 앱 생성
+    // 2. REST API 키 발급
+    // 3. 서버에서 OAuth 처리 후 Firebase Custom Token 발급
+    toast('카카오 로그인은 백엔드 서버 연동 후 사용 가능해요 (준비 중)','ℹ️');
+  } else if(provider==='naver'){
+    // TODO: 네이버 로그인은 네이버 개발자센터 + 백엔드 서버 필요
+    // 1. https://developers.naver.com 에서 앱 등록
+    // 2. Client ID/Secret 발급
+    // 3. 서버에서 OAuth 처리 후 Firebase Custom Token 발급
+    toast('네이버 로그인은 백엔드 서버 연동 후 사용 가능해요 (준비 중)','ℹ️');
+  }
+}
+
+// ✅ FIX #6: 관리자 탭 — 로그인 상태에서 관리자 이메일이면 자동 표시됨
+// Firebase 콘솔에서 해당 이메일 계정 생성 필요:
+// Authentication → 사용자 추가 → sogare_@naver.com + 비밀번호 설정
+// 이후 해당 계정으로 로그인하면 관리자 탭이 활성화됩니다
 </script>
 </body>
 </html>
