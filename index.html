@@ -822,7 +822,7 @@ def process_order(order_id: str) -> dict:
   // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
   // ══════════════════════════════════════════
   const firebaseConfig = {
-    apiKey: "AIzaSyD3T1TyPq5iRNzLU5ATzaem4yZamYWKQhU",
+    apiKey: "-",
     authDomain: "codegame-75c54.firebaseapp.com",
     projectId: "codegame-75c54",
     storageBucket: "codegame-75c54.firebasestorage.app",
@@ -2056,12 +2056,14 @@ rend(P);rcComm();rcFAQ();uc();
     <div style="margin-top:24px;border-top:1px solid var(--acc3);padding-top:20px">
       <h3 style="font-size:14px;margin-bottom:16px;color:var(--text1)">💬 댓글</h3>
       <div id="commentList" style="margin-bottom:16px"></div>
-      <div id="commentWrite" style="display:none">
+      <div id="commentWrite">
         <textarea id="cmtInput" placeholder="댓글을 입력하세요" rows="3" maxlength="500"
           style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
-        <button onclick="submitComment()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button onclick="submitCommentSafe()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
+          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="openL('login');closePostDetail();" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
+        </div>
       </div>
-      <div id="cmtLoginMsg" style="font-size:13px;color:var(--text2)">댓글을 달려면 <span onclick="openL('login')" style="color:var(--acc);cursor:pointer">로그인</span>해주세요.</div>
     </div>
   </div>
 </div>
@@ -2102,7 +2104,7 @@ async function submitPost(){
   btn.disabled=true;btn.textContent='게시 중...';
   try{
     const db=window._fb.db;
-    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nick||user.email.split('@')[0];
+    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nickname||user.email.split('@')[0];
     await window._fb.addDoc(window._fb.collection(db,'posts'),{
       title,content,cat,tags,
       uid:user.uid,
@@ -2212,14 +2214,18 @@ async function openPostDetail(postId){
       </button>
     `;
 
-    // 댓글 영역 처리
-    const cmtLogin=document.getElementById('cmtLoginMsg');
-    const cmtWrite=document.getElementById('commentWrite');
-    if(user){cmtWrite.style.display='block';cmtLogin.style.display='none';}
-    else{cmtWrite.style.display='none';cmtLogin.style.display='block';}
-
-    // 댓글 불러오기
+    // 댓글 불러오기 (UI는 항상 표시, 로그인 여부는 submitCommentSafe에서 처리)
+    const cmtMsg=document.getElementById('cmtLoginMsg');
+    if(cmtMsg) cmtMsg.style.display='none';
     loadComments(postId);
+
+
+
+
+
+
+
+
   }catch(e){
     document.getElementById('postDetailContent').innerHTML='<p style="color:#ff6b6b">불러오기 실패: '+e.message+'</p>';
   }
@@ -2277,6 +2283,18 @@ async function loadComments(postId){
   }catch(e){list.innerHTML='<p style="color:#ff6b6b;font-size:13px">댓글 로드 실패</p>';}
 }
 
+// 댓글 달기 - 로그인 여부 친절하게 안내
+function submitCommentSafe(){
+  const user=window._fb?.auth?.currentUser;
+  const msg=document.getElementById('cmtLoginMsg');
+  if(!user){
+    if(msg) msg.style.display='inline';
+    return;
+  }
+  if(msg) msg.style.display='none';
+  submitComment();
+}
+
 async function submitComment(){
   const user=window._fb?.auth?.currentUser;
   if(!user){toast('로그인이 필요해요','⚠️');return;}
@@ -2285,7 +2303,7 @@ async function submitComment(){
   if(!content){toast('댓글을 입력해주세요','⚠️');return;}
   const db=window._fb.db;
   try{
-    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nick||user.email.split('@')[0];
+    const nick=(await window._fb.getDoc(window._fb.doc(db,'users',user.uid))).data()?.nickname||user.email.split('@')[0];
     await window._fb.addDoc(window._fb.collection(db,'posts',_currentPostId,'comments'),{
       content,uid:user.uid,author:nick,createdAt:window._fb.serverTimestamp()
     });
