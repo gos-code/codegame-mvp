@@ -822,7 +822,7 @@ def process_order(order_id: str) -> dict:
   // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
   // ══════════════════════════════════════════
   const firebaseConfig = {
-    apiKey: "-",
+    apiKey: "AIzaSyD3T1TyPq5iRNzLU5ATzaem4yZamYWKQhU",
     authDomain: "codegame-75c54.firebaseapp.com",
     projectId: "codegame-75c54",
     storageBucket: "codegame-75c54.firebasestorage.app",
@@ -834,7 +834,7 @@ def process_order(order_id: str) -> dict:
   // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
   // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
   // ══════════════════════════════════════════
-  window.ADMIN_EMAIL // ← 이메일
+  window.ADMIN_EMAIL = null; // Firestore config/admin 에서 로드됨
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -861,15 +861,12 @@ def process_order(order_id: str) -> dict:
     if (user) {
       const nick = user.displayName || user.email.split('@')[0];
       const initial = nick[0].toUpperCase();
-      const isAdmin = user.email === window.ADMIN_EMAIL;
       document.querySelector('.nav-r').innerHTML = `
         <button class="bg" onclick="toggleSearch()" id="searchBtn" style="font-size:12px;padding:5px 12px">🔍</button>
         <span style="font-size:12px;color:var(--text2);font-family:var(--fco)">${nick}</span>
         <div onclick="openMyPage()" style="width:30px;height:30px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;cursor:pointer;color:#000;font-family:var(--fen);box-shadow:0 0 12px rgba(0,245,196,.3)">${initial}</div>
         <button class="bg" style="font-size:11px;padding:5px 12px" onclick="doLogout()">LOGOUT</button>`;
-      // 관리자 탭 표시 여부
-      const adminTab = document.getElementById('mpT5');
-      if (adminTab) adminTab.style.display = isAdmin ? 'block' : 'none';
+      checkAdminRole(user.email);
       loadUserStats(user.uid);
       setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
     } else {
@@ -1490,6 +1487,33 @@ async function fbRegister(){
 }
 
 // ── 로그아웃 ──
+// ── 관리자 확인 — Firestore config/admin 문서에서 이메일 읽어 비교 ──
+async function checkAdminRole(userEmail){
+  try{
+    const db=window._fb?.db;
+    if(!db) return;
+    const snap=await window._fb.getDoc(window._fb.doc(db,'config','admin'));
+    const adminEmail=snap.exists()?snap.data()?.email:null;
+    const adminTab=document.getElementById('mpT5');
+    if(adminTab) adminTab.style.display=(adminEmail&&userEmail===adminEmail)?'block':'none';
+  }catch(e){
+    const adminTab=document.getElementById('mpT5');
+    if(adminTab) adminTab.style.display='none';
+  }
+}
+
+// ── 댓글 달기 — 비로그인 시 안내 메시지 표시 ──
+function submitCommentSafe(){
+  const user=window._fb?.auth?.currentUser;
+  const msg=document.getElementById('cmtLoginMsg');
+  if(!user){
+    if(msg) msg.style.display='inline';
+    return;
+  }
+  if(msg) msg.style.display='none';
+  submitComment();
+}
+
 async function doLogout(){
   await window._fb.signOut(window._fb.auth);
   toast('로그아웃됐어요 👋','');
@@ -2061,7 +2085,7 @@ rend(P);rcComm();rcFAQ();uc();
           style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
         <div style="display:flex;gap:8px;align-items:center">
           <button onclick="submitCommentSafe()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
-          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="openL('login');closePostDetail();" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
+          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="closePostDetail();openL('login');" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
         </div>
       </div>
     </div>
@@ -2214,18 +2238,10 @@ async function openPostDetail(postId){
       </button>
     `;
 
-    // 댓글 불러오기 (UI는 항상 표시, 로그인 여부는 submitCommentSafe에서 처리)
+    // 댓글 불러오기
     const cmtMsg=document.getElementById('cmtLoginMsg');
     if(cmtMsg) cmtMsg.style.display='none';
     loadComments(postId);
-
-
-
-
-
-
-
-
   }catch(e){
     document.getElementById('postDetailContent').innerHTML='<p style="color:#ff6b6b">불러오기 실패: '+e.message+'</p>';
   }
@@ -2281,18 +2297,6 @@ async function loadComments(postId){
       </div>`;
     }).join('');
   }catch(e){list.innerHTML='<p style="color:#ff6b6b;font-size:13px">댓글 로드 실패</p>';}
-}
-
-// 댓글 달기 - 로그인 여부 친절하게 안내
-function submitCommentSafe(){
-  const user=window._fb?.auth?.currentUser;
-  const msg=document.getElementById('cmtLoginMsg');
-  if(!user){
-    if(msg) msg.style.display='inline';
-    return;
-  }
-  if(msg) msg.style.display='none';
-  submitComment();
 }
 
 async function submitComment(){
@@ -2460,7 +2464,10 @@ async function socialLogin(provider){
   }
 }
 
-
+// ✅ FIX #6: 관리자 탭 — 로그인 상태에서 관리자 이메일이면 자동 표시됨
+// Firebase 콘솔에서 해당 이메일 계정 생성 필요:
+// 관리자 이메일은 Firestore > config > admin > email 필드에 저장하세요.
+// 이후 해당 계정으로 로그인하면 관리자 탭이 활성화됩니다
 </script>
 </body>
 </html>
