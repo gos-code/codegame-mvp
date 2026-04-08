@@ -834,7 +834,7 @@ def process_order(order_id: str) -> dict:
   // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
   // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
   // ══════════════════════════════════════════
-  window.ADMIN_EMAIL = "sogare_@naver.com" // ← 이메일
+  window.ADMIN_EMAIL // ← 이메일
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
