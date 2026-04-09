@@ -532,7 +532,7 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
         <div class="bcard">
           <div class="bprice" id="dpr"></div>
           <div class="brows" id="drw"></div>
-          <button class="bbuy" id="dBuyBtn" onclick="toast('결제 기능 준비 중! (MVP)','💳')" style="font-family:var(--fco);letter-spacing:.06em">
+          <button class="bbuy" id="dBuyBtn" onclick="buyItem()" style="font-family:var(--fco);letter-spacing:.06em">
             <!-- ✅ FIX #7: 구매 버튼 직관화 — 가격 인라인 표시 -->
             🛒 지금 구매하기 <span id="dBuyPrice" style="opacity:.8;font-size:11px"></span>
           </button>
@@ -822,7 +822,7 @@ def process_order(order_id: str) -> dict:
   // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
   // ══════════════════════════════════════════
   const firebaseConfig = {
-    apiKey: "AIzaSyD3T1TyPq5iRNzLU5ATzaem4yZamYWKQhU",
+    apiKey: "-",
     authDomain: "codegame-75c54.firebaseapp.com",
     projectId: "codegame-75c54",
     storageBucket: "codegame-75c54.firebasestorage.app",
@@ -834,7 +834,7 @@ def process_order(order_id: str) -> dict:
   // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
   // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
   // ══════════════════════════════════════════
-  window.ADMIN_EMAIL = "sogare_@naver.com" // ← 이메일
+  window.ADMIN_EMAIL = null; // Firestore config/admin 에서 로드됨
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -861,15 +861,12 @@ def process_order(order_id: str) -> dict:
     if (user) {
       const nick = user.displayName || user.email.split('@')[0];
       const initial = nick[0].toUpperCase();
-      const isAdmin = user.email === window.ADMIN_EMAIL;
       document.querySelector('.nav-r').innerHTML = `
         <button class="bg" onclick="toggleSearch()" id="searchBtn" style="font-size:12px;padding:5px 12px">🔍</button>
         <span style="font-size:12px;color:var(--text2);font-family:var(--fco)">${nick}</span>
         <div onclick="openMyPage()" style="width:30px;height:30px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;cursor:pointer;color:#000;font-family:var(--fen);box-shadow:0 0 12px rgba(0,245,196,.3)">${initial}</div>
         <button class="bg" style="font-size:11px;padding:5px 12px" onclick="doLogout()">LOGOUT</button>`;
-      // 관리자 탭 표시 여부
-      const adminTab = document.getElementById('mpT5');
-      if (adminTab) adminTab.style.display = isAdmin ? 'block' : 'none';
+      checkAdminRole(user.email);
       loadUserStats(user.uid);
       setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
     } else {
@@ -1283,6 +1280,14 @@ function det(id){
   // 미리보기 버튼 추가
   const previewBtn = document.getElementById('dPreviewBtn');
   if(previewBtn) previewBtn.onclick = ()=>openCodePreview(p.cd, p.ti);
+  // 현재 상품 전역 저장 (구매 버튼용)
+  window._currentProduct = {
+    uploadId: p.id,
+    id: p.id,
+    price: p.pr||0,
+    title: p.ti||p.em||'상품',
+    fileUrl: p.fu||p.fileUrl||''
+  };
   go('detail');
 }
 
@@ -1431,7 +1436,7 @@ function openL(mode){
 function closeL(){document.getElementById('lo').classList.remove('on');}
 // ✅ 외부 클릭으로 로그인 모달 닫기 완전 비활성화 — X 버튼으로만 닫힘
 // document.getElementById('lo').addEventListener('click', ...) 제거됨
-document.getElementById('myPageModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+// myPageModal 바깥 클릭 닫힘 비활성화 (의도치 않은 닫힘 방지)
 
 // ── 로그인/회원가입 탭 전환 ──
 function switchAuthTab(mode){
@@ -1490,6 +1495,41 @@ async function fbRegister(){
 }
 
 // ── 로그아웃 ──
+// ── 관리자 확인 — Firestore config/admin 문서에서 이메일 읽어 비교 ──
+async function checkAdminRole(userEmail){
+  try{
+    const db=window._fb?.db;
+    if(!db) return;
+    const snap=await window._fb.getDoc(window._fb.doc(db,'config','admin'));
+    const adminEmail=snap.exists()?snap.data()?.email:null;
+    const isAdmin=(adminEmail&&userEmail===adminEmail);
+    // 전역 저장 — 마이페이지 열릴 때마다 적용
+    window._isAdmin=isAdmin;
+    // 지금 바로 탭 업데이트
+    applyAdminTab();
+  }catch(e){
+    window._isAdmin=false;
+    applyAdminTab();
+  }
+}
+
+function applyAdminTab(){
+  const adminTab=document.getElementById('mpT5');
+  if(adminTab) adminTab.style.display=window._isAdmin?'block':'none';
+}
+
+// ── 댓글 달기 — 비로그인 시 안내 메시지 표시 ──
+function submitCommentSafe(){
+  const user=window._fb?.auth?.currentUser;
+  const msg=document.getElementById('cmtLoginMsg');
+  if(!user){
+    if(msg) msg.style.display='inline';
+    return;
+  }
+  if(msg) msg.style.display='none';
+  submitComment();
+}
+
 async function doLogout(){
   await window._fb.signOut(window._fb.auth);
   toast('로그아웃됐어요 👋','');
@@ -1518,6 +1558,8 @@ function openMyPage(){
     document.getElementById('settingsEmailDisplay').textContent=user.email;
     document.getElementById('settingsAvatar').textContent=initial;
     loadMpXp(user.uid);
+    // 마이페이지 열릴 때마다 관리자 탭 상태 적용
+    applyAdminTab();
   }
 }
 
@@ -1681,24 +1723,69 @@ async function deleteUpload(docId,storagePath){
 // ─────────────────────────────────────
 // 구매 처리 & 내역
 // ─────────────────────────────────────
+// ── 현재 열린 상품 전역 변수 ──
+window._currentProduct = null;
+
+// ── 상품 상세에서 구매 버튼 클릭 시 호출 ──
+function buyItem(){
+  const p = window._currentProduct;
+  if(!p){toast('상품 정보를 불러오는 중이에요','⚠️');return;}
+  buyAsset(p.uploadId||p.id, p.price||p.pr||0, p.title||p.ti||'상품', p.fileUrl||p.fu||'');
+}
+
+// ── 라이선스 키 생성 (UUID v4 방식) ──
+function generateLicenseKey(){
+  const s=()=>Math.floor((1+Math.random())*0x10000).toString(16).substring(1).toUpperCase();
+  return `CG-${s()}${s()}-${s()}${s()}-${s()}${s()}-${s()}${s()}`;
+  // 예: CG-A1B2C3D4-E5F6G7H8-I9J0K1L2-M3N4O5P6
+}
+
 async function buyAsset(uploadId,price,title,fileUrl){
   const fb=window._fb;const user=fb?.auth?.currentUser;
   if(!user){openL('login');toast('로그인이 필요해요','⚠️');return;}
-  if(!confirm(`₩${price.toLocaleString()}에 구매할까요?`))return;
+  if(!confirm(`"${title}"\n₩${price.toLocaleString()}에 구매할까요?\n\n구매 후 마이페이지에서 라이선스 키와 다운로드 링크를 확인하세요.`))return;
+
+  // 이미 구매했는지 확인
   try{
+    const dupQ=fb.query(fb.collection(fb.db,'purchases'),
+      fb.where('buyerUid','==',user.uid),
+      fb.where('uploadId','==',uploadId));
+    const dupSnap=await fb.getDocs(dupQ);
+    if(!dupSnap.empty){toast('이미 구매한 상품이에요! 마이페이지에서 확인하세요 ✅','⚠️');openMyPage();return;}
+  }catch(e){}
+
+  try{
+    // 라이선스 키 자동 생성
+    const licenseKey=generateLicenseKey();
+    const expiresAt=null; // 영구 (구독형은 나중에)
+
     await fb.addDoc(fb.collection(fb.db,'purchases'),{
-      buyerUid:user.uid,buyerNick:user.displayName||user.email,
-      uploadId,title,price,fileUrl,purchasedAt:fb.serverTimestamp()
+      buyerUid:user.uid,
+      buyerNick:user.displayName||user.email,
+      uploadId,title,price,fileUrl,
+      licenseKey,         // 고유 라이선스 키
+      expiresAt,          // 유효기간 (null = 영구)
+      isActive:true,      // 키 활성화 상태
+      downloadCount:0,    // 다운로드 횟수
+      purchasedAt:fb.serverTimestamp()
     });
+
+    // 판매자 통계 업데이트
     const uploadRef=fb.doc(fb.db,'uploads',uploadId);
     const uploadSnap=await fb.getDoc(uploadRef);
     if(uploadSnap.exists()){
       const d=uploadSnap.data();
-      await fb.updateDoc(uploadRef,{salesCount:fb.increment(1),revenue:fb.increment(Math.round(price*0.8))});
+      await fb.updateDoc(uploadRef,{
+        salesCount:fb.increment(1),
+        revenue:fb.increment(Math.round(price*0.8))
+      });
       await addXP(d.uid,10);
     }
     await addXP(user.uid,5);
-    toast('구매 완료! 마이페이지에서 다운로드하세요 🎉','✅');
+
+    toast('구매 완료! 라이선스 키가 발급됐어요 🎉','✅');
+    // 마이페이지 구매내역 탭으로 이동
+    setTimeout(()=>{openMyPage();mpTab('purchases');},800);
   }catch(e){toast('구매 실패: '+e.message,'❌');}
 }
 
@@ -1710,14 +1797,62 @@ async function loadPurchases(){
   try{
     const q=fb.query(fb.collection(fb.db,'purchases'),fb.where('buyerUid','==',user.uid),fb.orderBy('purchasedAt','desc'));
     const snap=await fb.getDocs(q);
-    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p></div>';return;}
-    el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.purchasedAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
-      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
-        <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${dt} · ₩${(v.price||0).toLocaleString()}</div></div>
-        <a href="${v.fileUrl}" target="_blank" style="padding:6px 12px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco);flex-shrink:0">⬇ DOWNLOAD</a>
-      </div>`;}).join('');
-  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fco)">불러오기 실패</div>';}
+    if(!snap.docs.length){
+      el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p></div>';
+      return;
+    }
+    el.innerHTML=snap.docs.map(d=>{
+      const v=d.data();
+      const dt=v.purchasedAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
+      const key=v.licenseKey||'키 없음';
+      const active=v.isActive!==false;
+      const expires=v.expiresAt?v.expiresAt.toDate?.()?.toLocaleDateString('ko-KR'):'영구';
+      return`
+      <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:10px;padding:16px;margin-bottom:12px">
+        <!-- 상품 제목 + 날짜 -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title||'제목 없음'}</div>
+            <div style="font-size:11px;color:var(--text2)">구매일: ${dt} · ₩${(v.price||0).toLocaleString()}</div>
+          </div>
+          <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:${active?'rgba(0,245,196,.1)':'rgba(255,100,100,.1)'};color:${active?'var(--acc)':'#ff6464'};border:1px solid ${active?'rgba(0,245,196,.2)':'rgba(255,100,100,.2)'}">
+            ${active?'● 활성':'● 만료'}
+          </span>
+        </div>
+        <!-- 라이선스 키 -->
+        <div style="background:var(--bg3);border:1px solid var(--acc3);border-radius:6px;padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">🔑 라이선스 키</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <code style="font-size:12px;color:var(--acc);font-family:var(--fco);letter-spacing:.05em">${key}</code>
+            <button onclick="navigator.clipboard.writeText('${key}').then(()=>toast('키 복사됨!','📋'))"
+              style="background:none;border:1px solid var(--acc3);color:var(--text2);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;white-space:nowrap">
+              복사
+            </button>
+          </div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">유효기간: ${expires}</div>
+        </div>
+        <!-- 다운로드 버튼 -->
+        <a href="${v.fileUrl||'#'}" target="_blank"
+          onclick="recordDownload('${d.id}')"
+          style="display:block;text-align:center;padding:9px;background:var(--acc);color:#000;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;font-family:var(--fco)">
+          ⬇ 파일 다운로드
+        </a>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:#ff6b6b;font-family:var(--fco)">불러오기 실패: '+e.message+'</div>';
+  }
+}
+
+// 다운로드 횟수 기록
+async function recordDownload(purchaseId){
+  try{
+    const fb=window._fb;
+    await fb.updateDoc(fb.doc(fb.db,'purchases',purchaseId),{
+      downloadCount:fb.increment(1),
+      lastDownloadAt:fb.serverTimestamp()
+    });
+  }catch(e){}
 }
 
 // ─────────────────────────────────────
@@ -2061,7 +2196,7 @@ rend(P);rcComm();rcFAQ();uc();
           style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
         <div style="display:flex;gap:8px;align-items:center">
           <button onclick="submitCommentSafe()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
-          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="openL('login');closePostDetail();" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
+          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="closePostDetail();openL('login');" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
         </div>
       </div>
     </div>
@@ -2086,7 +2221,7 @@ function openWriteModal(){
 function closeWriteModal(){
   document.getElementById('writeModal').style.display='none';
 }
-document.getElementById('writeModal').addEventListener('click',function(e){if(e.target===this)closeWriteModal();});
+// writeModal 바깥 클릭 닫힘 비활성화
 
 async function submitPost(){
   const user=window._fb?.auth?.currentUser;
@@ -2214,18 +2349,10 @@ async function openPostDetail(postId){
       </button>
     `;
 
-    // 댓글 불러오기 (UI는 항상 표시, 로그인 여부는 submitCommentSafe에서 처리)
+    // 댓글 불러오기
     const cmtMsg=document.getElementById('cmtLoginMsg');
     if(cmtMsg) cmtMsg.style.display='none';
     loadComments(postId);
-
-
-
-
-
-
-
-
   }catch(e){
     document.getElementById('postDetailContent').innerHTML='<p style="color:#ff6b6b">불러오기 실패: '+e.message+'</p>';
   }
@@ -2236,7 +2363,7 @@ function closePostDetail(){
   _currentPostId=null;
   loadFirestorePosts(); // 새로고침
 }
-document.getElementById('postDetailModal').addEventListener('click',function(e){if(e.target===this)closePostDetail();});
+// postDetailModal 바깥 클릭 닫힘 비활성화
 
 async function toggleLike(postId){
   const user=window._fb?.auth?.currentUser;
@@ -2283,18 +2410,6 @@ async function loadComments(postId){
   }catch(e){list.innerHTML='<p style="color:#ff6b6b;font-size:13px">댓글 로드 실패</p>';}
 }
 
-// 댓글 달기 - 로그인 여부 친절하게 안내
-function submitCommentSafe(){
-  const user=window._fb?.auth?.currentUser;
-  const msg=document.getElementById('cmtLoginMsg');
-  if(!user){
-    if(msg) msg.style.display='inline';
-    return;
-  }
-  if(msg) msg.style.display='none';
-  submitComment();
-}
-
 async function submitComment(){
   const user=window._fb?.auth?.currentUser;
   if(!user){toast('로그인이 필요해요','⚠️');return;}
@@ -2320,7 +2435,7 @@ setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
 </script>
 
 <!-- ✅ FIX #7: 기업 문의 모달 -->
-<div class="overlay" id="enterpriseModal" onclick="if(event.target===this)closeEnterpriseModal()">
+<div class="overlay" id="enterpriseModal">
   <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
     <button class="mx" onclick="closeEnterpriseModal()">✕</button>
     <div class="mtitle" style="color:#a78bff">🏢 기업 문의</div>
@@ -2462,7 +2577,7 @@ async function socialLogin(provider){
 
 // ✅ FIX #6: 관리자 탭 — 로그인 상태에서 관리자 이메일이면 자동 표시됨
 // Firebase 콘솔에서 해당 이메일 계정 생성 필요:
-// Authentication → 사용자 추가 → sogare_@naver.com + 비밀번호 설정
+// 관리자 이메일은 Firestore > config > admin > email 필드에 저장하세요.
 // 이후 해당 계정으로 로그인하면 관리자 탭이 활성화됩니다
 </script>
 </body>
