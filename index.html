@@ -867,9 +867,18 @@ nav {
           <button onclick="clearUpFile()" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:16px">✕</button>
         </div>
       </div>
-      <div id="upProgress" style="display:none;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fm)"><span>업로드 중...</span><span id="upPct">0%</span></div>
-        <div style="height:3px;background:rgba(0,245,196,.1);border-radius:99px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:99px"></div></div>
+      <div id="upProgress" style="display:none;margin-top:14px;background:var(--g1);border:1px solid var(--b1);border-radius:14px;padding:16px 18px;backdrop-filter:blur(12px)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse3 1.2s infinite"></div>
+            <span style="font-size:12px;color:var(--t1);font-weight:500">업로드 중...</span>
+          </div>
+          <span id="upPct" style="font-size:13px;font-weight:700;color:var(--accent);font-family:var(--fe)">0%</span>
+        </div>
+        <div style="height:6px;background:rgba(0,245,196,.08);border-radius:99px;overflow:hidden">
+          <div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .25s ease;border-radius:99px;box-shadow:0 0 10px rgba(0,245,196,.4)"></div>
+        </div>
+        <div id="upStatusMsg" style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--fm)">파일을 서버에 업로드하고 있어요...</div>
       </div>
       <div class="fg" style="margin-top:16px"><label class="fl">README / 사용 설명서</label>
         <textarea class="fta" id="upReadme" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea>
@@ -1333,8 +1342,8 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
           <div id="mpUpProgress" style="display:none">
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
-            <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="mpUpPct">0%</span></div>
+            <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="mpUpBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
           </div>
           <div id="upSuccess" style="display:none;background:rgba(0,245,196,.06);border:1px solid rgba(0,245,196,.2);border-radius:6px;padding:12px">
             <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:var(--fco)">✅ UPLOAD COMPLETE</div>
@@ -2080,7 +2089,20 @@ async function doUpload2(){
     const path=`uploads/${user.uid}/${Date.now()}_${_upFile.name}`;
     const task=fb.uploadBytesResumable(fb.ref(fb.storage,path),_upFile);
     task.on('state_changed',
-      snap=>{const p=Math.round(snap.bytesTransferred/snap.totalBytes*100);document.getElementById('upBar').style.width=p+'%';document.getElementById('upPct').textContent=p+'%';},
+      snap=>{
+        const p=Math.round(snap.bytesTransferred/snap.totalBytes*100);
+        const bar=document.getElementById('upBar');
+        const pct=document.getElementById('upPct');
+        const msg=document.getElementById('upStatusMsg');
+        if(bar) bar.style.width=p+'%';
+        if(pct) pct.textContent=p+'%';
+        if(msg){
+          const kb=Math.round(snap.bytesTransferred/1024);
+          const total=Math.round(snap.totalBytes/1024);
+          msg.textContent=`${kb}KB / ${total}KB 업로드 중...`;
+        }
+        if(btn) btn.textContent=`UPLOADING... ${p}%`;
+      },
       err=>{toast('업로드 실패: '+err.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';},
       async()=>{
         const url=await fb.getDownloadURL(task.snapshot.ref);
