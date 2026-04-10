@@ -855,7 +855,15 @@ nav {
           <p style="font-size:12px;color:var(--t3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
 
       <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서는 초보를 위해 자세하게 설명해주세요.</div></div>
-      <div class="fg"><label class="fl">스크린샷 (선택)</label><div class="uzone" onclick="toast('이미지 업로드 준비 중!','🖼')"><div class="uicon">🖼</div><p><strong>실행 화면 캡처</strong>를 올리면 판매율이 올라가요</p><p style="font-size:12px;color:var(--t3);margin-top:5px">PNG, JPG · 최대 5장</p></div></div>
+      <div class="fg"><label class="fl">스크린샷 (선택)</label>
+        <div class="uzone" onclick="document.getElementById('ssFile').click()" id="ssZone">
+          <input type="file" id="ssFile" accept=".png,.jpg,.jpeg,.gif,.webp" multiple style="display:none" onchange="handleScreenshots(this.files)">
+          <div class="uicon">🖼</div>
+          <p><strong>클릭</strong>해서 이미지 업로드</p>
+          <p style="font-size:12px;color:var(--t3);margin-top:5px">PNG, JPG, GIF · 최대 5장 · 각 5MB 이하</p>
+        </div>
+        <div id="ssPreviews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+      </div>
       <div style="display:flex;gap:10px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[0],'s1')">← 이전</button><button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[2],'s3');toast('저장됨!','✅')">다음 단계 →</button></div>
     </div>
     <div id="s3" class="spanel">
@@ -878,7 +886,7 @@ nav {
           <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)" id="ep100">-</div><div style="font-size:11px;color:var(--t2)">100건 판매시</div></div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:20px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button><button class="bsub" onclick="toast('검수 신청 완료! 1~2일 내 검토 후 승인돼요 🚀','📤')">검수 신청하기 🚀</button></div>
+      <div style="display:flex;gap:10px;margin-top:20px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button><button class="bsub" id="submitBtn" onclick="doUpload()">검수 신청하기 🚀</button></div>
     </div>
     <div id="s4" class="spanel">
       <div class="ecalc">
@@ -1954,9 +1962,25 @@ function setShotFile(file){
   img.src = URL.createObjectURL(file);
   document.getElementById('shotPreview').style.display = 'block';
 }
+let _ssFiles=[];
+function handleScreenshots(files){
+  const previews=document.getElementById('ssPreviews');
+  const arr=Array.from(files).slice(0,5);
+  _ssFiles=arr;
+  previews.innerHTML=arr.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return '<div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1)">'
+      +'<img src="'+url+'" style="width:100%;height:100%;object-fit:cover">'
+      +'<button onclick="_ssFiles.splice('+i+',1);this.parentElement.remove()" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1">x</button>'
+      +'</div>';
+  }).join('');
+}
+
 function clearUpFile(){_upFile=null;document.getElementById('upFileInfo').style.display='none';document.getElementById('upFile').value='';}
 function handleDrop2(e){e.preventDefault();document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)';if(e.dataTransfer.files[0])setUpFile(e.dataTransfer.files[0]);}
 function fmtSz(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+
+function doUpload(){ doUpload2(); }
 
 async function doUpload2(){
   const fb=window._fb;const user=fb?.auth?.currentUser;
@@ -1976,6 +2000,17 @@ async function doUpload2(){
       err=>{toast('업로드 실패: '+err.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';},
       async()=>{
         const url=await fb.getDownloadURL(task.snapshot.ref);
+        const ssUrls=[];
+        for(let i=0;i<_ssFiles.length;i++){
+          const sf=_ssFiles[i];
+          const sPath=`screenshots/${user.uid}_${Date.now()}_${i}_${sf.name}`;
+          const sRef=fb.ref(fb.storage,sPath);
+          const sTask=await new Promise((res,rej)=>{
+            const t=fb.uploadBytesResumable(sRef,sf);
+            t.on('state_changed',null,rej,()=>res(t));
+          });
+          ssUrls.push(await fb.getDownloadURL(sTask.snapshot.ref));
+        }
         await fb.addDoc(fb.collection(fb.db,'uploads'),{
           uid:user.uid,nickname:user.displayName||user.email,
           title,description:document.getElementById('upDesc').value,
@@ -1983,26 +2018,31 @@ async function doUpload2(){
           license:document.getElementById('upLic').value,
           price:parseInt(document.getElementById('upPrice').value)||0,
           fileName:_upFile.name,fileSize:_upFile.size,fileUrl:url,
-          storagePath:path,status:'pending',salesCount:0,revenue:0,
+          storagePath:path,screenshots:ssUrls,
+          status:'pending',salesCount:0,revenue:0,
           createdAt:fb.serverTimestamp()
         });
         try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
         await addXP(user.uid,20);
         document.getElementById('upLink').href=url;
-        document.getElementById('upSuccess').innerHTML = `
-  <div style="padding:18px;text-align:center">
-    <div style="font-size:42px">✅</div>
-    <h3 style="margin:10px 0">검수 신청이 완료되었습니다</h3>
-    <p style="font-size:12px;color:var(--t2)">
-      관리자 검토 후 승인되면 판매 목록에 자동 등록됩니다.
-    </p>
-  </div>
-`;
-document.getElementById('upSuccess').style.display='block';
-document.getElementById('upProgress').style.display='none';
-        toast('업로드 완료! +20 XP 획득! 🚀','✅');
-        clearUpFile();['upTitle','upDesc','upPrice'].forEach(id=>{document.getElementById(id).value='';});
+        document.getElementById('upProgress').style.display='none';
+        clearUpFile();['upTitle','upDesc','upPrice'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
         btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
+        toast('검수 신청 완료! +20 XP 🚀','✅');
+        setTimeout(()=>{
+          go('home');
+          const notice = document.createElement('div');
+          notice.style.cssText='position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px)';
+          notice.innerHTML=`
+            <div style="background:rgba(8,9,18,0.95);border:1px solid rgba(0,245,196,0.25);border-radius:24px;padding:40px;text-align:center;max-width:380px;width:90%;box-shadow:0 40px 100px rgba(0,0,0,.8)">
+              <div style="font-size:52px;margin-bottom:16px">✅</div>
+              <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;font-family:'Sora',sans-serif">검수 신청 완료</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:24px;font-weight:300">관리자 검토 후 1~2일 내에<br>판매 목록에 자동 등록됩니다.</div>
+              <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif">확인</button>
+            </div>`;
+          document.body.appendChild(notice);
+          notice.addEventListener('click',e=>{if(e.target===notice)notice.remove();});
+        },400);
       }
     );
   }catch(e){toast('오류: '+e.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';}
@@ -2225,7 +2265,10 @@ async function loadAdminQueue(status='pending'){
   const fb=window._fb;const el=document.getElementById('adminQueue');
   el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
-    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('status','==',status),fb.orderBy('createdAt','desc'));
+    const q=fb.query(
+      fb.collection(fb.db,'uploads'),
+      fb.where('status','==',status)
+    );
     const snap=await fb.getDocs(q);
     if(!snap.docs.length){el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--t2);font-family:var(--fco)">${status} 항목이 없어요</div>`;return;}
     el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
@@ -2236,12 +2279,17 @@ async function loadAdminQueue(status='pending'){
           <a href="${v.fileUrl}" target="_blank" style="padding:5px 10px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco);flex-shrink:0">파일 확인</a>
         </div>
         ${v.description?`<div style="font-size:11px;color:var(--t2);margin-bottom:8px;padding:8px;background:var(--g1);border-radius:4px;font-family:var(--fco)">${v.description}</div>`:''}
-        <div style="display:flex;gap:6px">
-          <button onclick="adminAction('${d.id}','${v.uid}','approved')" style="padding:5px 12px;background:rgba(0,245,196,.1);color:var(--accent);border:1px solid rgba(0,245,196,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">✅ 승인</button>
-          <button onclick="adminAction('${d.id}','${v.uid}','rejected')" style="padding:5px 12px;background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">❌ 반려</button>
+        ${v.screenshots&&v.screenshots.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${v.screenshots.map(s=>`<a href="${s}" target="_blank"><img src="${s}" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,.1)"></a>`).join('')}</div>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <button onclick="adminAction('${d.id}','${v.uid}','approved')" style="padding:6px 14px;background:rgba(0,245,196,.1);color:var(--accent);border:1px solid rgba(0,245,196,.3);border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--fs);font-weight:500">✅ 승인</button>
+          <button onclick="adminAction('${d.id}','${v.uid}','rejected')" style="padding:6px 14px;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--fs);font-weight:500">❌ 반려</button>
+          <span style="font-size:10px;color:var(--t3);font-family:var(--fm)">${v.fileName||''} · ${v.fileSize?(v.fileSize/1024).toFixed(0)+'KB':''}</span>
         </div>
       </div>`;}).join('');
-  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fco)">불러오기 실패</div>';}
+  }catch(e){
+    console.error('관리자 큐 오류:',e);
+    el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fm);font-size:12px">오류: ${e.message||'불러오기 실패'}<br><small style="opacity:.6">Firebase 인덱스 설정이 필요할 수 있어요</small></div>`;
+  }
 }
 
 async function adminAction(docId,sellerUid,action){
