@@ -1586,8 +1586,7 @@ async function loadApprovedProducts(){
     if(!fb?.db) return;
     const q=fb.query(
       fb.collection(fb.db,'uploads'),
-      fb.where('status','==','approved'),
-      fb.orderBy('createdAt','desc')
+      fb.where('status','==','approved')
     );
     const snap=await fb.getDocs(q);
     const fbProducts=snap.docs.map(d=>{
@@ -1896,7 +1895,7 @@ async function openSellerProfile(uid, nickname){
       const u=userSnap.data();
       document.getElementById('spXp').textContent=(u.xp||0)+'';
     }
-    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',uid),fb.where('status','==','approved'),fb.orderBy('createdAt','desc'));
+    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',uid),fb.where('status','==','approved'));
     const snap=await fb.getDocs(q);
     const products=snap.docs.map(d=>({id:d.id,...d.data()}));
     document.getElementById('spProducts').textContent=products.length+'';
@@ -2086,7 +2085,8 @@ async function doUpload2(){
   document.getElementById('upProgress').style.display='block';
   document.getElementById('upSuccess').style.display='none';
   try{
-    const path=`uploads/${user.uid}/${Date.now()}_${_upFile.name}`;
+    const safeName=title.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,30);
+    const path=`uploads/${user.uid}/${safeName}_${Date.now()}_${_upFile.name}`;
     const task=fb.uploadBytesResumable(fb.ref(fb.storage,path),_upFile);
     task.on('state_changed',
       snap=>{
@@ -2105,7 +2105,10 @@ async function doUpload2(){
       },
       err=>{toast('업로드 실패: '+err.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';},
       async()=>{
-        const url=await fb.getDownloadURL(task.snapshot.ref);
+        const url=await fb.getDownloadURL(task.snapshot.ref).catch(async()=>{
+          const freshSnap=await task;
+          return fb.getDownloadURL(freshSnap.ref);
+        });
         const ssUrls=[];
         for(let i=0;i<_ssFiles.length;i++){
           const sf=_ssFiles[i];
@@ -2146,7 +2149,7 @@ async function loadMyFiles(){
   const el=document.getElementById('myFilesList');
   el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
-    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',user.uid),fb.orderBy('createdAt','desc'));
+    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',user.uid));
     const snap=await fb.getDocs(q);
     if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p></div>';return;}
     const stBadge={'pending':'<span style="color:var(--yellow)">⏳ 검수중</span>','approved':'<span style="color:var(--accent)">✅ 승인</span>','rejected':'<span style="color:var(--red)">❌ 반려</span>'};
@@ -2357,10 +2360,8 @@ async function loadAdminQueue(status='pending'){
   const fb=window._fb;const el=document.getElementById('adminQueue');
   el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
-    const q=fb.query(
-      fb.collection(fb.db,'uploads'),
-      fb.where('status','==',status)
-    );
+    const col=fb.collection(fb.db,'uploads');
+    const q=fb.query(col,fb.where('status','==',status));
     const snap=await fb.getDocs(q);
     if(!snap.docs.length){el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--t2);font-family:var(--fco)">${status} 항목이 없어요</div>`;return;}
     el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
