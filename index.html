@@ -2957,6 +2957,39 @@ setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
   </div>
 </div>
 
+<div class="overlay" id="calcModal">
+  <div class="modal" style="max-width:460px;width:95vw">
+    <button class="mx" onclick="document.getElementById('calcModal').classList.remove('on')">✕</button>
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">📊 수익 시뮬레이션</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:22px;font-weight:300">예상 판매량을 설정하고 수익을 미리 계산해보세요</div>
+    <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
+    <div class="fg">
+      <label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent);font-family:var(--fm)">50건</span></label>
+      <input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()">
+    </div>
+    <div class="eres" style="margin-top:8px">
+      <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
+      <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
+      <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(0,245,196,.05);border:1px solid rgba(0,245,196,.12);border-radius:12px;font-size:12px;color:var(--t2);font-weight:300">
+      💡 <strong style="color:var(--accent);font-weight:500">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--accent);font-weight:500">₩2,400,000</strong> 이상 수익을 올리고 있어요.
+    </div>
+    <button onclick="document.getElementById('calcModal').classList.remove('on')" style="width:100%;margin-top:18px;padding:12px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer">확인</button>
+  </div>
+</div>
+
+<div class="overlay" id="submitSuccessModal">
+  <div class="modal" style="max-width:380px;width:90vw;text-align:center;padding:44px 36px">
+    <div style="font-size:56px;margin-bottom:18px">✅</div>
+    <div style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px">완료되었습니다</div>
+    <div style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:28px;font-weight:300">
+      관리자 검토 후 1~2일 내에<br>판매 목록에 자동 등록됩니다.
+    </div>
+    <button onclick="document.getElementById('submitSuccessModal').classList.remove('on');go('home')" style="width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">메인으로 돌아가기</button>
+  </div>
+</div>
+
 <div class="overlay" id="enterpriseModal">
   <div class="modal" style="max-width:480px">
     <button class="mx" onclick="closeEnterpriseModal()">✕</button>
