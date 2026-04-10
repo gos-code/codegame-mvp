@@ -1232,12 +1232,12 @@ def process_order(order_id: str) -> dict:
         <div style="display:grid;gap:14px">
           <div>
             <label class="fl">상품명 *</label>
-            <input class="fi2" type="text" id="upTitle" placeholder="예: 스마트스토어 주문 자동 처리 봇">
+            <input class="fi2" type="text" id="mpTitle" placeholder="예: 스마트스토어 주문 자동 처리 봇">
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div>
               <label class="fl">카테고리</label>
-              <select class="fi2" id="upCat">
+              <select class="fi2" id="mpCat">
                 <option>스마트스토어/커머스</option><option>유튜브/쇼츠</option>
                 <option>GPT/AI</option><option>Google Sheets</option>
                 <option>n8n/Make</option><option>크롤링</option>
@@ -1246,16 +1246,16 @@ def process_order(order_id: str) -> dict:
             </div>
             <div>
               <label class="fl">판매가격 (원)</label>
-              <input class="fi2" type="number" id="upPrice" placeholder="29000">
+              <input class="fi2" type="number" id="mpPrice" placeholder="29000">
             </div>
           </div>
           <div>
             <label class="fl">상품 설명</label>
-            <textarea class="fi2" id="upDesc" rows="3" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 설명해주세요" style="resize:vertical"></textarea>
+            <textarea class="fi2" id="mpDesc" rows="3" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 설명해주세요" style="resize:vertical"></textarea>
           </div>
           <div>
             <label class="fl">라이선스</label>
-            <select class="fi2" id="upLic">
+            <select class="fi2" id="mpLic">
               <option>일반 상업용</option><option>완전 독점</option>
               <option>팀 라이선스</option><option>오픈소스(MIT)</option>
             </select>
@@ -1991,7 +1991,23 @@ function doUpload(){ doUpload2(); }
 
 async function doUpload2(){
   const fb=window._fb;const user=fb?.auth?.currentUser;
-  const title=document.getElementById('upTitle').value.trim();
+  const isSellPage = document.getElementById('page-sell').classList.contains('on');
+  const titleEl = isSellPage
+    ? document.getElementById('upTitle')
+    : document.getElementById('mpTitle');
+  const descEl = isSellPage
+    ? document.getElementById('upDesc')
+    : document.getElementById('mpDesc');
+  const catEl = isSellPage
+    ? document.getElementById('upCat')
+    : document.getElementById('mpCat');
+  const priceEl = isSellPage
+    ? document.getElementById('upPrice')
+    : document.getElementById('mpPrice');
+  const licEl = isSellPage
+    ? document.getElementById('upLic')
+    : document.getElementById('mpLic');
+  const title = titleEl?.value?.trim() || '';
   if(!user){toast('로그인이 필요해요','⚠️');return;}
   if(!_upFile){toast('파일을 선택해주세요','⚠️');return;}
   if(!title){toast('상품명을 입력해주세요','⚠️');return;}
@@ -2020,10 +2036,11 @@ async function doUpload2(){
         }
         await fb.addDoc(fb.collection(fb.db,'uploads'),{
           uid:user.uid,nickname:user.displayName||user.email,
-          title,description:document.getElementById('upDesc').value,
-          category:document.getElementById('upCat').value,
-          license:document.getElementById('upLic').value,
-          price:parseInt(document.getElementById('upPrice').value)||0,
+          title,
+          description:descEl?.value||'',
+          category:catEl?.value||'기타',
+          license:licEl?.value||'일반 상업용',
+          price:parseInt(priceEl?.value)||0,
           fileName:_upFile.name,fileSize:_upFile.size,fileUrl:url,
           storagePath:path,screenshots:ssUrls,
           status:'pending',salesCount:0,revenue:0,
@@ -2033,7 +2050,7 @@ async function doUpload2(){
         await addXP(user.uid,20);
         document.getElementById('upLink').href=url;
         document.getElementById('upProgress').style.display='none';
-        clearUpFile();['upTitle','upDesc','upPrice'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+        clearUpFile();[titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
         btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
         toast('검수 신청 완료! +20 XP 🚀','✅');
         setTimeout(()=>{
