@@ -787,35 +787,54 @@ nav {
 </div>
 
 <div id="page-sell" class="page">
-  <div class="swrap">
+  <div class="swrap" style="max-width:680px;margin:0 auto">
+
+    
     <div class="shero">
       <div>
-        <h1>💰 코드 자산 판매하기</h1>
-        <p>완성된 자동화 코드와 기능 모듈을 등록하고 수익을 만들어보세요. 판매 수익의 80%는 바로 정산돼요.</p>
+        <h1 style="font-size:22px;font-weight:700;letter-spacing:-.01em">코드 자산 판매하기</h1>
+        <p style="font-size:13px;color:var(--t2);margin-top:6px;font-weight:300">완성된 코드를 등록하고 수익을 만들어보세요</p>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div style="text-align:center;background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--accent)">80%</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">판매자 수익</div></div>
-        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--t1)">2~3일</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">검수 기간</div></div>
-        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--t1)">무료</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">등록 비용</div></div>
+      <div style="display:flex;gap:10px">
+        <div style="text-align:center;background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:12px;padding:14px 20px;backdrop-filter:blur(12px)"><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--accent)">80%</div><div style="font-size:10px;color:var(--t2);margin-top:2px;font-family:var(--fm)">수익</div></div>
+        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:12px;padding:14px 20px;backdrop-filter:blur(12px)"><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--t1)">2~3일</div><div style="font-size:10px;color:var(--t2);margin-top:2px;font-family:var(--fm)">검수</div></div>
+        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:12px;padding:14px 20px;backdrop-filter:blur(12px)"><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--t1)">무료</div><div style="font-size:10px;color:var(--t2);margin-top:2px;font-family:var(--fm)">등록</div></div>
       </div>
     </div>
+
+    
     <div class="ssteps">
-      <button class="ssb on" onclick="stab(this,'s1')">① 기본 정보</button>
-      <button class="ssb" onclick="stab(this,'s2')">② 파일 업로드</button>
-      <button class="ssb" onclick="stab(this,'s3')">③ 가격 설정</button>
-      <button class="ssb" onclick="stab(this,'s4')">④ 수익 계산기</button>
+      <button class="ssb on" id="ssb1" onclick="sellTab(this,'s1')">① 기본 정보</button>
+      <button class="ssb" id="ssb2" onclick="sellTab(this,'s2')">② 파일 업로드</button>
+      <button class="ssb" id="ssb3" onclick="sellTab(this,'s3')">③ 가격 설정</button>
+      <button class="ssb" id="ssb4" onclick="sellTab(this,'s4')">④ 수익 계산기</button>
     </div>
+
+    
     <div id="s1" class="spanel on">
-      <div class="fg"><label class="fl">상품명 *</label><input class="fi2" id="upTitle" placeholder="예: 스마트스토어 주문 자동 처리 스크립트 v2.0"><div class="fhint">검색에 잘 걸리는 구체적인 이름을 써주세요</div></div>
-      <div class="frow">
-        <div class="fg"><label class="fl">자산 유형 *</label><select class="fsel" id="upType"><option>🔄 자동화 워크플로우</option><option>🧩 기능 모듈</option><option>📋 템플릿</option><option>🛠 도구/유틸리티</option></select></div>
-        <div class="fg"><label class="fl">카테고리 *</label><select class="fsel" id="upCat"><option>스마트스토어 / 커머스</option><option>유튜브 / 쇼츠</option><option>GPT / AI</option><option>Google Sheets</option><option>n8n / Make</option><option>크롤링</option><option>데이터 처리</option></select></div>
+      <div class="fg"><label class="fl">상품명 *</label>
+        <input class="fi2" id="upTitle" placeholder="예: 스마트스토어 주문 자동 처리 스크립트 v2.0">
+        <div class="fhint">검색에 잘 걸리는 구체적인 이름을 써주세요</div>
       </div>
-      <div class="fg"><label class="fl">상품 설명 *</label><textarea class="fta" id="upDesc" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 구체적으로 설명해주세요. 실제 사용 예시를 함께 쓰면 판매율이 3배 올라요."></textarea></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">자산 유형 *</label>
+          <select class="fsel" id="upType"><option>🔄 자동화 워크플로우</option><option>🧩 기능 모듈</option><option>📋 템플릿</option><option>🛠 도구/유틸리티</option></select>
+        </div>
+        <div class="fg"><label class="fl">카테고리 *</label>
+          <select class="fsel" id="upCat"><option>스마트스토어 / 커머스</option><option>유튜브 / 쇼츠</option><option>GPT / AI</option><option>Google Sheets</option><option>n8n / Make</option><option>크롤링</option><option>데이터 처리</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">상품 설명 *</label>
+        <textarea class="fta" id="upDesc" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 구체적으로 설명해주세요."></textarea>
+      </div>
       <div class="frow3">
-        <div class="fg"><label class="fl">언어/도구</label><input class="fi2" placeholder="예: Python 3.11"></div>
-        <div class="fg"><label class="fl">실행 환경</label><select class="fsel"><option>Windows</option><option>Mac</option><option>Linux</option><option>웹브라우저</option><option>모두 가능</option></select></div>
-        <div class="fg"><label class="fl">난이도</label><select class="fsel"><option>누구나 가능</option><option>기본 지식 필요</option><option>개발자 전용</option></select></div>
+        <div class="fg"><label class="fl">언어/도구</label><input class="fi2" id="upLang" placeholder="예: Python 3.11"></div>
+        <div class="fg"><label class="fl">실행 환경</label>
+          <select class="fsel" id="upEnv"><option>Windows</option><option>Mac</option><option>Linux</option><option>웹브라우저</option><option>모두 가능</option></select>
+        </div>
+        <div class="fg"><label class="fl">난이도</label>
+          <select class="fsel" id="upLv"><option>누구나 가능</option><option>기본 지식 필요</option><option>개발자 전용</option></select>
+        </div>
       </div>
       <div class="fg"><label class="fl">라이선스 *</label>
         <div class="lgrid">
@@ -825,36 +844,37 @@ nav {
           <div class="lo" onclick="slic(this)"><div class="lt">오픈소스 (MIT)</div><div class="ld">자유롭게 수정·배포 가능</div></div>
         </div>
       </div>
-      <button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[1],'s2');toast('저장됨!','✅')">다음 단계 →</button>
+      <button class="bsub" onclick="sellTab(document.getElementById('ssb2'),'s2')">다음 단계 →</button>
     </div>
+
+    
     <div id="s2" class="spanel">
       <div class="fg"><label class="fl">메인 파일 *</label>
-        <div id="dropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s"
-  ondragover="event.preventDefault();document.getElementById('dropZ').style.borderColor='var(--accent)'"
-  ondragleave="document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)'"
-  ondrop="handleDrop2(event)">
-  
-  <input type="file" id="upFile"
-    accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt"
-    style="position:absolute;inset:0;opacity:0;cursor:pointer"
-    onchange="setUpFile(this.files[0])">
-
-  <div style="font-size:28px;margin-bottom:8px">📦</div>
-  <p><strong>클릭 또는 드래그</strong>해서 파일 업로드</p>
-  <p style="font-size:12px;color:var(--t3);margin-top:5px">
-    .py .js .json .zip .ipynb 지원 · 최대 50MB
-  </p>
-</div>
-
-<div id="upFileInfo" style="display:none;margin-top:8px;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
-  <div>
-    <div id="upFileName" style="font-size:12px;font-weight:600"></div>
-    <div id="upFileSize" style="font-size:11px;color:var(--t2)"></div>
-  </div>
-</div>
-          <p style="font-size:12px;color:var(--t3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
-
-      <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서는 초보를 위해 자세하게 설명해주세요.</div></div>
+        <div id="dropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:12px;padding:36px;text-align:center;cursor:pointer;position:relative;transition:all .2s;backdrop-filter:blur(8px)"
+          ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+          ondragleave="this.style.borderColor='rgba(0,245,196,.25)'"
+          ondrop="handleDrop2(event)">
+          <input type="file" id="upFile" accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="setUpFile(this.files[0])">
+          <div style="font-size:36px;margin-bottom:10px">📦</div>
+          <p style="font-size:13px;font-weight:500"><span style="color:var(--accent)">클릭 또는 드래그</span>해서 파일 업로드</p>
+          <p style="font-size:11px;color:var(--t3);margin-top:6px">.py .js .ts .json .zip .ipynb .html .sh · 최대 50MB</p>
+        </div>
+        <div id="upFileInfo" style="display:none;margin-top:10px;background:var(--g1);border:1px solid var(--b1);border-radius:10px;padding:12px 16px;display:none;justify-content:space-between;align-items:center">
+          <div>
+            <div id="upFileName" style="font-size:13px;font-weight:600"></div>
+            <div id="upFileSize" style="font-size:11px;color:var(--t2);margin-top:2px"></div>
+          </div>
+          <button onclick="clearUpFile()" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:16px">✕</button>
+        </div>
+      </div>
+      <div id="upProgress" style="display:none;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fm)"><span>업로드 중...</span><span id="upPct">0%</span></div>
+        <div style="height:3px;background:rgba(0,245,196,.1);border-radius:99px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:99px"></div></div>
+      </div>
+      <div class="fg" style="margin-top:16px"><label class="fl">README / 사용 설명서</label>
+        <textarea class="fta" id="upReadme" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea>
+        <div class="fhint">마크다운 형식 지원. 초보자도 쉽게 따라할 수 있게 자세히 써주세요.</div>
+      </div>
       <div class="fg"><label class="fl">스크린샷 (선택)</label>
         <div class="uzone" onclick="document.getElementById('ssFile').click()" id="ssZone">
           <input type="file" id="ssFile" accept=".png,.jpg,.jpeg,.gif,.webp" multiple style="display:none" onchange="handleScreenshots(this.files)">
@@ -864,8 +884,13 @@ nav {
         </div>
         <div id="ssPreviews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
-      <div style="display:flex;gap:10px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[0],'s1')">← 이전</button><button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[2],'s3');toast('저장됨!','✅')">다음 단계 →</button></div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="bg" onclick="sellTab(document.getElementById('ssb1'),'s1')">← 이전</button>
+        <button class="bsub" onclick="sellTab(document.getElementById('ssb3'),'s3')" style="flex:1">다음 단계 →</button>
+      </div>
     </div>
+
+    
     <div id="s3" class="spanel">
       <div class="fg"><label class="fl">판매 방식</label>
         <div class="pgrid2">
@@ -875,57 +900,53 @@ nav {
         </div>
       </div>
       <div class="frow">
-        <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="upPrice" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
-        <div class="fg"><label class="fl">할인 이벤트 (선택)</label><input class="fi2" placeholder="예: 출시 기념 20% 할인"></div>
+        <div class="fg"><label class="fl">판매 가격 (원) *</label>
+          <input class="fi2" type="number" id="upPrice" placeholder="예: 29000" oninput="ce()">
+          <div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div>
+        </div>
+        <div class="fg"><label class="fl">할인 이벤트 (선택)</label>
+          <input class="fi2" id="upDiscount" placeholder="예: 출시 기념 20% 할인">
+        </div>
       </div>
-      <div id="ep" style="background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:14px;padding:20px;display:none;backdrop-filter:blur(12px)">
-        <div style="font-size:11px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">수익 예상</div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--accent)" id="ep1">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">건당 수익(80%)</div></div>
-          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep10">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">10건 판매시</div></div>
-          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep100">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">100건 판매시</div></div>
+      <div id="ep" style="background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:14px;padding:18px;display:none;backdrop-filter:blur(12px)">
+        <div style="font-size:10px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">수익 예상</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--accent)" id="ep1">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">건당 수익(80%)</div></div>
+          <div><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep10">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">10건 판매시</div></div>
+          <div><div style="font-size:20px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep100">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">100건 판매시</div></div>
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:24px;align-items:center">
-        <button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button>
-        <button class="bg" onclick="openCalcModal()" style="border-color:rgba(139,92,246,.3);color:#a78bff">📊 수익 계산기</button>
+        <button class="bg" onclick="sellTab(document.getElementById('ssb2'),'s2')">← 이전</button>
+        <button class="bg" onclick="sellTab(document.getElementById('ssb4'),'s4')" style="border-color:rgba(139,92,246,.3);color:#a78bff">📊 수익 계산기</button>
         <button class="bsub" id="submitBtn" onclick="doUpload()" style="flex:1">검수 신청하기 🚀</button>
       </div>
     </div>
-    <div id="s4" class="spanel" style="display:none"></div>
-  </div>
-</div>
 
-<div class="overlay" id="calcModal">
-  <div class="modal" style="max-width:460px;width:95vw">
-    <button class="mx" onclick="document.getElementById('calcModal').classList.remove('on')">✕</button>
-    <div style="font-size:17px;font-weight:700;margin-bottom:4px">📊 수익 시뮬레이션</div>
-    <div style="font-size:12px;color:var(--t2);margin-bottom:22px;font-weight:300">예상 판매량을 설정하고 수익을 미리 계산해보세요</div>
-    <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
-    <div class="fg">
-      <label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent);font-family:var(--fm)">50건</span></label>
-      <input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()">
+    
+    <div id="s4" class="spanel">
+      <div class="ecalc">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:20px">📊 월 수익 시뮬레이션</h3>
+        <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
+        <div class="fg">
+          <label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent);font-family:var(--fm)">50건</span></label>
+          <input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()">
+        </div>
+        <div class="eres" style="margin-top:8px">
+          <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
+          <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
+          <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px 16px;background:rgba(0,245,196,.05);border:1px solid rgba(0,245,196,.12);border-radius:12px;font-size:12px;color:var(--t2);font-weight:300">
+          💡 <strong style="color:var(--accent);font-weight:500">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--accent);font-weight:500">₩2,400,000</strong> 이상 수익을 올리고 있어요.
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:24px">
+        <button class="bg" onclick="sellTab(document.getElementById('ssb3'),'s3')">← 이전</button>
+        <button class="bsub" id="submitBtn2" onclick="doUpload()" style="flex:1">검수 신청하기 🚀</button>
+      </div>
     </div>
-    <div class="eres" style="margin-top:8px">
-      <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
-      <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
-      <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
-    </div>
-    <div style="margin-top:16px;padding:12px 16px;background:rgba(0,245,196,.05);border:1px solid rgba(0,245,196,.12);border-radius:12px;font-size:12px;color:var(--t2);font-weight:300">
-      💡 <strong style="color:var(--accent);font-weight:500">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--accent);font-weight:500">₩2,400,000</strong> 이상 수익을 올리고 있어요.
-    </div>
-    <button onclick="document.getElementById('calcModal').classList.remove('on')" style="width:100%;margin-top:18px;padding:12px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer">확인</button>
-  </div>
-</div>
 
-<div class="overlay" id="submitSuccessModal">
-  <div class="modal" style="max-width:380px;width:90vw;text-align:center;padding:44px 36px">
-    <div style="font-size:56px;margin-bottom:18px">✅</div>
-    <div style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px">완료되었습니다</div>
-    <div style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:28px;font-weight:300">
-      관리자 검토 후 1~2일 내에<br>판매 목록에 자동 등록됩니다.
-    </div>
-    <button onclick="document.getElementById('submitSuccessModal').classList.remove('on');go('home')" style="width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">메인으로 돌아가기</button>
   </div>
 </div>
 
@@ -1287,31 +1308,31 @@ def process_order(order_id: str) -> dict:
           </div>
           <div>
             <label class="fl">파일 선택 *</label>
-            <div id="dropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s"
-              ondragover="event.preventDefault();document.getElementById('dropZ').style.borderColor='var(--accent)'"
-              ondragleave="document.getElementById('dropZ').style.borderColor='rgba(0,245,196,.25)'"
+            <div id="mpDropZ" style="border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s"
+              ondragover="event.preventDefault();document.getElementById('mpDropZ').style.borderColor='var(--accent)'"
+              ondragleave="document.getElementById('mpDropZ').style.borderColor='rgba(0,245,196,.25)'"
               ondrop="handleDrop2(event)">
-              <input type="file" id="upFile" accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="setUpFile(this.files[0])">
+              <input type="file" id="mpUpFile" accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="setUpFile(this.files[0])">
               <div style="font-size:28px;margin-bottom:8px">📦</div>
               <p style="font-size:12px;color:var(--t2);font-family:var(--fco)"><span style="color:var(--accent)">CLICK OR DRAG</span> FILE HERE</p>
               <p style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--fco)">.py .js .json .zip .ipynb · MAX 50MB</p>
             </div>
-            <div id="upFileInfo" style="display:none;margin-top:8px;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
-              <div><div id="upFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="upFileSize" style="font-size:11px;color:var(--t2)"></div></div>
+            <div id="mpUpFileInfo" style="display:none;margin-top:8px;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
+              <div><div id="mpUpFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="mpUpFileSize" style="font-size:11px;color:var(--t2)"></div></div>
               <button onclick="clearUpFile()" style="background:none;border:none;color:var(--t2);cursor:pointer">✕</button>
             </div>
-            <button class="bsub" onclick="doUpload2()" id="btnUpload">
+            <button class="bsub" onclick="doUpload2()" id="mpBtnUpload">
             SUBMIT FOR REVIEW 🚀
             </button>
           </div>
           <div style="margin-top:14px">
   <label class="fl">실행 화면 캡처 *</label>
-  <input type="file" id="upShot" accept="image/*" onchange="setShotFile(this.files[0])">
-  <div id="shotPreview" style="display:none;margin-top:8px">
-    <img id="shotImg" style="max-width:260px;border-radius:8px;border:1px solid var(--b1)">
+  <input type="file" id="mpUpShot" accept="image/*" onchange="setShotFile(this.files[0])">
+  <div id="mpShotPreview" style="display:none;margin-top:8px">
+    <img id="mpShotImg" style="max-width:260px;border-radius:8px;border:1px solid var(--b1)">
   </div>
 </div>
-          <div id="upProgress" style="display:none">
+          <div id="mpUpProgress" style="display:none">
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
             <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
           </div>
@@ -1751,6 +1772,15 @@ async function likeRequest(docId, current){
   }catch(e){}
 }
 
+function sellTab(btn, id){
+  document.querySelectorAll('.ssb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const el=document.getElementById(id);
+  if(el) el.classList.add('on');
+  if(id==='s4') uc();
+}
+
 function openCalcModal(){
   uc();
   document.getElementById('calcModal').classList.add('on');
@@ -2022,7 +2052,7 @@ function doUpload(){ doUpload2(); }
 
 async function doUpload2(){
   const fb=window._fb;const user=fb?.auth?.currentUser;
-  const isSellPage = document.getElementById('page-sell').classList.contains('on');
+  const sellPage = document.getElementById('page-sell'); const isSellPage = sellPage && sellPage.classList.contains('on');
   const titleEl = isSellPage
     ? document.getElementById('upTitle')
     : document.getElementById('mpTitle');
@@ -2042,7 +2072,7 @@ async function doUpload2(){
   if(!user){toast('로그인이 필요해요','⚠️');return;}
   if(!_upFile){toast('파일을 선택해주세요','⚠️');return;}
   if(!title){toast('상품명을 입력해주세요','⚠️');return;}
-  const btn=document.getElementById('btnUpload');
+  const btn=document.getElementById('submitBtn')||document.getElementById('submitBtn2')||document.getElementById('btnUpload');
   btn.disabled=true;btn.textContent='UPLOADING...';
   document.getElementById('upProgress').style.display='block';
   document.getElementById('upSuccess').style.display='none';
@@ -2079,8 +2109,8 @@ async function doUpload2(){
         });
         try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
         await addXP(user.uid,20);
-        document.getElementById('upProgress').style.display='none';
-        btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
+        const upProg=document.getElementById('upProgress')||document.getElementById('mpUpProgress');if(upProg)upProg.style.display='none';
+        if(btn){btn.disabled=false;btn.textContent='검수 신청하기 🚀';}
         clearUpFile();[titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
         document.getElementById('submitSuccessModal').classList.add('on');
       }
