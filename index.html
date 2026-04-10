@@ -806,12 +806,12 @@ nav {
       <button class="ssb" onclick="stab(this,'s4')">④ 수익 계산기</button>
     </div>
     <div id="s1" class="spanel on">
-      <div class="fg"><label class="fl">상품명 *</label><input class="fi2" placeholder="예: 스마트스토어 주문 자동 처리 스크립트 v2.0"><div class="fhint">검색에 잘 걸리는 구체적인 이름을 써주세요</div></div>
+      <div class="fg"><label class="fl">상품명 *</label><input class="fi2" id="upTitle" placeholder="예: 스마트스토어 주문 자동 처리 스크립트 v2.0"><div class="fhint">검색에 잘 걸리는 구체적인 이름을 써주세요</div></div>
       <div class="frow">
-        <div class="fg"><label class="fl">자산 유형 *</label><select class="fsel"><option>🔄 자동화 워크플로우</option><option>🧩 기능 모듈</option><option>📋 템플릿</option><option>🛠 도구/유틸리티</option></select></div>
-        <div class="fg"><label class="fl">카테고리 *</label><select class="fsel"><option>스마트스토어 / 커머스</option><option>유튜브 / 쇼츠</option><option>GPT / AI</option><option>Google Sheets</option><option>n8n / Make</option><option>크롤링</option><option>데이터 처리</option></select></div>
+        <div class="fg"><label class="fl">자산 유형 *</label><select class="fsel" id="upType"><option>🔄 자동화 워크플로우</option><option>🧩 기능 모듈</option><option>📋 템플릿</option><option>🛠 도구/유틸리티</option></select></div>
+        <div class="fg"><label class="fl">카테고리 *</label><select class="fsel" id="upCat"><option>스마트스토어 / 커머스</option><option>유튜브 / 쇼츠</option><option>GPT / AI</option><option>Google Sheets</option><option>n8n / Make</option><option>크롤링</option><option>데이터 처리</option></select></div>
       </div>
-      <div class="fg"><label class="fl">상품 설명 *</label><textarea class="fta" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 구체적으로 설명해주세요. 실제 사용 예시를 함께 쓰면 판매율이 3배 올라요."></textarea></div>
+      <div class="fg"><label class="fl">상품 설명 *</label><textarea class="fta" id="upDesc" placeholder="어떤 문제를 해결하는지, 어떻게 사용하는지 구체적으로 설명해주세요. 실제 사용 예시를 함께 쓰면 판매율이 3배 올라요."></textarea></div>
       <div class="frow3">
         <div class="fg"><label class="fl">언어/도구</label><input class="fi2" placeholder="예: Python 3.11"></div>
         <div class="fg"><label class="fl">실행 환경</label><select class="fsel"><option>Windows</option><option>Mac</option><option>Linux</option><option>웹브라우저</option><option>모두 가능</option></select></div>
@@ -875,7 +875,7 @@ nav {
         </div>
       </div>
       <div class="frow">
-        <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="pi" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
+        <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="upPrice" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
         <div class="fg"><label class="fl">할인 이벤트 (선택)</label><input class="fi2" placeholder="예: 출시 기념 20% 할인"></div>
       </div>
       <div id="ep" style="background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:none;">
@@ -1727,8 +1727,15 @@ async function likeRequest(docId, current){
 }
 
 function stab(btn,id){document.querySelectorAll('.ssb').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));btn.classList.add('on');document.getElementById(id)?.classList.add('on');}
-function slic(el){document.querySelectorAll('.lo').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
-function ce(){const v=parseInt(document.getElementById('pi')?.value||0);if(!v){document.getElementById('ep').style.display='none';return;}const e=Math.round(v*.8);document.getElementById('ep1').textContent='₩'+e.toLocaleString();document.getElementById('ep10').textContent='₩'+(e*10).toLocaleString();document.getElementById('ep100').textContent='₩'+(e*100).toLocaleString();document.getElementById('ep').style.display='block';}
+function slic(el){
+  document.querySelectorAll('.lo').forEach(o=>o.classList.remove('on'));
+  el.classList.add('on');
+  const licVal=el.querySelector('.lt')?.textContent||'일반 상업용';
+  let hi=document.getElementById('upLic');
+  if(!hi){hi=document.createElement('input');hi.type='hidden';hi.id='upLic';document.body.appendChild(hi);}
+  hi.value=licVal;
+}
+function ce(){const v=parseInt(document.getElementById('upPrice')?.value||0);if(!v){document.getElementById('ep').style.display='none';return;}const e=Math.round(v*.8);document.getElementById('ep1').textContent='₩'+e.toLocaleString();document.getElementById('ep10').textContent='₩'+(e*10).toLocaleString();document.getElementById('ep100').textContent='₩'+(e*100).toLocaleString();document.getElementById('ep').style.display='block';}
 function uc(){const p=parseInt(document.getElementById('cp')?.value||29000);const q=parseInt(document.getElementById('cq')?.value||50);document.getElementById('ql').textContent=q+'건';const e=Math.round(p*.8);document.getElementById('c1').textContent='₩'+(e*q).toLocaleString();document.getElementById('c2').textContent='₩'+(e*q*12).toLocaleString();document.getElementById('c3').textContent='₩'+e.toLocaleString();}
 
 function gtab(el,id){document.querySelectorAll('.gni').forEach(i=>i.classList.remove('on'));document.querySelectorAll('.gsec').forEach(s=>s.classList.remove('on'));el.classList.add('on');document.getElementById(id)?.classList.add('on');}
