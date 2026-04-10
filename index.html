@@ -1,48 +1,5 @@
 <!DOCTYPE html>
-<!--
-================================================================
-  저작물명   : CodeGame 웹 플랫폼 v1.1
-  저작물 유형 : 컴퓨터 프로그램 저작물
-================================================================
-  저작권자  : [고수환]                ← 실명으로 변경
-  창작 완성일: 2026년 4월
-  국적      : 대한민국
-  공표 여부 : 공표
-================================================================
-  프로그램 개요:
-    즉시 실행 가능한 자동화 코드 및 기능 모듈을 판매자와
-    구매자가 거래할 수 있는 국내 최초 코드 자산 전문
-    마켓플레이스 플랫폼.
 
-  구현 기술:
-    HTML5 / CSS3 / Vanilla JavaScript (ES2022)
-    Firebase Authentication (이메일/비밀번호 인증)
-    Firebase Cloud Firestore (실시간 데이터베이스)
-    Firebase Cloud Storage (파일 업로드/다운로드)
-    Canvas API (인트로 매트릭스 애니메이션)
-
-  핵심 기능 (본인이 직접 설계·구현):
-    1. 해커 스타일 부팅 인트로 화면 (매트릭스 효과)
-    2. 사이버펑크 HUD 바 (레벨/XP 시스템)
-    3. 코드 자산 마켓플레이스 (카테고리/언어별 필터 검색)
-    4. Firebase 기반 회원가입/로그인/로그아웃
-    5. 파일 업로드 시스템 (진행률 표시, Storage 저장)
-    6. 상품 검수 워크플로우 (pending/approved/rejected)
-    7. 구매 처리 및 구매내역 관리
-    8. 판매자 수익 통계 (판매건수, 수익 80% 계산)
-    9. XP/레벨 게임화 시스템
-    10. 관리자 승인/반려 패널
-    11. 닉네임·비밀번호 변경, 계정 삭제
-    12. 실시간 코드 프리뷰 상세 페이지
-    13. 수익 시뮬레이션 계산기
-    14. 커뮤니티 게시판 (질문/후기/자유)
-    15. 통합 코드 자산 검색 기능
-
-  Copyright (c) 2026 [고수환]. All rights reserved.
-  본 프로그램의 무단 복제, 배포, 수정을 금합니다.
-  Unauthorized reproduction or distribution is prohibited.
-================================================================
--->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -50,345 +7,626 @@
 <meta name="author" content="[본인 이름 입력]">
 <meta name="description" content="CodeGame — 실행 가능한 코드 자산 거래 플랫폼. 자동화 워크플로우, 기능 모듈, 스크립트를 사고파는 국내 최초 코드 마켓플레이스.">
 <title>CodeGame — 코드 자산 거래 플랫폼</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
 <style>
-:root{
-  --bg:#04050a;--bg2:#080c14;--bg3:#0d1220;--card:#0a0f1c;
-  --border:#0f1e36;--border2:#162a46;--border3:#1e3a5f;
-  --accent:#00f5c4;--accent2:#0ff;--purple:#7c3fff;--pink:#ff2d78;
-  --yellow:#f5c400;--red:#ff3b3b;--orange:#ff7b00;
-  --text:#cde8ff;--text2:#5a8cb0;--text3:#2a4a6a;
-  --fko:'Pretendard',sans-serif;
-  --fen:'Orbitron',monospace;
-  --fco:'Share Tech Mono','JetBrains Mono',monospace;
-  --r:8px;
-  --glow:0 0 20px rgba(0,245,196,.25);
-  --glow2:0 0 40px rgba(0,245,196,.15);
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;900&display=swap');
+
+:root {
+  
+  --bg: #03040b;
+  --bg2: #060810;
+  --bg3: #08091400;
+  --card: #0a0c1800;
+
+  
+  --g1: rgba(255,255,255,0.042);
+  --g2: rgba(255,255,255,0.068);
+  --g3: rgba(255,255,255,0.09);
+  --gb: rgba(0,245,196,0.07);
+
+  
+  --b1: rgba(255,255,255,0.07);
+  --b2: rgba(255,255,255,0.12);
+  --ba: rgba(0,245,196,0.18);
+  --ba2: rgba(0,245,196,0.35);
+
+  
+  --t1: rgba(255,255,255,0.92);
+  --t2: rgba(255,255,255,0.45);
+  --t3: rgba(255,255,255,0.22);
+
+  
+  --accent: #00f5c4;
+  --accent2: #00d4ff;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --orange: #f97316;
+
+  
+  --fs: 'Sora', sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+  --fe: 'Orbitron', monospace;
+
+  
+  --r: 16px;
+  --r2: 20px;
+  --r3: 24px;
+  --shadow: 0 32px 80px rgba(0,0,0,0.8);
+  --shadow2: 0 8px 32px rgba(0,0,0,0.5);
+  --glow: 0 0 24px rgba(0,245,196,0.2);
+
+  
+  --bg2-solid: #060810;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.1);
+  --border3: rgba(0,245,196,0.2);
+  --text: rgba(255,255,255,0.92);
+  --text2: rgba(255,255,255,0.45);
+  --text3: rgba(255,255,255,0.22);
+  --fko: 'Sora', sans-serif;
+  --fen: 'Orbitron', monospace;
+  --fco: 'JetBrains Mono', monospace;
+  --glow2: 0 0 40px rgba(0,245,196,0.15);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:var(--fko);min-height:100vh;overflow-x:hidden;cursor:default;}
 
-/* 배경 그리드 효과 */
-body::before{content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(0,245,196,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,196,.03) 1px,transparent 1px);
-  background-size:40px 40px;pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(0,245,196,.06) 0%,transparent 60%),
-  radial-gradient(ellipse 40% 40% at 90% 90%,rgba(124,63,255,.08) 0%,transparent 50%);
-  pointer-events:none;z-index:0;}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 
-/* ── INTRO ── */
-#intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .8s,transform .8s;}
-#intro.hidden-on-reload{display:none!important;}
-#intro.out{opacity:0;transform:scale(1.05);pointer-events:none;}
-#matrixCanvas{position:absolute;inset:0;opacity:.18;}
-.scan-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;}
-.intro-content{position:relative;z-index:2;text-align:center;width:min(600px,90vw);}
-.intro-logo{font-family:var(--fen);font-size:clamp(28px,6vw,52px);font-weight:900;color:var(--accent);text-shadow:0 0 30px var(--accent),0 0 60px rgba(0,245,196,.4);margin-bottom:28px;letter-spacing:.1em;}
-.intro-bracket{color:rgba(0,245,196,.4);}
-#introText{color:var(--accent);}
-.intro-cursor{animation:blink .6s step-end infinite;color:var(--accent);}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.intro-terminal{font-family:var(--fco);font-size:13px;color:#3a9;text-align:left;min-height:120px;line-height:1.9;padding:16px;background:rgba(0,245,196,.03);border:1px solid rgba(0,245,196,.1);border-radius:4px;margin-bottom:24px;}
-.intro-terminal .t-green{color:var(--accent);}
-.intro-terminal .t-dim{color:#1a5a3a;}
-.intro-terminal .t-white{color:var(--text);}
-.intro-terminal .t-warn{color:var(--yellow);}
-.intro-bar-wrap{margin-bottom:20px;}
-.intro-bar-label{font-family:var(--fco);font-size:11px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:6px;}
-.intro-bar{height:3px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden;}
-.intro-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;width:0%;transition:width .15s linear;box-shadow:0 0 12px var(--accent);}
-.intro-skip{font-family:var(--fco);font-size:11px;color:rgba(0,245,196,.3);cursor:pointer;letter-spacing:.15em;animation:pulse2 2s ease-in-out infinite;}
-.intro-skip:hover{color:var(--accent);}
-@keyframes pulse2{0%,100%{opacity:.3}50%{opacity:.7}}
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--fs);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ── HUD BAR ── */
-.hud-bar{position:fixed;top:0;left:0;right:0;z-index:190;height:28px;background:rgba(4,5,10,.95);border-bottom:1px solid rgba(0,245,196,.12);display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:var(--fco);font-size:11px;}
-.hud-left{display:flex;align-items:center;gap:12px;}
-.hud-badge{color:var(--accent);font-weight:700;letter-spacing:.1em;text-shadow:0 0 8px var(--accent);}
-.hud-xp-track{width:80px;height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden;}
-.hud-xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width .5s ease;}
-.hud-xp-txt{color:var(--text2);font-size:10px;}
-.hud-right{display:flex;gap:16px;align-items:center;}
-.hud-stat{color:var(--text2);font-size:10px;letter-spacing:.05em;}
-.hud-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:4px;animation:pulse3 1.5s ease-in-out infinite;box-shadow:0 0 6px var(--accent);}
-@keyframes pulse3{0%,100%{opacity:1}50%{opacity:.4}}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%, rgba(0,245,196,0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 75%, rgba(139,92,246,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 100%, rgba(0,212,255,0.04) 0%, transparent 50%);
+}
 
-/* ── NAV ── */
-nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;background:rgba(4,5,10,.92);backdrop-filter:blur(30px);border-bottom:1px solid rgba(0,245,196,.1);}
-.logo{font-family:var(--fen);font-weight:900;font-size:18px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--accent);text-shadow:0 0 16px rgba(0,245,196,.5);letter-spacing:.1em;}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 16px rgba(0,245,196,.4);}
-.nav-links{display:flex;gap:28px;}
-.nav-links a{color:var(--text2);font-size:13px;cursor:pointer;transition:all .18s;padding:4px 0;border-bottom:1px solid transparent;font-family:var(--fco);letter-spacing:.05em;}
-.nav-links a:hover,.nav-links a.on{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 8px var(--accent);}
-.nav-r{display:flex;gap:10px;align-items:center;}
-.nav-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;margin-right:6px;}
-.nav-search input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:160px;font-family:var(--fco);}
-.nav-search input::placeholder{color:var(--text3);}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
 
-/* ── BUTTONS ── */
-.bg{background:transparent;border:1px solid rgba(0,245,196,.3);color:var(--accent);padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .18s;}
-.bg:hover{border-color:var(--accent);background:rgba(0,245,196,.08);box-shadow:var(--glow);}
-.bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:7px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;border:none;transition:all .2s;}
-.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,245,196,.4);}
-.bsub{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;border-radius:6px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .2s;}
-.bsub:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,245,196,.35);}
-.blg-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:13px 28px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:var(--fco);letter-spacing:.06em;transition:all .2s;}
-.blg-p:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,245,196,.4);}
-.blg-g{background:transparent;border:1px solid rgba(0,245,196,.3);color:var(--accent);padding:13px 28px;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--fco);letter-spacing:.06em;transition:all .18s;}
-.blg-g:hover{border-color:var(--accent);background:rgba(0,245,196,.08);box-shadow:var(--glow);}
-.blg{font-family:var(--fco);}
+#bgMatrix { position:fixed; inset:0; z-index:0; opacity:0.035; pointer-events:none; }
 
-/* SEARCH BAR */
-.search-bar-wrap{max-width:1100px;margin:0 auto;padding:0 40px;overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s;opacity:0;}
-.search-bar-wrap.open{max-height:120px;opacity:1;}
-.search-bar-inner{display:flex;gap:12px;align-items:center;padding:20px 0 10px;}
-.search-big{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px 18px;transition:border-color .18s;}
-.search-big:focus-within{border-color:var(--accent);}
-.search-big input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:15px;font-family:var(--fko);}
-.search-big input::placeholder{color:var(--text3);}
-.search-big span{font-size:18px;}
-.search-go{padding:12px 24px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fko);transition:all .18s;white-space:nowrap;}
-.search-go:hover{filter:brightness(1.1);transform:translateY(-1px);}
-.search-close{padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:6px;font-size:14px;cursor:pointer;transition:all .18s;}
-.search-close:hover{color:var(--accent);border-color:var(--accent);}
-.search-result-wrap{max-width:1100px;margin:0 auto;padding:0 40px;}
-.search-result-label{font-size:12px;color:var(--text2);margin-bottom:16px;padding-top:4px;font-family:var(--fco);}
-.search-result-label b{color:var(--accent);}
-.no-result{text-align:center;padding:40px;color:var(--text2);font-size:13px;}
-.no-result .nr-icon{font-size:40px;margin-bottom:12px;}
+.glass {
+  background: var(--g1);
+  border: 1px solid var(--b1);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
 
-/* PAGE */
-.page{display:none;padding-top:86px;min-height:100vh;position:relative;z-index:1;}
-.page.on{display:block;}
+#intro {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  transition: opacity .9s cubic-bezier(.4,0,.2,1), transform .9s;
+}
+#intro.hidden-on-reload { display:none!important; }
+#intro.out { opacity:0; transform:scale(1.04); pointer-events:none; }
+#matrixCanvas { position:absolute; inset:0; opacity:.22; }
+.scan-lines {
+  position:absolute; inset:0; pointer-events:none;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);
+}
+.intro-content { position:relative; z-index:2; text-align:center; width:min(560px,90vw); }
+.intro-logo {
+  font-family:var(--fe); font-size:clamp(30px,6vw,54px); font-weight:900;
+  color:var(--accent); letter-spacing:.12em; margin-bottom:32px;
+  text-shadow: 0 0 40px var(--accent), 0 0 80px rgba(0,245,196,0.3);
+}
+.intro-bracket { color:rgba(0,245,196,.35); }
+.intro-cursor { animation:blink .55s step-end infinite; color:var(--accent); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.intro-terminal {
+  font-family:var(--fm); font-size:12px; color:rgba(0,245,196,.7);
+  text-align:left; min-height:120px; line-height:2;
+  padding:18px; background:rgba(0,245,196,.03);
+  border:1px solid rgba(0,245,196,.1); border-radius:12px; margin-bottom:24px;
+}
+.intro-terminal .t-green { color:var(--accent); }
+.intro-terminal .t-dim { color:rgba(0,245,196,.25); }
+.intro-terminal .t-white { color:rgba(255,255,255,.8); }
+.intro-terminal .t-warn { color:var(--yellow); }
+.intro-bar-wrap { margin-bottom:24px; }
+.intro-bar-label {
+  font-family:var(--fm); font-size:10px; color:var(--t2);
+  display:flex; justify-content:space-between; margin-bottom:8px; letter-spacing:.1em;
+}
+.intro-bar { height:2px; background:rgba(0,245,196,.08); border-radius:99px; overflow:hidden; }
+.intro-bar-fill {
+  height:100%; border-radius:99px; width:0%;
+  background:linear-gradient(90deg, var(--accent), var(--accent2));
+  transition:width .12s linear;
+  box-shadow: 0 0 16px var(--accent);
+}
+.intro-skip {
+  font-family:var(--fm); font-size:10px; color:rgba(0,245,196,.25);
+  cursor:pointer; letter-spacing:.18em;
+  animation: pulse2 2.4s ease-in-out infinite;
+}
+.intro-skip:hover { color:var(--accent); }
+@keyframes pulse2 { 0%,100%{opacity:.25} 50%{opacity:.65} }
 
-/* HERO */
-.hero{padding:70px 40px 50px;max-width:1100px;margin:0 auto;text-align:center;}
-.hbadge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:3px;border:1px solid rgba(0,245,196,.25);background:rgba(0,245,196,.05);font-size:11px;color:var(--accent);margin-bottom:28px;font-family:var(--fco);letter-spacing:.1em;}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse3 1.5s infinite;box-shadow:0 0 6px var(--accent);}
-.hero h1{font-size:clamp(36px,5vw,58px);font-weight:900;line-height:1.05;margin-bottom:20px;font-family:var(--fen);letter-spacing:-.02em;color:var(--text);}
-.hero h1 em{font-style:normal;color:var(--accent);text-shadow:0 0 30px rgba(0,245,196,.5);}
-.hero p{font-size:15px;color:var(--text2);max-width:520px;margin:0 auto 36px;line-height:1.8;}
-.hbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.hud-bar {
+  position:fixed; top:0; left:0; right:0; z-index:190; height:26px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; font-family:var(--fm); font-size:10px;
+}
+.hud-left { display:flex; align-items:center; gap:14px; }
+.hud-badge { color:var(--accent); font-weight:500; letter-spacing:.12em; }
+.hud-xp-track { width:72px; height:3px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
+.hud-xp-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:99px; transition:width .5s ease; }
+.hud-xp-txt { color:var(--t2); font-size:9px; letter-spacing:.05em; }
+.hud-right { display:flex; gap:20px; align-items:center; }
+.hud-stat { color:var(--t2); font-size:10px; letter-spacing:.06em; }
+.hud-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); display:inline-block; margin-right:5px; animation:pulse3 1.8s ease-in-out infinite; box-shadow:0 0 8px var(--accent); }
+@keyframes pulse3 { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-/* STATS */
-.stats{display:flex;justify-content:center;gap:56px;padding:34px 40px;border-top:1px solid rgba(0,245,196,.08);border-bottom:1px solid rgba(0,245,196,.08);margin:0 40px;}
-.stat{text-align:center;}
-.stn{font-size:28px;font-weight:800;font-family:var(--fen);color:var(--text);letter-spacing:.05em;}
-.stn b{color:var(--accent);text-shadow:0 0 16px rgba(0,245,196,.4);}
-.stl{font-size:11px;color:var(--text2);margin-top:3px;font-family:var(--fco);letter-spacing:.08em;}
+nav {
+  position:fixed; top:26px; left:0; right:0; z-index:180;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; height:60px;
+  background: rgba(3,4,11,0.65);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 1px 0 rgba(0,245,196,0.06), 0 8px 32px rgba(0,0,0,0.4);
+}
+.logo {
+  font-family:var(--fe); font-weight:900; font-size:17px;
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  color:var(--accent); letter-spacing:.1em;
+  text-shadow: 0 0 20px rgba(0,245,196,0.4);
+}
+.logo-icon {
+  width:30px; height:30px;
+  background:linear-gradient(135deg, rgba(0,245,196,0.9), rgba(0,212,255,0.9));
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:15px; box-shadow:0 0 20px rgba(0,245,196,0.35);
+}
+.nav-links { display:flex; gap:32px; }
+.nav-links a {
+  color:var(--t2); font-size:13px; cursor:pointer; transition:all .2s;
+  padding:4px 0; border-bottom:1px solid transparent;
+  font-family:var(--fs); font-weight:400; letter-spacing:.02em;
+}
+.nav-links a:hover, .nav-links a.on {
+  color:var(--t1); border-bottom-color:rgba(0,245,196,0.5);
+}
+.nav-r { display:flex; gap:8px; align-items:center; }
+.nav-search { display:flex; align-items:center; gap:8px; background:var(--g1); border:1px solid var(--b1); border-radius:10px; padding:6px 14px; margin-right:4px; }
+.nav-search input { background:none; border:none; outline:none; color:var(--t1); font-size:13px; width:150px; font-family:var(--fs); }
+.nav-search input::placeholder { color:var(--t3); }
 
-/* MKT */
-.mwrap{max-width:1100px;margin:0 auto;padding:40px;}
-.mtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.mtitle{font-size:18px;font-weight:700;font-family:var(--fen);color:var(--text);letter-spacing:.08em;}
-.srt{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);padding:7px 12px;border-radius:6px;font-size:12px;font-family:var(--fco);cursor:pointer;outline:none;}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;}
-.fb{padding:6px 14px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);transition:all .18s;letter-spacing:.05em;}
-.fb:hover,.fb.on{border-color:var(--accent);color:var(--accent);background:rgba(0,245,196,.06);text-shadow:0 0 8px rgba(0,245,196,.4);}
-.fdiv{width:1px;background:var(--border2);height:28px;margin:0 2px;align-self:center;}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.bg {
+  background: var(--g1);
+  border: 1px solid var(--b2);
+  color: var(--t1); padding:7px 18px; border-radius:10px;
+  font-size:12px; cursor:pointer; font-family:var(--fs);
+  font-weight:500; letter-spacing:.02em;
+  transition: all .2s; backdrop-filter:blur(12px);
+}
+.bg:hover { background:var(--g2); border-color:rgba(0,245,196,.3); box-shadow:var(--glow); }
 
-/* 카드 */
-.pc{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .25s;position:relative;}
-.pc::before{content:'';position:absolute;inset:0;border-radius:var(--r);background:linear-gradient(135deg,rgba(0,245,196,.03),transparent);opacity:0;transition:opacity .25s;}
-.pc:hover{border-color:rgba(0,245,196,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 20px rgba(0,245,196,.08);}
-.pc:hover::before{opacity:1;}
-.ctop{height:120px;padding:16px;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
-.ctop::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.1) 3px,rgba(0,0,0,.1) 4px);pointer-events:none;}
-.ctbdg{position:absolute;top:10px;right:10px;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--fco);letter-spacing:.06em;}
-.bwf{background:rgba(0,245,196,.12);color:var(--accent);border:1px solid rgba(0,245,196,.2);}
-.bfn{background:rgba(0,200,255,.12);color:var(--accent2);border:1px solid rgba(0,200,255,.2);}
-.btpl{background:rgba(255,45,120,.12);color:var(--pink);border:1px solid rgba(255,45,120,.2);}
-.btol{background:rgba(245,196,0,.12);color:var(--yellow);border:1px solid rgba(245,196,0,.2);}
-.ccode{position:relative;z-index:1;font-family:var(--fco);font-size:10px;color:var(--accent);line-height:1.65;max-height:90px;overflow:hidden;opacity:.8;}
-.cbody{padding:14px;}
-.ctags{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;}
-.tag{padding:2px 7px;border-radius:3px;font-size:10px;font-family:var(--fco);font-weight:500;letter-spacing:.04em;}
-.tpy{background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.15);}
-.tjs{background:rgba(245,196,0,.08);color:var(--yellow);border:1px solid rgba(245,196,0,.15);}
-.tsh{background:rgba(124,63,255,.08);color:#a78bff;border:1px solid rgba(124,63,255,.15);}
-.tn8{background:rgba(255,45,120,.08);color:var(--pink);border:1px solid rgba(255,45,120,.15);}
-.tgpt{background:rgba(255,59,59,.08);color:var(--red);border:1px solid rgba(255,59,59,.15);}
-.tno{background:rgba(255,123,0,.08);color:var(--orange);border:1px solid rgba(255,123,0,.15);}
-.ctitle{font-size:13px;font-weight:700;margin-bottom:5px;line-height:1.4;color:var(--text);}
-.cdesc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
-.cfoot{display:flex;align-items:center;justify-content:space-between;}
-.cprice{font-size:16px;font-weight:700;font-family:var(--fen);color:var(--accent);text-shadow:0 0 12px rgba(0,245,196,.3);}
-.csub{font-size:10px;color:var(--text3);font-family:var(--fco);}
-.cmeta{font-size:11px;color:var(--text2);font-family:var(--fco);}
+.bp {
+  background:linear-gradient(135deg, rgba(0,245,196,0.9), rgba(0,212,255,0.85));
+  color:#000; padding:7px 18px; border-radius:10px;
+  font-size:12px; font-weight:600; cursor:pointer;
+  font-family:var(--fs); border:none; transition:all .22s;
+}
+.bp:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,245,196,0.35); filter:brightness(1.08); }
 
-/* DETAIL */
-.dwrap{max-width:980px;margin:0 auto;padding:36px 40px;}
-.back{display:inline-flex;align-items:center;gap:6px;color:var(--text2);cursor:pointer;font-size:12px;margin-bottom:26px;transition:color .18s;font-family:var(--fco);letter-spacing:.06em;}
-.back:hover{color:var(--accent);}
-.dgrid{display:grid;grid-template-columns:1fr 300px;gap:30px;}
-.dcode{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:20px;font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.8;overflow-x:auto;}
-.dtitle{font-size:22px;font-weight:800;margin-bottom:10px;font-family:var(--fen);letter-spacing:.05em;}
-.dtags{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
-.ddesc{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px;}
-.dsec{margin-bottom:20px;}
-.dsec h3{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.6px;font-family:var(--fco);}
-.fi{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px;font-size:13px;color:var(--text2);}
-.fck{color:var(--accent);flex-shrink:0;}
-.bcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:22px;position:sticky;top:94px;}
-.bprice{font-size:28px;font-weight:700;font-family:var(--fen);color:var(--accent);margin-bottom:16px;text-shadow:0 0 16px rgba(0,245,196,.3);}
-.bprice small{font-size:12px;color:var(--text2);font-weight:400;}
-.brows{margin-bottom:16px;}
-.brow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.brow:last-child{border:none;}
-.brow span:first-child{color:var(--text2);}
-.bbuy{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fko);margin-bottom:8px;transition:all .2s;}
-.bbuy:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,245,196,.3);}
-.bprev{width:100%;padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--fco);transition:all .2s;}
-.bprev:hover{color:var(--accent);border-color:var(--accent);}
-.sbox{margin-top:18px;padding-top:18px;border-top:1px solid var(--border2);}
-.sbox h4{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:var(--fco);}
-.srow{display:flex;align-items:center;gap:10px;}
-.savt{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
-.snm{font-size:13px;font-weight:600;}
-.sgd{font-size:11px;color:var(--accent);}
+.bsub, .blg-p {
+  background:linear-gradient(135deg, rgba(0,245,196,0.9), rgba(0,212,255,0.85));
+  color:#000; border:none; border-radius:12px; padding:13px 28px;
+  font-size:13px; font-weight:600; cursor:pointer;
+  font-family:var(--fs); transition:all .22s;
+}
+.bsub:hover, .blg-p:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(0,245,196,0.4); }
 
-/* SELL */
-.swrap{max-width:1080px;margin:0 auto;padding:40px;}
-.shero{background:linear-gradient(135deg,rgba(0,245,196,.06),rgba(0,200,255,.04));border:1px solid rgba(0,245,196,.15);border-radius:var(--r);padding:32px;margin-bottom:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
-.shero h1{font-size:24px;font-weight:800;margin-bottom:7px;font-family:var(--fen);letter-spacing:.05em;}
-.shero p{font-size:13px;color:var(--text2);line-height:1.7;max-width:460px;}
-.ssteps{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:32px;}
-.ssb{padding:10px 22px;background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;white-space:nowrap;letter-spacing:.05em;}
-.ssb.on{color:var(--accent);border-bottom-color:var(--accent);}
-.spanel{display:none;}
-.spanel.on{display:block;}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.fg{margin-bottom:20px;}
-.fl{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;font-family:var(--fco);}
-.fi2,.fsel,.fta{width:100%;padding:11px 15px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;font-family:var(--fco);transition:border-color .18s;outline:none;}
-.fi2:focus,.fsel:focus,.fta:focus{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,245,196,.1);}
-.fta{min-height:110px;resize:vertical;line-height:1.7;}
-.fsel option{background:var(--bg2);}
-.fhint{font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--fco);}
-.uzone{border:1px dashed rgba(0,245,196,.25);border-radius:6px;padding:44px;text-align:center;cursor:pointer;transition:all .2s;}
-.uzone:hover{border-color:var(--accent);background:rgba(0,245,196,.03);}
-.uicon{font-size:36px;margin-bottom:12px;}
-.uzone p{font-size:13px;color:var(--text2);}
-.uzone strong{color:var(--accent);}
-.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.lo{padding:14px;border:1px solid var(--border2);border-radius:6px;cursor:pointer;transition:all .18s;}
-.lo:hover,.lo.on{border-color:var(--accent);background:rgba(0,245,196,.04);}
-.lt{font-size:13px;font-weight:700;margin-bottom:3px;}
-.ld{font-size:11px;color:var(--text2);line-height:1.5;}
-.pgrid2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.ptier{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:16px;}
-.ptier.rec{border-color:rgba(0,245,196,.4);background:rgba(0,245,196,.04);}
-.ptl{font-size:10px;color:var(--text2);margin-bottom:5px;font-family:var(--fco);}
-.ptn{font-size:13px;font-weight:700;margin-bottom:8px;}
-.pti{font-size:11px;color:var(--text2);line-height:1.8;}
-.ecalc{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;margin-top:20px;}
-.ecalc h3{font-size:13px;font-weight:700;margin-bottom:16px;font-family:var(--fen);letter-spacing:.05em;}
-.eslider{width:100%;margin:12px 0;accent-color:var(--accent);}
-.eres{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
-.eitem{background:var(--bg3);border-radius:6px;padding:14px;text-align:center;border:1px solid var(--border2);}
-.enum{font-size:20px;font-weight:700;font-family:var(--fen);color:var(--accent);text-shadow:0 0 12px rgba(0,245,196,.3);}
-.elbl{font-size:10px;color:var(--text2);margin-top:3px;font-family:var(--fco);}
+.blg-g {
+  background:var(--g1); border:1px solid var(--b2); color:var(--t1);
+  padding:13px 28px; border-radius:12px; font-size:13px; cursor:pointer;
+  font-family:var(--fs); transition:all .2s; backdrop-filter:blur(12px);
+}
+.blg-g:hover { background:var(--g2); border-color:var(--ba); }
+.blg { font-family:var(--fs); }
 
-/* GUIDE */
-.gwrap{max-width:1080px;margin:0 auto;padding:40px;}
-.ghero{text-align:center;padding:36px 0 44px;}
-.ghero h1{font-size:30px;font-weight:800;margin-bottom:10px;font-family:var(--fen);letter-spacing:.05em;}
-.ghero p{font-size:14px;color:var(--text2);max-width:460px;margin:0 auto;}
-.ggrid{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start;}
-.gnav{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:8px;position:sticky;top:94px;}
-.gni{padding:10px 14px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--text2);transition:all .18s;display:flex;align-items:center;gap:8px;font-family:var(--fco);}
-.gni:hover,.gni.on{background:rgba(0,245,196,.06);color:var(--accent);}
-.gsec{display:none;}
-.gsec.on{display:block;}
-.gcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:26px;margin-bottom:18px;}
-.gcard h2{font-size:17px;font-weight:700;margin-bottom:8px;font-family:var(--fen);letter-spacing:.04em;}
-.gcard p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px;}
-.gcard ul{padding-left:0;list-style:none;}
-.gcard ul li{font-size:13px;color:var(--text2);padding:4px 0 4px 18px;position:relative;line-height:1.7;}
-.gcard ul li::before{content:'›';position:absolute;left:0;color:var(--accent);}
-.gstep{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;}
-.gsn{width:32px;height:32px;border-radius:4px;background:rgba(0,245,196,.12);border:1px solid rgba(0,245,196,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:var(--accent);font-family:var(--fen);}
-.gsb h3{font-size:13px;font-weight:700;margin-bottom:4px;}
-.gsb p{font-size:13px;color:var(--text2);line-height:1.7;}
-.cex{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:16px;font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.8;margin:12px 0;overflow-x:auto;}
-.gtip{background:rgba(0,245,196,.04);border:1px solid rgba(0,245,196,.15);border-radius:6px;padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
-.faq{border-bottom:1px solid var(--border2);padding:14px 0;cursor:pointer;}
-.faqq{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;}
-.faqa{font-size:13px;color:var(--text2);line-height:1.75;margin-top:10px;display:none;}
-.faqa.on{display:block;}
+.search-bar-wrap {
+  max-width:1100px; margin:0 auto; padding:0 40px;
+  overflow:hidden; max-height:0; transition:max-height .35s cubic-bezier(.4,0,.2,1), opacity .25s; opacity:0;
+}
+.search-bar-wrap.open { max-height:120px; opacity:1; }
+.search-bar-inner { display:flex; gap:12px; align-items:center; padding:20px 0 10px; }
+.search-big {
+  flex:1; display:flex; align-items:center; gap:12px;
+  background:var(--g1); border:1px solid var(--b1); border-radius:14px;
+  padding:13px 18px; transition:all .2s; backdrop-filter:blur(20px);
+}
+.search-big:focus-within { border-color:var(--ba); background:var(--g2); }
+.search-big input { flex:1; background:none; border:none; outline:none; color:var(--t1); font-size:15px; font-family:var(--fs); }
+.search-big input::placeholder { color:var(--t3); }
+.search-big span { font-size:18px; }
+.search-go {
+  padding:13px 24px; background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));
+  color:#000; border:none; border-radius:12px; font-size:14px; font-weight:600;
+  cursor:pointer; font-family:var(--fs); transition:all .2s; white-space:nowrap;
+}
+.search-go:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.search-close {
+  padding:12px; background:var(--g1); color:var(--t2);
+  border:1px solid var(--b1); border-radius:10px; font-size:14px; cursor:pointer; transition:all .2s;
+}
+.search-close:hover { color:var(--accent); border-color:var(--ba); }
+.search-result-wrap { max-width:1100px; margin:0 auto; padding:0 40px; }
+.search-result-label { font-size:12px; color:var(--t2); margin-bottom:16px; padding-top:4px; font-family:var(--fm); }
+.search-result-label b { color:var(--accent); }
+.no-result { text-align:center; padding:48px; color:var(--t2); font-size:13px; }
+.no-result .nr-icon { font-size:40px; margin-bottom:12px; }
 
-/* COMMUNITY */
-.cwrap{max-width:1080px;margin:0 auto;padding:40px;}
-.chero{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;gap:16px;flex-wrap:wrap;}
-.chero h1{font-size:24px;font-weight:800;margin-bottom:4px;font-family:var(--fen);letter-spacing:.05em;}
-.chero p{font-size:13px;color:var(--text2);}
-.clayout{display:grid;grid-template-columns:1fr 290px;gap:26px;align-items:start;}
-.ctabs{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:20px;}
-.ctb{padding:9px 18px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;letter-spacing:.05em;}
-.ctb.on{color:var(--accent);border-bottom-color:var(--accent);}
-.plist{display:flex;flex-direction:column;gap:12px;}
-.pcard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .18s;}
-.pcard:hover{border-color:rgba(0,245,196,.3);transform:translateX(3px);box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.ph{display:flex;gap:12px;margin-bottom:10px;}
-.pavt{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
-.pi h3{font-size:13px;font-weight:700;margin-bottom:2px;}
-.pi p{font-size:11px;color:var(--text2);font-family:var(--fco);}
-.ptgs{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
-.ptg{padding:2px 8px;border-radius:3px;font-size:10px;background:rgba(0,245,196,.06);color:var(--accent);border:1px solid rgba(0,245,196,.12);font-family:var(--fco);}
-.pex{font-size:12px;color:var(--text2);line-height:1.65;}
-.pft{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--fco);}
-.cside{}
-.scard{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:16px;}
-.scard h3{font-size:11px;font-weight:700;margin-bottom:14px;color:var(--text2);font-family:var(--fco);letter-spacing:.08em;text-transform:uppercase;}
-.ritem{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.rnum{width:22px;height:22px;border-radius:3px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0;font-family:var(--fco);}
-.rnum.top{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;}
-.rinf{flex:1;}
-.rn{font-size:13px;font-weight:500;}
-.rs{font-size:11px;color:var(--text2);font-family:var(--fco);}
-.rv{font-size:12px;font-weight:700;color:var(--accent);font-family:var(--fen);}
-.nitem{padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;cursor:pointer;color:var(--text2);transition:color .18s;}
-.nitem:hover{color:var(--accent);}
-.nitem:last-child{border:none;}
+.page { display:none; padding-top:86px; min-height:100vh; position:relative; z-index:1; }
+.page.on { display:block; }
 
-/* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
-.overlay.on{display:flex;}
-.modal{background:var(--bg2);border:1px solid rgba(0,245,196,.2);border-radius:10px;padding:28px;width:100%;max-width:390px;position:relative;box-shadow:0 0 40px rgba(0,245,196,.08);}
-.mx{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;font-family:var(--fco);transition:color .18s;}
-.mx:hover{color:var(--accent);}
-.mtitle{font-size:18px;font-weight:800;margin-bottom:4px;font-family:var(--fen);color:var(--accent);letter-spacing:.05em;}
-.msub{font-size:12px;color:var(--text2);margin-bottom:20px;font-family:var(--fco);}
-.mtabs{display:flex;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:18px;}
-.mtb{padding:7px 18px;background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--fco);border-bottom:1px solid transparent;margin-bottom:-1px;transition:all .18s;letter-spacing:.06em;}
-.mtb.on{color:var(--accent);border-bottom-color:var(--accent);}
-.modal .fi2{margin-bottom:10px;}
-.msocial{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
-.socb{padding:9px;border:1px solid var(--border2);border-radius:6px;background:transparent;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--fco);transition:all .18s;text-align:center;}
-.socb:hover{border-color:var(--accent);color:var(--accent);}
-.toast{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--card);border:1px solid rgba(0,245,196,.3);border-radius:6px;padding:12px 18px;font-size:12px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,196,.1);transform:translateY(70px);opacity:0;transition:all .28s;font-family:var(--fco);}
-.toast.on{transform:translateY(0);opacity:1;}
+.hero { padding:80px 40px 60px; max-width:1100px; margin:0 auto; text-align:center; }
+.hbadge {
+  display:inline-flex; align-items:center; gap:7px; padding:5px 18px;
+  border-radius:99px; border:1px solid rgba(0,245,196,.2);
+  background:rgba(0,245,196,.06); font-size:11px; color:var(--accent);
+  margin-bottom:32px; font-family:var(--fm); letter-spacing:.12em;
+  backdrop-filter:blur(8px);
+}
+.dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:pulse3 1.8s infinite; box-shadow:0 0 8px var(--accent); }
+.hero h1 {
+  font-size:clamp(38px,5.5vw,62px); font-weight:700; line-height:1.08;
+  margin-bottom:22px; font-family:var(--fs); letter-spacing:-.03em; color:var(--t1);
+}
+.hero h1 em { font-style:normal; color:var(--accent); }
+.hero p { font-size:15px; color:var(--t2); max-width:500px; margin:0 auto 40px; line-height:1.85; font-weight:300; }
+.hbtns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+.stats {
+  display:flex; justify-content:center; gap:60px; padding:36px 40px;
+  margin:0 40px;
+  background:var(--g1); border-top:1px solid var(--b1); border-bottom:1px solid var(--b1);
+  backdrop-filter:blur(20px); border-radius:0;
+}
+.stat { text-align:center; }
+.stn { font-size:30px; font-weight:700; font-family:var(--fe); color:var(--t1); letter-spacing:.06em; }
+.stn b { color:var(--accent); }
+.stl { font-size:10px; color:var(--t3); margin-top:4px; font-family:var(--fm); letter-spacing:.1em; text-transform:uppercase; }
+
+.mwrap { max-width:1100px; margin:0 auto; padding:48px 40px; }
+.mtop { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.mtitle { font-size:17px; font-weight:600; font-family:var(--fs); color:var(--t1); letter-spacing:-.01em; }
+.srt {
+  background:var(--g1); border:1px solid var(--b1); color:var(--t2);
+  padding:7px 12px; border-radius:10px; font-size:12px; font-family:var(--fm);
+  cursor:pointer; outline:none; backdrop-filter:blur(12px);
+}
+.filters { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:28px; }
+.fb {
+  padding:6px 15px; border-radius:99px; border:1px solid var(--b1);
+  background:var(--g1); color:var(--t2); font-size:12px; cursor:pointer;
+  font-family:var(--fs); font-weight:400; transition:all .2s; backdrop-filter:blur(8px);
+}
+.fb:hover, .fb.on {
+  border-color:rgba(0,245,196,.35); color:var(--accent);
+  background:rgba(0,245,196,.07);
+}
+.fdiv { width:1px; background:var(--b1); height:28px; margin:0 4px; align-self:center; }
+.pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:18px; }
+
+.pc {
+  background:var(--g1);
+  border:1px solid var(--b1);
+  border-radius:var(--r2);
+  overflow:hidden; cursor:pointer;
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+}
+.pc::before {
+  content:''; position:absolute; inset:0; border-radius:var(--r2);
+  background:linear-gradient(135deg, rgba(255,255,255,.04) 0%, transparent 60%);
+  opacity:0; transition:opacity .28s;
+}
+.pc:hover {
+  border-color:rgba(0,245,196,.25);
+  transform:translateY(-6px) scale(1.01);
+  box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(0,245,196,.1);
+  background:var(--g2);
+}
+.pc:hover::before { opacity:1; }
+.ctop { height:120px; padding:18px; position:relative; overflow:hidden; display:flex; align-items:flex-end; }
+.ctop::after {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
+  pointer-events:none;
+}
+.ctbdg { position:absolute; top:10px; right:10px; padding:3px 9px; border-radius:99px; font-size:10px; font-weight:500; font-family:var(--fm); letter-spacing:.06em; backdrop-filter:blur(8px); }
+.bwf { background:rgba(0,245,196,.1); color:var(--accent); border:1px solid rgba(0,245,196,.2); }
+.bfn { background:rgba(0,212,255,.1); color:var(--accent2); border:1px solid rgba(0,212,255,.2); }
+.btpl { background:rgba(236,72,153,.1); color:var(--pink); border:1px solid rgba(236,72,153,.2); }
+.btol { background:rgba(245,158,11,.1); color:var(--yellow); border:1px solid rgba(245,158,11,.2); }
+.ccode { position:relative; z-index:1; font-family:var(--fm); font-size:10px; color:var(--accent); line-height:1.7; max-height:88px; overflow:hidden; opacity:.75; }
+.cbody { padding:16px 18px; }
+.ctags { display:flex; gap:5px; margin-bottom:9px; flex-wrap:wrap; }
+.tag { padding:3px 8px; border-radius:99px; font-size:10px; font-family:var(--fm); font-weight:400; letter-spacing:.04em; }
+.tpy { background:rgba(0,245,196,.07); color:var(--accent); border:1px solid rgba(0,245,196,.15); }
+.tjs { background:rgba(245,158,11,.07); color:var(--yellow); border:1px solid rgba(245,158,11,.15); }
+.tsh { background:rgba(139,92,246,.07); color:#a78bff; border:1px solid rgba(139,92,246,.15); }
+.tn8 { background:rgba(236,72,153,.07); color:var(--pink); border:1px solid rgba(236,72,153,.15); }
+.tgpt { background:rgba(239,68,68,.07); color:var(--red); border:1px solid rgba(239,68,68,.15); }
+.tno { background:rgba(249,115,22,.07); color:var(--orange); border:1px solid rgba(249,115,22,.15); }
+.ctitle { font-size:14px; font-weight:600; margin-bottom:6px; line-height:1.4; color:var(--t1); letter-spacing:-.01em; }
+.cdesc { font-size:12px; color:var(--t2); line-height:1.65; margin-bottom:14px; font-weight:300; }
+.cfoot { display:flex; align-items:center; justify-content:space-between; }
+.cprice { font-size:17px; font-weight:700; font-family:var(--fe); color:var(--accent); }
+.csub { font-size:10px; color:var(--t3); font-family:var(--fm); margin-top:2px; }
+.cmeta { font-size:11px; color:var(--t2); font-family:var(--fm); }
+
+.dwrap { max-width:980px; margin:0 auto; padding:40px 40px; }
+.back {
+  display:inline-flex; align-items:center; gap:6px; color:var(--t2);
+  cursor:pointer; font-size:12px; margin-bottom:28px; transition:color .2s;
+  font-family:var(--fm); letter-spacing:.06em;
+}
+.back:hover { color:var(--accent); }
+.dgrid { display:grid; grid-template-columns:1fr 310px; gap:32px; }
+.dcode {
+  background:rgba(0,245,196,.03); border:1px solid rgba(0,245,196,.1);
+  border-radius:var(--r); padding:24px; margin-bottom:22px;
+  font-family:var(--fm); font-size:12px; color:var(--accent); line-height:1.85;
+  overflow-x:auto; backdrop-filter:blur(8px);
+}
+.dtitle { font-size:24px; font-weight:700; margin-bottom:12px; font-family:var(--fs); letter-spacing:-.02em; color:var(--t1); }
+.dtags { display:flex; gap:7px; margin-bottom:16px; flex-wrap:wrap; }
+.ddesc { font-size:13px; color:var(--t2); line-height:1.85; margin-bottom:22px; font-weight:300; }
+.dsec { margin-bottom:22px; }
+.dsec h3 { font-size:10px; font-weight:600; color:var(--t3); margin-bottom:12px; text-transform:uppercase; letter-spacing:.8px; font-family:var(--fm); }
+.fi { display:flex; gap:9px; align-items:flex-start; margin-bottom:8px; font-size:13px; color:var(--t2); font-weight:300; }
+.fck { color:var(--accent); flex-shrink:0; }
+.bcard {
+  background:var(--g2);
+  border:1px solid var(--b2);
+  border-radius:var(--r2); padding:24px; position:sticky; top:96px;
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  box-shadow: 0 24px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.bprice { font-size:30px; font-weight:700; font-family:var(--fe); color:var(--accent); margin-bottom:18px; }
+.bprice small { font-size:12px; color:var(--t2); font-weight:300; }
+.brows { margin-bottom:18px; }
+.brow { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--b1); font-size:12px; }
+.brow:last-child { border:none; }
+.brow span:first-child { color:var(--t2); }
+.bbuy {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg, rgba(0,245,196,.9), rgba(0,212,255,.85));
+  color:#000; border:none; border-radius:12px;
+  font-size:14px; font-weight:600; cursor:pointer; font-family:var(--fs);
+  margin-bottom:10px; transition:all .22s; letter-spacing:.01em;
+}
+.bbuy:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(0,245,196,.35); filter:brightness(1.08); }
+.bprev {
+  width:100%; padding:12px; background:var(--g1); color:var(--t2);
+  border:1px solid var(--b1); border-radius:12px; font-size:13px;
+  cursor:pointer; font-family:var(--fs); transition:all .2s;
+}
+.bprev:hover { color:var(--t1); border-color:var(--b2); background:var(--g2); }
+.sbox { margin-top:20px; padding-top:20px; border-top:1px solid var(--b1); }
+.sbox h4 { font-size:10px; color:var(--t3); text-transform:uppercase; letter-spacing:.8px; margin-bottom:12px; font-family:var(--fm); }
+.srow { display:flex; align-items:center; gap:10px; }
+.savt { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
+.snm { font-size:13px; font-weight:500; color:var(--t1); }
+.sgd { font-size:11px; color:var(--accent); font-family:var(--fm); }
+
+.swrap { max-width:1080px; margin:0 auto; padding:48px 40px; }
+.shero {
+  background:var(--g1); border:1px solid rgba(0,245,196,.12);
+  border-radius:var(--r2); padding:36px; margin-bottom:40px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  backdrop-filter:blur(20px);
+}
+.shero h1 { font-size:26px; font-weight:700; margin-bottom:8px; font-family:var(--fs); letter-spacing:-.02em; }
+.shero p { font-size:13px; color:var(--t2); line-height:1.75; max-width:460px; font-weight:300; }
+.ssteps { display:flex; border-bottom:1px solid var(--b1); margin-bottom:36px; }
+.ssb {
+  padding:10px 22px; background:none; border:none; color:var(--t2);
+  font-size:13px; cursor:pointer; font-family:var(--fs);
+  border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .2s; white-space:nowrap;
+}
+.ssb.on { color:var(--accent); border-bottom-color:var(--accent); }
+.spanel { display:none; }
+.spanel.on { display:block; }
+.frow { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.frow3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.fg { margin-bottom:22px; }
+.fl { display:block; font-size:10px; font-weight:600; color:var(--t2); margin-bottom:7px; text-transform:uppercase; letter-spacing:.7px; font-family:var(--fm); }
+.fi2, .fsel, .fta {
+  width:100%; padding:12px 16px;
+  background:var(--g1); border:1px solid var(--b1); border-radius:12px;
+  color:var(--t1); font-size:13px; font-family:var(--fs);
+  transition:all .2s; outline:none; backdrop-filter:blur(8px);
+}
+.fi2:focus, .fsel:focus, .fta:focus { border-color:rgba(0,245,196,.35); background:var(--g2); box-shadow:0 0 0 3px rgba(0,245,196,.06); }
+.fta { min-height:110px; resize:vertical; line-height:1.75; }
+.fsel option { background:#06080f; }
+.fhint { font-size:11px; color:var(--t3); margin-top:5px; font-family:var(--fm); }
+.uzone {
+  border:1px dashed rgba(0,245,196,.2); border-radius:var(--r);
+  padding:48px; text-align:center; cursor:pointer; transition:all .22s; backdrop-filter:blur(8px);
+}
+.uzone:hover { border-color:rgba(0,245,196,.4); background:rgba(0,245,196,.03); }
+.uicon { font-size:36px; margin-bottom:14px; }
+.uzone p { font-size:13px; color:var(--t2); font-weight:300; }
+.uzone strong { color:var(--accent); font-weight:500; }
+.lgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.lo { padding:15px; border:1px solid var(--b1); border-radius:12px; cursor:pointer; transition:all .2s; backdrop-filter:blur(8px); }
+.lo:hover, .lo.on { border-color:rgba(0,245,196,.3); background:rgba(0,245,196,.04); }
+.lt { font-size:13px; font-weight:500; margin-bottom:4px; color:var(--t1); }
+.ld { font-size:11px; color:var(--t2); line-height:1.55; font-weight:300; }
+.pgrid2 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.ptier { background:var(--g1); border:1px solid var(--b1); border-radius:14px; padding:18px; backdrop-filter:blur(12px); }
+.ptier.rec { border-color:rgba(0,245,196,.3); background:rgba(0,245,196,.04); }
+.ptl { font-size:10px; color:var(--t2); margin-bottom:6px; font-family:var(--fm); letter-spacing:.06em; }
+.ptn { font-size:14px; font-weight:600; margin-bottom:9px; color:var(--t1); }
+.pti { font-size:11px; color:var(--t2); line-height:1.85; font-weight:300; }
+.ecalc { background:var(--g1); border:1px solid var(--b1); border-radius:var(--r2); padding:28px; margin-top:22px; backdrop-filter:blur(16px); }
+.ecalc h3 { font-size:14px; font-weight:600; margin-bottom:18px; font-family:var(--fs); letter-spacing:-.01em; }
+.eslider { width:100%; margin:14px 0; accent-color:var(--accent); }
+.eres { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+.eitem { background:rgba(0,245,196,.04); border-radius:14px; padding:16px; text-align:center; border:1px solid rgba(0,245,196,.1); }
+.enum { font-size:22px; font-weight:700; font-family:var(--fe); color:var(--accent); }
+.elbl { font-size:10px; color:var(--t2); margin-top:4px; font-family:var(--fm); letter-spacing:.06em; text-transform:uppercase; }
+
+.gwrap { max-width:1080px; margin:0 auto; padding:48px 40px; }
+.ghero { text-align:center; padding:36px 0 48px; }
+.ghero h1 { font-size:32px; font-weight:700; margin-bottom:10px; font-family:var(--fs); letter-spacing:-.02em; }
+.ghero p { font-size:14px; color:var(--t2); max-width:440px; margin:0 auto; font-weight:300; }
+.ggrid { display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
+.gnav { background:var(--g1); border:1px solid var(--b1); border-radius:var(--r2); padding:8px; position:sticky; top:96px; backdrop-filter:blur(20px); }
+.gni { padding:10px 15px; border-radius:10px; font-size:12px; cursor:pointer; color:var(--t2); transition:all .2s; display:flex; align-items:center; gap:9px; font-family:var(--fs); font-weight:400; }
+.gni:hover, .gni.on { background:rgba(0,245,196,.07); color:var(--t1); }
+.gsec { display:none; }
+.gsec.on { display:block; }
+.gcard { background:var(--g1); border:1px solid var(--b1); border-radius:var(--r2); padding:28px; margin-bottom:18px; backdrop-filter:blur(16px); }
+.gcard h2 { font-size:18px; font-weight:600; margin-bottom:9px; font-family:var(--fs); letter-spacing:-.01em; }
+.gcard p { font-size:13px; color:var(--t2); line-height:1.85; margin-bottom:14px; font-weight:300; }
+.gcard ul { padding-left:0; list-style:none; }
+.gcard ul li { font-size:13px; color:var(--t2); padding:4px 0 4px 18px; position:relative; line-height:1.75; font-weight:300; }
+.gcard ul li::before { content:'›'; position:absolute; left:0; color:var(--accent); }
+.gstep { display:flex; gap:14px; align-items:flex-start; margin-bottom:20px; }
+.gsn { width:32px; height:32px; border-radius:10px; background:rgba(0,245,196,.08); border:1px solid rgba(0,245,196,.2); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; flex-shrink:0; color:var(--accent); font-family:var(--fe); }
+.gsb h3 { font-size:14px; font-weight:600; margin-bottom:5px; }
+.gsb p { font-size:13px; color:var(--t2); line-height:1.75; font-weight:300; }
+.cex { background:rgba(0,245,196,.03); border:1px solid rgba(0,245,196,.1); border-radius:12px; padding:18px; font-family:var(--fm); font-size:12px; color:var(--accent); line-height:1.85; margin:14px 0; overflow-x:auto; }
+.gtip { background:rgba(0,245,196,.04); border:1px solid rgba(0,245,196,.12); border-radius:12px; padding:16px 18px; font-size:13px; color:var(--t2); line-height:1.75; display:flex; gap:12px; align-items:flex-start; font-weight:300; }
+.faq { border-bottom:1px solid var(--b1); padding:16px 0; cursor:pointer; }
+.faqq { display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:500; color:var(--t1); }
+.faqa { font-size:13px; color:var(--t2); line-height:1.85; margin-top:12px; display:none; font-weight:300; }
+.faqa.on { display:block; }
+
+.cwrap { max-width:1080px; margin:0 auto; padding:48px 40px; }
+.chero { display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; gap:16px; flex-wrap:wrap; }
+.chero h1 { font-size:26px; font-weight:700; margin-bottom:5px; font-family:var(--fs); letter-spacing:-.02em; }
+.chero p { font-size:13px; color:var(--t2); font-weight:300; }
+.clayout { display:grid; grid-template-columns:1fr 280px; gap:28px; align-items:start; }
+.ctabs { display:flex; border-bottom:1px solid var(--b1); margin-bottom:22px; }
+.ctb { padding:9px 20px; background:none; border:none; color:var(--t2); font-size:12px; cursor:pointer; font-family:var(--fs); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .2s; }
+.ctb.on { color:var(--accent); border-bottom-color:var(--accent); }
+.plist { display:flex; flex-direction:column; gap:12px; }
+.pcard {
+  background:var(--g1); border:1px solid var(--b1); border-radius:var(--r);
+  padding:20px; cursor:pointer; transition:all .22s; backdrop-filter:blur(16px);
+}
+.pcard:hover { border-color:rgba(0,245,196,.22); transform:translateX(5px); background:var(--g2); box-shadow:0 8px 32px rgba(0,0,0,.4); }
+.ph { display:flex; gap:12px; margin-bottom:12px; }
+.pavt { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+.pi h3 { font-size:13px; font-weight:600; margin-bottom:3px; color:var(--t1); }
+.pi p { font-size:11px; color:var(--t2); font-family:var(--fm); }
+.ptgs { display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+.ptg { padding:3px 9px; border-radius:99px; font-size:10px; background:rgba(0,245,196,.06); color:var(--accent); border:1px solid rgba(0,245,196,.12); font-family:var(--fm); }
+.pex { font-size:12px; color:var(--t2); line-height:1.7; font-weight:300; }
+.pft { display:flex; gap:18px; margin-top:14px; font-size:11px; color:var(--t3); font-family:var(--fm); }
+.cside {}
+.scard { background:var(--g1); border:1px solid var(--b1); border-radius:var(--r); padding:20px; margin-bottom:16px; backdrop-filter:blur(16px); }
+.scard h3 { font-size:10px; font-weight:600; margin-bottom:16px; color:var(--t3); font-family:var(--fm); letter-spacing:.1em; text-transform:uppercase; }
+.ritem { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.rnum { width:22px; height:22px; border-radius:6px; background:var(--g2); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--t2); flex-shrink:0; font-family:var(--fm); }
+.rnum.top { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000; }
+.rinf { flex:1; }
+.rn { font-size:13px; font-weight:500; color:var(--t1); }
+.rs { font-size:11px; color:var(--t2); font-family:var(--fm); }
+.rv { font-size:12px; font-weight:700; color:var(--accent); font-family:var(--fe); }
+.nitem { padding:9px 0; border-bottom:1px solid var(--b1); font-size:12px; cursor:pointer; color:var(--t2); transition:color .2s; font-weight:300; }
+.nitem:hover { color:var(--t1); }
+.nitem:last-child { border:none; }
+
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.75); z-index:300;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(30px) saturate(120%);
+  -webkit-backdrop-filter:blur(30px) saturate(120%);
+}
+.overlay.on { display:flex; }
+.modal {
+  background: rgba(8,9,18,0.88);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r3); padding:32px;
+  width:100%; max-width:400px; position:relative;
+  box-shadow: 0 48px 120px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+}
+.mx { position:absolute; top:16px; right:18px; background:none; border:none; color:var(--t2); font-size:16px; cursor:pointer; font-family:var(--fm); transition:color .2s; }
+.mx:hover { color:var(--t1); }
+.mtitle { font-size:20px; font-weight:700; margin-bottom:5px; font-family:var(--fs); color:var(--t1); letter-spacing:-.01em; }
+.msub { font-size:12px; color:var(--t2); margin-bottom:22px; font-family:var(--fm); font-weight:300; }
+.mtabs { display:flex; border-bottom:1px solid var(--b1); margin-bottom:20px; }
+.mtb { padding:7px 20px; background:none; border:none; color:var(--t2); font-size:12px; cursor:pointer; font-family:var(--fs); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .2s; }
+.mtb.on { color:var(--accent); border-bottom-color:var(--accent); }
+.modal .fi2 { margin-bottom:12px; }
+.msocial { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
+.socb { padding:10px; border:1px solid var(--b1); border-radius:10px; background:var(--g1); color:var(--t2); font-size:11px; cursor:pointer; font-family:var(--fs); transition:all .2s; text-align:center; backdrop-filter:blur(8px); }
+.socb:hover { border-color:var(--ba); color:var(--t1); background:var(--g2); }
+
+.toast {
+  position:fixed; bottom:28px; right:28px; z-index:9998;
+  background:rgba(8,9,20,0.92);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:14px 22px;
+  font-size:12px; display:flex; align-items:center; gap:12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter:blur(30px); transform:translateY(80px); opacity:0;
+  transition:all .3s cubic-bezier(.4,0,.2,1); font-family:var(--fs); font-weight:400;
+}
+.toast.on { transform:translateY(0); opacity:1; }
+
+#loginErr, #regErr {
+  display:none; margin-top:12px; padding:11px 15px;
+  background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.2);
+  color:rgba(239,68,68,.9); border-radius:10px; font-size:12px; font-weight:400;
+}
 
 @media(max-width:768px){
-  nav{padding:0 16px;}
-  .nav-links,.nav-search{display:none;}
-  .hero{padding:50px 16px 40px;}
-  .hero h1{font-size:30px;}
-  .stats{flex-wrap:wrap;gap:24px;margin:0 16px;padding:22px 16px;}
-  .mwrap,.swrap,.gwrap,.cwrap,.dwrap{padding:20px 16px;}
-  .dgrid,.ggrid,.clayout{grid-template-columns:1fr;}
-  .frow,.frow3,.pgrid2,.lgrid{grid-template-columns:1fr;}
+  nav { padding:0 18px; }
+  .nav-links, .nav-search { display:none; }
+  .hero { padding:56px 18px 44px; }
+  .hero h1 { font-size:32px; }
+  .stats { flex-wrap:wrap; gap:28px; margin:0 18px; padding:24px 18px; }
+  .mwrap,.swrap,.gwrap,.cwrap,.dwrap { padding:22px 18px; }
+  .dgrid,.ggrid,.clayout { grid-template-columns:1fr; }
+  .frow,.frow3,.pgrid2,.lgrid { grid-template-columns:1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- ✅ FIX #4: 새로고침 시 인트로 스킵 (최초 방문에만 표시) -->
 <script>
   if(sessionStorage.getItem('cg_intro_shown')){
     document.addEventListener('DOMContentLoaded',function(){
@@ -400,7 +638,8 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   }
 </script>
 
-<!-- HACKER INTRO -->
+<canvas id="bgMatrix" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.038;"></canvas>
+
 <div id="intro">
   <canvas id="matrixCanvas"></canvas>
   <div class="intro-content">
@@ -417,7 +656,6 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   <div class="scan-lines"></div>
 </div>
 
-<!-- XP HUD -->
 <div class="hud-bar" id="hudBar">
   <div class="hud-left">
     <span class="hud-badge">LV.<span id="hudLvl">01</span></span>
@@ -426,8 +664,8 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   </div>
   <div class="hud-right">
     <span class="hud-stat"><span class="hud-dot"></span>LIVE</span>
-    <span class="hud-stat">💾 2,400 ASSETS</span>
-    <span class="hud-stat">⚡ 1,800 DEVS</span>
+    <span class="hud-stat" id="hudAssets">💾 — ASSETS</span>
+    <span class="hud-stat" id="hudDevs">⚡ — DEVS</span>
   </div>
 </div>
 
@@ -439,6 +677,7 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
     <a id="n-req" onclick="go('req')">요청하기</a>
     <a id="n-guide" onclick="go('guide')">가이드</a>
     <a id="n-comm" onclick="go('comm')">커뮤니티</a>
+    <a id="n-ent" onclick="openEnterpriseModal()">기업 문의</a>
   </div>
   <div class="nav-r">
     <button class="bg" onclick="toggleSearch()" id="searchBtn">🔍 검색</button>
@@ -447,7 +686,6 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   </div>
 </nav>
 
-<!-- HOME -->
 <div id="page-home" class="page on">
   <div class="hero">
     <div class="hbadge"><div class="dot"></div>Beta · 지금 무료로 시작하세요</div>
@@ -459,13 +697,13 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
     </div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stn"><b>2,400</b>+</div><div class="stl">등록 자산</div></div>
-    <div class="stat"><div class="stn"><b>1,800</b>+</div><div class="stl">활성 판매자</div></div>
-    <div class="stat"><div class="stn">₩<b>48M</b>+</div><div class="stl">누적 거래액</div></div>
+    <div class="stat"><div class="stn" id="statProducts"><b>—</b></div><div class="stl">등록 자산</div></div>
+    <div class="stat"><div class="stn" id="statSellers"><b>—</b></div><div class="stl">활성 판매자</div></div>
+    <div class="stat"><div class="stn" id="statTrades">₩<b>—</b></div><div class="stl">누적 거래액</div></div>
     <div class="stat"><div class="stn"><b>4.9</b>★</div><div class="stl">평균 평점</div></div>
   </div>
 
-  <!-- 검색 바 -->
+  
   <div class="search-bar-wrap" id="searchBarWrap">
     <div class="search-bar-inner">
       <div class="search-big">
@@ -476,23 +714,28 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
       <button class="search-close" onclick="closeSearch()">✕</button>
     </div>
   </div>
-  <!-- 검색 결과 -->
+  
   <div class="search-result-wrap" id="searchResultWrap" style="display:none;">
     <div class="search-result-label" id="searchLabel"></div>
     <div class="pgrid" id="searchGrid"></div>
   </div>
   <div class="mwrap" id="ms">
+    <div id="demoNotice" style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:11px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(245,158,11,0.8);backdrop-filter:blur(8px)">
+      <span>💡</span>
+      <span style="font-weight:300">현재 예시 상품이 표시되고 있어요. 판매자가 상품을 등록하면 여기에 나타납니다.</span>
+      <button onclick="document.getElementById('demoNotice').style.display='none'" style="margin-left:auto;background:none;border:none;color:rgba(245,158,11,0.5);cursor:pointer;font-size:16px;line-height:1">✕</button>
+    </div>
     <div class="mtop">
-      <div class="mtitle">전체 자산 <span style="color:var(--text2);font-size:14px;font-weight:400;">· 2,400+</span></div>
+      <div class="mtitle">전체 자산 <span id="mktCount" style="color:var(--t2);font-size:14px;font-weight:300">· —</span></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <!-- ✅ FIX #7: 기업 문의 버튼 추가 -->
-        <button onclick="openEnterpriseModal()" style="padding:7px 14px;background:rgba(124,63,255,.12);border:1px solid rgba(124,63,255,.3);color:#a78bff;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--fco);letter-spacing:.04em">🏢 기업 문의</button>
+        
+        <button onclick="openEnterpriseModal()" style="padding:7px 16px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#a78bff;border-radius:99px;font-size:12px;cursor:pointer;font-family:var(--fs);font-weight:500;backdrop-filter:blur(8px);transition:all .2s" onmouseover="this.style.background='rgba(139,92,246,.15)'" onmouseout="this.style.background='rgba(139,92,246,.08)'">기업 문의</button>
         <select class="srt" onchange="toast('정렬 적용됨','✓')"><option>인기순</option><option>최신순</option><option>낮은 가격순</option><option>높은 평점순</option></select>
       </div>
     </div>
-    <!-- ✅ FIX #7: 카테고리 두 줄로 분리 — 타입/언어 구분 -->
+    
     <div style="margin-bottom:8px">
-      <div style="font-size:10px;color:var(--text3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">유형</div>
+      <div style="font-size:10px;color:var(--t3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">유형</div>
       <div class="filters" style="margin-bottom:0">
         <button class="fb on" onclick="filt(this,'all')">전체</button>
         <button class="fb" onclick="filt(this,'workflow')">🔄 자동화 워크플로우</button>
@@ -502,7 +745,7 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
       </div>
     </div>
     <div style="margin-bottom:24px">
-      <div style="font-size:10px;color:var(--text3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">언어 / 플랫폼</div>
+      <div style="font-size:10px;color:var(--t3);font-family:var(--fco);letter-spacing:.08em;margin-bottom:6px">언어 / 플랫폼</div>
       <div class="filters" style="margin-bottom:0">
         <button class="fb" onclick="filt(this,'py')">🐍 Python</button>
         <button class="fb" onclick="filt(this,'js')">🟨 JavaScript</button>
@@ -515,7 +758,6 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   </div>
 </div>
 
-<!-- DETAIL -->
 <div id="page-detail" class="page">
   <div class="dwrap">
     <div class="back" onclick="go('home')">← 마켓으로 돌아가기</div>
@@ -533,7 +775,7 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
           <div class="bprice" id="dpr"></div>
           <div class="brows" id="drw"></div>
           <button class="bbuy" id="dBuyBtn" onclick="buyItem()" style="font-family:var(--fco);letter-spacing:.06em">
-            <!-- ✅ FIX #7: 구매 버튼 직관화 — 가격 인라인 표시 -->
+            
             🛒 지금 구매하기 <span id="dBuyPrice" style="opacity:.8;font-size:11px"></span>
           </button>
           <button class="bprev" id="dPreviewBtn" style="font-family:var(--fco);letter-spacing:.06em">💻 코드 미리보기</button>
@@ -544,7 +786,6 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
   </div>
 </div>
 
-<!-- SELL -->
 <div id="page-sell" class="page">
   <div class="swrap">
     <div class="shero">
@@ -552,10 +793,10 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
         <h1>💰 코드 자산 판매하기</h1>
         <p>완성된 자동화 코드와 기능 모듈을 등록하고 수익을 만들어보세요. 판매 수익의 80%는 바로 정산돼요.</p>
       </div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <div style="text-align:center;background:rgba(124,111,255,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)">80%</div><div style="font-size:11px;color:var(--text2)">판매자 수익</div></div>
-        <div style="text-align:center;background:rgba(0,212,170,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)">2~3일</div><div style="font-size:11px;color:var(--text2)">검수 기간</div></div>
-        <div style="text-align:center;background:rgba(255,107,157,.1);border-radius:12px;padding:16px 22px;"><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)">무료</div><div style="font-size:11px;color:var(--text2)">등록 비용</div></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="text-align:center;background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--accent)">80%</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">판매자 수익</div></div>
+        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--t1)">2~3일</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">검수 기간</div></div>
+        <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:14px;padding:16px 24px;backdrop-filter:blur(12px)"><div style="font-size:24px;font-weight:700;font-family:var(--fe);color:var(--t1)">무료</div><div style="font-size:10px;color:var(--t2);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)">등록 비용</div></div>
       </div>
     </div>
     <div class="ssteps">
@@ -600,21 +841,21 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
 
   <div style="font-size:28px;margin-bottom:8px">📦</div>
   <p><strong>클릭 또는 드래그</strong>해서 파일 업로드</p>
-  <p style="font-size:12px;color:var(--text3);margin-top:5px">
+  <p style="font-size:12px;color:var(--t3);margin-top:5px">
     .py .js .json .zip .ipynb 지원 · 최대 50MB
   </p>
 </div>
 
-<div id="upFileInfo" style="display:none;margin-top:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
+<div id="upFileInfo" style="display:none;margin-top:8px;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
   <div>
     <div id="upFileName" style="font-size:12px;font-weight:600"></div>
-    <div id="upFileSize" style="font-size:11px;color:var(--text2)"></div>
+    <div id="upFileSize" style="font-size:11px;color:var(--t2)"></div>
   </div>
 </div>
-          <p style="font-size:12px;color:var(--text3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
+          <p style="font-size:12px;color:var(--t3);margin-top:5px">.py .js .json .zip .ipynb 지원 · 최대 50MB</p></div></div>
 
       <div class="fg"><label class="fl">README / 사용 설명서</label><textarea class="fta" placeholder="# 설치 방법&#10;pip install -r requirements.txt&#10;&#10;# 사용 방법&#10;python main.py&#10;&#10;# 주의사항"></textarea><div class="fhint">마크다운 형식 지원. 설명서는 초보를 위해 자세하게 설명해주세요.</div></div>
-      <div class="fg"><label class="fl">스크린샷 (선택)</label><div class="uzone" onclick="toast('이미지 업로드 준비 중!','🖼')"><div class="uicon">🖼</div><p><strong>실행 화면 캡처</strong>를 올리면 판매율이 올라가요</p><p style="font-size:12px;color:var(--text3);margin-top:5px">PNG, JPG · 최대 5장</p></div></div>
+      <div class="fg"><label class="fl">스크린샷 (선택)</label><div class="uzone" onclick="toast('이미지 업로드 준비 중!','🖼')"><div class="uicon">🖼</div><p><strong>실행 화면 캡처</strong>를 올리면 판매율이 올라가요</p><p style="font-size:12px;color:var(--t3);margin-top:5px">PNG, JPG · 최대 5장</p></div></div>
       <div style="display:flex;gap:10px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[0],'s1')">← 이전</button><button class="bsub" onclick="stab(document.querySelectorAll('.ssb')[2],'s3');toast('저장됨!','✅')">다음 단계 →</button></div>
     </div>
     <div id="s3" class="spanel">
@@ -629,12 +870,12 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
         <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="pi" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
         <div class="fg"><label class="fl">할인 이벤트 (선택)</label><input class="fi2" placeholder="예: 출시 기념 20% 할인"></div>
       </div>
-      <div id="ep" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:none;">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:12px">수익 예상</div>
+      <div id="ep" style="background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:none;">
+        <div style="font-size:13px;color:var(--t2);margin-bottom:12px">수익 예상</div>
         <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)" id="ep1">-</div><div style="font-size:11px;color:var(--text2)">건당 수익(80%)</div></div>
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)" id="ep10">-</div><div style="font-size:11px;color:var(--text2)">10건 판매시</div></div>
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)" id="ep100">-</div><div style="font-size:11px;color:var(--text2)">100건 판매시</div></div>
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)" id="ep1">-</div><div style="font-size:11px;color:var(--t2)">건당 수익(80%)</div></div>
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)" id="ep10">-</div><div style="font-size:11px;color:var(--t2)">10건 판매시</div></div>
+          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)" id="ep100">-</div><div style="font-size:11px;color:var(--t2)">100건 판매시</div></div>
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:20px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button><button class="bsub" onclick="toast('검수 신청 완료! 1~2일 내 검토 후 승인돼요 🚀','📤')">검수 신청하기 🚀</button></div>
@@ -649,13 +890,12 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
           <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
           <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
         </div>
-        <div style="margin-top:16px;padding:12px 16px;background:rgba(0,212,170,.07);border-radius:8px;font-size:12.5px;color:var(--text2)">💡 <strong style="color:var(--teal)">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--teal)">₩2,400,000</strong> 이상 수익을 올리고 있어요.</div>
+        <div style="margin-top:16px;padding:12px 16px;background:rgba(0,212,170,.07);border-radius:8px;font-size:12.5px;color:var(--t2)">💡 <strong style="color:var(--teal)">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--teal)">₩2,400,000</strong> 이상 수익을 올리고 있어요.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- GUIDE -->
 <div id="page-guide" class="page">
   <div class="gwrap">
     <div class="ghero"><h1>📚 가이드 센터</h1><p>CodeGame을 200% 활용하는 방법을 알려드려요</p></div>
@@ -681,7 +921,7 @@ nav{position:fixed;top:28px;left:0;right:0;z-index:180;display:flex;align-items:
         <div id="g2" class="gsec">
           <div class="gcard"><h2>💰 판매자 가이드</h2><p>잘 팔리는 코드 자산을 만들기 위한 핵심 원칙이에요.</p><div class="gtip"><span>🔥</span><span>인기 판매자들의 공통점: 구체적인 문제를 해결하고, README가 친절하며, 빠른 업데이트를 해요.</span></div></div>
           <div class="gcard"><h2>잘 팔리는 코드의 조건</h2><ul><li>즉시 실행 가능 — pip install 한 줄로 환경 세팅 완료</li><li>명확한 문제 해결 — "스마트스토어 주문 자동화"처럼 구체적</li><li>친절한 README — 설치법, 사용법, 주의사항 포함</li><li>에러 처리 포함 — 예외상황에도 안 멈추는 코드</li><li>업데이트 제공 — API 변경 시 빠른 패치</li></ul>
-          <div class="cex"><span style="color:var(--text3)"># ✅ 좋은 예 — 명확한 함수명과 에러처리</span>
+          <div class="cex"><span style="color:var(--t3)"># ✅ 좋은 예 — 명확한 함수명과 에러처리</span>
 def process_order(order_id: str) -> dict:
     try:
         order = fetch_order(order_id)
@@ -704,7 +944,7 @@ def process_order(order_id: str) -> dict:
         <div id="g4" class="gsec">
           <div class="gcard"><h2>📝 잘 팔리는 코드 작성 팁</h2><p>실제 판매 데이터를 기반으로 분석한 핵심 팁이에요.</p></div>
           <div class="gcard"><h2>코드 품질 체크리스트</h2><ul><li>함수/변수명은 영어로, 주석은 한국어로</li><li>requirements.txt 또는 package.json 포함</li><li>config 파일 분리 (하드코딩 금지)</li><li>로그 출력 포함 (실행 중 상태 확인 가능)</li><li>예외처리 필수 (try/except, try/catch)</li><li>테스트 코드 또는 샘플 데이터 포함</li></ul>
-          <div class="cex"><span style="color:var(--text3)"># config.json — 하드코딩 대신 설정 파일 분리</span>
+          <div class="cex"><span style="color:var(--t3)"># config.json — 하드코딩 대신 설정 파일 분리</span>
 {
   "api_key": "여기에_API키_입력",
   "store_id": "여기에_스토어ID",
@@ -724,10 +964,15 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
 
-<!-- COMMUNITY -->
 <div id="page-comm" class="page">
   <div class="cwrap">
-    <div class="chero"><div><h1>💬 커뮤니티</h1><p>판매자·구매자가 함께 성장하는 공간이에요</p></div><button class="bp" onclick="openWriteModal()">+ 글쓰기</button></div>
+    <div class="chero">
+      <div>
+        <h1 style="font-size:26px;font-weight:700;font-family:var(--fs);letter-spacing:-.02em;margin-bottom:6px">커뮤니티</h1>
+        <p style="font-size:13px;color:var(--t2);font-weight:300">판매자·구매자가 함께 성장하는 공간이에요</p>
+      </div>
+      <button class="bp" onclick="openWriteModal()" style="height:fit-content">+ 글쓰기</button>
+    </div>
     <div class="clayout">
       <div>
         <div class="ctabs">
@@ -749,19 +994,17 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
 
-
-<!-- REQUEST PAGE -->
 <div id="page-req" class="page">
   <div class="mwrap">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px">
       <div>
-        <h1 style="font-family:var(--fen);font-size:22px;letter-spacing:.06em;margin-bottom:6px">💡 코드 요청하기</h1>
-        <p style="font-size:13px;color:var(--text2)">원하는 코드가 없다면 직접 요청하세요. 판매자가 제작해드려요.</p>
+        <h1 style="font-size:24px;font-weight:700;font-family:var(--fs);letter-spacing:-.02em;margin-bottom:6px">코드 요청하기</h1>
+        <p style="font-size:13px;color:var(--t2)">원하는 코드가 없다면 직접 요청하세요. 판매자가 제작해드려요.</p>
       </div>
       <button class="bp" onclick="openRequestModal()" style="font-family:var(--fco);letter-spacing:.06em">+ 요청 올리기</button>
     </div>
 
-    <!-- 필터 -->
+    
     <div class="filters" id="reqFilters">
       <button class="fb on" onclick="filterReq(this,'all')">전체</button>
       <button class="fb" onclick="filterReq(this,'스마트스토어')">스마트스토어</button>
@@ -771,9 +1014,9 @@ def process_order(order_id: str) -> dict:
       <button class="fb" onclick="filterReq(this,'기타')">기타</button>
     </div>
 
-    <!-- 요청 목록 -->
+    
     <div id="reqList">
-      <div style="text-align:center;padding:60px;color:var(--text2);font-family:var(--fco)">
+      <div style="text-align:center;padding:60px;color:var(--t2);font-family:var(--fco)">
         <div style="font-size:48px;margin-bottom:14px">💡</div>
         <p>아직 요청이 없어요. 첫 번째 요청자가 되어보세요!</p>
       </div>
@@ -781,7 +1024,6 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
 
-<!-- 요청 작성 모달 -->
 <div class="overlay" id="reqModal">
   <div class="modal" style="max-width:500px">
     <button class="mx" onclick="document.getElementById('reqModal').classList.remove('on')">✕</button>
@@ -817,10 +1059,6 @@ def process_order(order_id: str) -> dict:
   import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
   import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment, setDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  // ══════════════════════════════════════════
-  // ⚠️ Firebase 설정 — 본인 프로젝트 값으로 교체
-  // console.firebase.google.com → 프로젝트 설정 → 내 앱 → SDK 설정
-  // ══════════════════════════════════════════
   const firebaseConfig = {
     apiKey: "-",
     authDomain: "codegame-75c54.firebaseapp.com",
@@ -830,11 +1068,7 @@ def process_order(order_id: str) -> dict:
     appId: "1:63875927338:web:375fc9bf52e8939138e253"
   };
 
-  // ══════════════════════════════════════════
-  // 🔧 관리자 이메일 설정 — 본인 이메일로 교체
-  // 이 이메일로 로그인하면 관리자 탭이 활성화됩니다
-  // ══════════════════════════════════════════
-  window.ADMIN_EMAIL = null; // Firestore config/admin 에서 로드됨
+  window.ADMIN_EMAIL = null;
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -843,44 +1077,38 @@ def process_order(order_id: str) -> dict:
 
   window._fb = {
     auth, storage, db,
-    // Auth
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
     signOut, onAuthStateChanged, updateProfile,
     deleteUser, EmailAuthProvider, reauthenticateWithCredential,
-    // Storage
     ref, uploadBytesResumable, getDownloadURL, deleteObject,
-    // Firestore
     collection, addDoc, getDocs, getDoc, doc, updateDoc,
     deleteDoc, query, where, orderBy, serverTimestamp,
     increment, setDoc, arrayUnion, arrayRemove, limit,
     currentUser: auth.currentUser
   };
 
-  // ── 로그인 상태 감지 ──
   onAuthStateChanged(auth, (user) => {
     if (user) {
       const nick = user.displayName || user.email.split('@')[0];
       const initial = nick[0].toUpperCase();
       document.querySelector('.nav-r').innerHTML = `
         <button class="bg" onclick="toggleSearch()" id="searchBtn" style="font-size:12px;padding:5px 12px">🔍</button>
-        <span style="font-size:12px;color:var(--text2);font-family:var(--fco)">${nick}</span>
+        <span style="font-size:12px;color:var(--t2);font-family:var(--fco)">${nick}</span>
         <div onclick="openMyPage()" style="width:30px;height:30px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;cursor:pointer;color:#000;font-family:var(--fen);box-shadow:0 0 12px rgba(0,245,196,.3)">${initial}</div>
         <button class="bg" style="font-size:11px;padding:5px 12px" onclick="doLogout()">LOGOUT</button>`;
       checkAdminRole(user.email);
       loadUserStats(user.uid);
-      setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
+      setTimeout(()=>{ if(window._fb?.db){loadFirestorePosts();loadApprovedProducts();} },800);
     } else {
       document.querySelector('.nav-r').innerHTML = `
         <button class="bg" onclick="openL('login')">로그인</button>
         <button class="bp" onclick="openL('register')">무료 시작</button>`;
-      // 관리자 탭 숨기기
       const adminTab = document.getElementById('mpT5');
       if (adminTab) adminTab.style.display = 'none';
       setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); },800);
     }
   });
 
-  // ── 유저 통계 로드 ──
   async function loadUserStats(uid) {
     try {
       const snap = await getDoc(doc(db, 'users', uid));
@@ -898,7 +1126,6 @@ def process_order(order_id: str) -> dict:
   window._loadUserStats = loadUserStats;
 </script>
 
-<!-- 로그인/회원가입 모달 -->
 <div class="overlay" id="lo">
   <div class="modal" style="max-width:420px">
     <button class="mx" onclick="closeL()">✕</button>
@@ -909,7 +1136,7 @@ def process_order(order_id: str) -> dict:
       <button class="mtb" id="mtbReg" onclick="switchAuthTab('register')">회원가입</button>
     </div>
 
-    <!-- 로그인 -->
+    
     <div id="authLogin">
       <input class="fi2" type="email" id="loginEmail" placeholder="이메일 주소">
       <input class="fi2" type="password" id="loginPw" placeholder="비밀번호" style="margin-top:10px" onkeydown="if(event.key==='Enter')fbLogin()">
@@ -917,7 +1144,7 @@ def process_order(order_id: str) -> dict:
       <div id="loginErr" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:#ff6b6b;border-radius:8px;font-size:13px;"></div>
     </div>
 
-    <!-- 회원가입 -->
+    
     <div id="authReg" style="display:none">
       <input class="fi2" type="text" id="regNick" placeholder="닉네임">
       <input class="fi2" type="email" id="regEmail" placeholder="이메일 주소" style="margin-top:10px">
@@ -928,69 +1155,68 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
 
-<!-- 마이페이지 모달 — 풀 기능 -->
 <div class="overlay" id="myPageModal">
   <div class="modal" style="max-width:680px;width:95vw;max-height:88vh;overflow-y:auto;padding:0">
 
-    <!-- 헤더 -->
+    
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;border-bottom:1px solid rgba(0,245,196,.1);margin-bottom:0">
-      <div style="font-family:var(--fen);font-size:16px;color:var(--accent);letter-spacing:.08em">PLAYER DASHBOARD</div>
+      <div style="font-size:15px;font-weight:600;color:var(--t1);font-family:var(--fs);letter-spacing:-.01em">마이페이지</div>
       <button class="mx" onclick="document.getElementById('myPageModal').classList.remove('on')" style="position:static">✕</button>
     </div>
 
-    <!-- XP / 레벨 카드 -->
-    <div id="mpXpCard" style="margin:16px 24px 0;background:linear-gradient(135deg,rgba(0,245,196,.06),rgba(0,200,255,.04));border:1px solid rgba(0,245,196,.2);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    
+    <div id="mpXpCard" style="margin:16px 24px 0;background:rgba(0,245,196,0.04);border:1px solid rgba(0,245,196,.2);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;backdrop-filter:blur(12px)">
       <div style="display:flex;align-items:center;gap:12px">
         <div id="mpAvatarBig" style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#000;font-family:var(--fen);flex-shrink:0">K</div>
         <div>
           <div id="mpNickBig" style="font-size:15px;font-weight:700;margin-bottom:2px"></div>
-          <div id="mpEmailBig" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+          <div id="mpEmailBig" style="font-size:11px;color:var(--t2);font-family:var(--fco)"></div>
         </div>
       </div>
       <div style="flex:1;min-width:180px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <span style="font-family:var(--fen);font-size:13px;color:var(--accent);font-weight:700">LV.<span id="mpLvBig">01</span></span>
-          <span style="font-size:11px;color:var(--text2);font-family:var(--fco)">XP <span id="mpXpBig">0</span> / <span id="mpXpNext">100</span></span>
+          <span style="font-size:11px;color:var(--t2);font-family:var(--fco)">XP <span id="mpXpBig">0</span> / <span id="mpXpNext">100</span></span>
         </div>
         <div style="height:6px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden">
           <div id="mpXpBarBig" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;width:0%;transition:width .6s ease;box-shadow:0 0 8px var(--accent)"></div>
         </div>
-        <div style="font-size:10px;color:var(--text3);font-family:var(--fco);margin-top:4px" id="mpXpDesc">다음 레벨까지 0 XP</div>
+        <div style="font-size:10px;color:var(--t3);font-family:var(--fco);margin-top:4px" id="mpXpDesc">다음 레벨까지 0 XP</div>
       </div>
       <div style="display:flex;gap:12px;flex-shrink:0">
         <div style="text-align:center">
           <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="mpStatUp">0</div>
-          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">업로드</div>
+          <div style="font-size:10px;color:var(--t2);font-family:var(--fco)">업로드</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--yellow)" id="mpStatSale">0</div>
-          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">판매</div>
+          <div style="font-size:10px;color:var(--t2);font-family:var(--fco)">판매</div>
         </div>
         <div style="text-align:center">
           <div style="font-size:18px;font-weight:700;font-family:var(--fen);color:var(--pink)" id="mpStatRev">₩0</div>
-          <div style="font-size:10px;color:var(--text2);font-family:var(--fco)">수익</div>
+          <div style="font-size:10px;color:var(--t2);font-family:var(--fco)">수익</div>
         </div>
       </div>
     </div>
 
-    <!-- 탭 -->
+    
     <div style="display:flex;border-bottom:1px solid rgba(0,245,196,.1);padding:0 24px">
-      <button class="mtb on" id="mpT1" onclick="mpTab('upload')">📤 업로드</button>
-      <button class="mtb" id="mpT2" onclick="mpTab('myfiles')">📁 내 판매</button>
-      <button class="mtb" id="mpT3" onclick="mpTab('purchases')">🛒 구매내역</button>
-      <button class="mtb" id="mpT4" onclick="mpTab('settings')">⚙️ 설정</button>
-      <button class="mtb" id="mpT5" onclick="mpTab('admin')" style="color:var(--yellow)">🔧 관리자</button>
+      <button class="mtb on" id="mpT1" onclick="mpTab('upload')">업로드</button>
+      <button class="mtb" id="mpT2" onclick="mpTab('myfiles')">내 판매</button>
+      <button class="mtb" id="mpT3" onclick="mpTab('purchases')">구매내역</button>
+      <button class="mtb" id="mpT4" onclick="mpTab('settings')">설정</button>
+      <button class="mtb" id="mpT5" onclick="mpTab('admin')" style="color:var(--yellow);display:none">관리자</button>
     </div>
 
     <div style="padding:20px 24px">
 
-      <!-- ── 업로드 탭 ── -->
+      
       <div id="mpPanel_upload">
-        <div style="background:rgba(245,196,0,.05);border:1px solid rgba(245,196,0,.15);border-radius:6px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.9;font-family:var(--fco)">
+        <div style="background:rgba(245,196,0,.05);border:1px solid rgba(245,196,0,.15);border-radius:6px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--t2);line-height:1.9;font-family:var(--fco)">
           <span style="color:var(--yellow)">⚙️ FIREBASE SETUP REQUIRED</span><br>
           1. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a> → 새 프로젝트 생성<br>
           2. Authentication → Email/Password 사용 설정<br>
-          3. Storage → 규칙: <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;color:var(--accent)">allow read,write: if request.auth!=null;</code><br>
+          3. Storage → 규칙: <code style="background:var(--g1);padding:1px 5px;border-radius:3px;color:var(--accent)">allow read,write: if request.auth!=null;</code><br>
           4. Firestore → 테스트 모드로 데이터베이스 생성<br>
           5. 프로젝트 설정 → SDK 설정값 → 상단 firebaseConfig에 붙여넣기
         </div>
@@ -1034,12 +1260,12 @@ def process_order(order_id: str) -> dict:
               ondrop="handleDrop2(event)">
               <input type="file" id="upFile" accept=".py,.js,.ts,.json,.zip,.ipynb,.html,.sh,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="setUpFile(this.files[0])">
               <div style="font-size:28px;margin-bottom:8px">📦</div>
-              <p style="font-size:12px;color:var(--text2);font-family:var(--fco)"><span style="color:var(--accent)">CLICK OR DRAG</span> FILE HERE</p>
-              <p style="font-size:10px;color:var(--text3);margin-top:4px;font-family:var(--fco)">.py .js .json .zip .ipynb · MAX 50MB</p>
+              <p style="font-size:12px;color:var(--t2);font-family:var(--fco)"><span style="color:var(--accent)">CLICK OR DRAG</span> FILE HERE</p>
+              <p style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--fco)">.py .js .json .zip .ipynb · MAX 50MB</p>
             </div>
-            <div id="upFileInfo" style="display:none;margin-top:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
-              <div><div id="upFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="upFileSize" style="font-size:11px;color:var(--text2)"></div></div>
-              <button onclick="clearUpFile()" style="background:none;border:none;color:var(--text2);cursor:pointer">✕</button>
+            <div id="upFileInfo" style="display:none;margin-top:8px;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:10px 14px;justify-content:space-between;align-items:center">
+              <div><div id="upFileName" style="font-size:12px;font-weight:600;font-family:var(--fco)"></div><div id="upFileSize" style="font-size:11px;color:var(--t2)"></div></div>
+              <button onclick="clearUpFile()" style="background:none;border:none;color:var(--t2);cursor:pointer">✕</button>
             </div>
             <button class="bsub" onclick="doUpload2()" id="btnUpload">
             SUBMIT FOR REVIEW 🚀
@@ -1049,56 +1275,56 @@ def process_order(order_id: str) -> dict:
   <label class="fl">실행 화면 캡처 *</label>
   <input type="file" id="upShot" accept="image/*" onchange="setShotFile(this.files[0])">
   <div id="shotPreview" style="display:none;margin-top:8px">
-    <img id="shotImg" style="max-width:260px;border-radius:8px;border:1px solid var(--border2)">
+    <img id="shotImg" style="max-width:260px;border-radius:8px;border:1px solid var(--b1)">
   </div>
 </div>
           <div id="upProgress" style="display:none">
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px;font-family:var(--fco)"><span>UPLOADING...</span><span id="upPct">0%</span></div>
             <div style="height:4px;background:rgba(0,245,196,.1);border-radius:100px;overflow:hidden"><div id="upBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;border-radius:100px"></div></div>
           </div>
           <div id="upSuccess" style="display:none;background:rgba(0,245,196,.06);border:1px solid rgba(0,245,196,.2);border-radius:6px;padding:12px">
             <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:var(--fco)">✅ UPLOAD COMPLETE</div>
-            <div style="font-size:11px;color:var(--text2)"><a id="upLink" href="#" target="_blank" style="color:var(--accent)">다운로드 링크 확인 →</a></div>
+            <div style="font-size:11px;color:var(--t2)"><a id="upLink" href="#" target="_blank" style="color:var(--accent)">다운로드 링크 확인 →</a></div>
           </div>
           <button class="bsub" onclick="doUpload2()" id="btnUpload" style="font-family:var(--fco);letter-spacing:.08em">SUBMIT FOR REVIEW 🚀</button>
         </div>
       </div>
 
-      <!-- ── 내 판매 탭 ── -->
+      
       <div id="mpPanel_myfiles" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-size:12px;color:var(--text2);font-family:var(--fco)">내가 등록한 코드 자산</div>
-          <div id="myStats" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+          <div style="font-size:12px;color:var(--t2);font-family:var(--fco)">내가 등록한 코드 자산</div>
+          <div id="myStats" style="font-size:11px;color:var(--t2);font-family:var(--fco)"></div>
         </div>
         <div id="myFilesList">
-          <div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">
+          <div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)">
             <div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p>
           </div>
         </div>
       </div>
 
-      <!-- ── 구매내역 탭 ── -->
+      
       <div id="mpPanel_purchases" style="display:none">
-        <div style="font-size:12px;color:var(--text2);font-family:var(--fco);margin-bottom:16px">구매한 코드 자산 (다운로드 가능)</div>
+        <div style="font-size:10px;color:var(--t3);font-family:var(--fm);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;font-weight:600">구매한 코드 자산</div>
         <div id="purchasesList">
-          <div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">
+          <div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)">
             <div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p>
           </div>
         </div>
       </div>
 
-      <!-- ── 설정 탭 ── -->
+      
       <div id="mpPanel_settings" style="display:none">
         <div style="display:grid;gap:20px">
 
-          <!-- 프로필 -->
-          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">프로필 수정</div>
+          
+          <div style="background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">프로필 수정</div>
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
               <div id="settingsAvatar" style="width:48px;height:48px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#000;font-family:var(--fen)">K</div>
               <div>
                 <div id="settingsNickDisplay" style="font-size:14px;font-weight:700"></div>
-                <div id="settingsEmailDisplay" style="font-size:11px;color:var(--text2);font-family:var(--fco)"></div>
+                <div id="settingsEmailDisplay" style="font-size:11px;color:var(--t2);font-family:var(--fco)"></div>
               </div>
             </div>
             <label class="fl">닉네임 변경</label>
@@ -1106,44 +1332,44 @@ def process_order(order_id: str) -> dict:
             <button class="bsub" onclick="updateNick()" style="font-family:var(--fco);font-size:12px;letter-spacing:.06em;padding:10px 20px">저장하기</button>
           </div>
 
-          <!-- 비밀번호 변경 -->
-          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">비밀번호 변경</div>
+          
+          <div style="background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">비밀번호 변경</div>
             <input class="fi2" type="password" id="currPw" placeholder="현재 비밀번호" style="margin-bottom:10px">
             <input class="fi2" type="password" id="newPw" placeholder="새 비밀번호 (6자 이상)">
             <button class="bsub" onclick="changePw()" style="font-family:var(--fco);font-size:12px;letter-spacing:.06em;padding:10px 20px;margin-top:10px">변경하기</button>
             <div id="pwMsg" style="display:none;margin-top:8px;font-size:12px;font-family:var(--fco)"></div>
           </div>
 
-          <!-- 판매 통계 -->
-          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:18px">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">내 판매 통계</div>
+          
+          <div style="background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:18px">
+            <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:14px">내 판매 통계</div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="myStatsGrid">
-              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+              <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:12px">
                 <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statUploads">0</div>
-                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">업로드</div>
+                <div style="font-size:10px;color:var(--t2);font-family:var(--fco);margin-top:3px">업로드</div>
               </div>
-              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+              <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:12px">
                 <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statSales">0</div>
-                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">총 판매</div>
+                <div style="font-size:10px;color:var(--t2);font-family:var(--fco);margin-top:3px">총 판매</div>
               </div>
-              <div style="text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:12px">
+              <div style="text-align:center;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:12px">
                 <div style="font-size:22px;font-weight:700;font-family:var(--fen);color:var(--accent)" id="statRevenue">₩0</div>
-                <div style="font-size:10px;color:var(--text2);font-family:var(--fco);margin-top:3px">총 수익(80%)</div>
+                <div style="font-size:10px;color:var(--t2);font-family:var(--fco);margin-top:3px">총 수익(80%)</div>
               </div>
             </div>
           </div>
 
-          <!-- 계정 삭제 -->
+          
           <div style="background:rgba(255,59,59,.04);border:1px solid rgba(255,59,59,.15);border-radius:6px;padding:18px">
             <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fco);margin-bottom:10px">⚠️ 위험 구역</div>
-            <p style="font-size:12px;color:var(--text2);margin-bottom:12px">계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.</p>
+            <p style="font-size:12px;color:var(--t2);margin-bottom:12px">계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.</p>
             <button onclick="deleteAccount()" style="background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.3);border-radius:6px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:var(--fco)">계정 삭제</button>
           </div>
         </div>
       </div>
 
-      <!-- ── 관리자 탭 ── -->
+      
       <div id="mpPanel_admin" style="display:none">
         <div style="background:rgba(245,196,0,.04);border:1px solid rgba(245,196,0,.15);border-radius:6px;padding:12px;margin-bottom:16px;font-size:11px;color:var(--yellow);font-family:var(--fco)">
           ⚠️ ADMIN PANEL — 검수 대기 중인 파일을 승인/반려할 수 있어요
@@ -1154,7 +1380,7 @@ def process_order(order_id: str) -> dict:
           <button onclick="loadAdminQueue('rejected')" class="bg" style="font-size:11px;font-family:var(--fco)">반려됨</button>
         </div>
         <div id="adminQueue">
-          <div style="text-align:center;padding:32px;color:var(--text2);font-family:var(--fco)">위 버튼을 눌러 목록을 불러오세요</div>
+          <div style="text-align:center;padding:32px;color:var(--t2);font-family:var(--fco)">위 버튼을 눌러 목록을 불러오세요</div>
         </div>
       </div>
 
@@ -1162,20 +1388,19 @@ def process_order(order_id: str) -> dict:
   </div>
 </div>
 
-<!-- 코드 라이브 프리뷰 모달 -->
 <div class="overlay" id="codePreviewModal">
-  <div class="modal" style="max-width:720px;width:95vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border-color:rgba(0,245,196,.3)">
+  <div class="modal" style="max-width:720px;width:95vw;max-height:85vh;overflow-y:auto;background:var(--g1);border-color:rgba(0,245,196,.3)">
     <button class="mx" onclick="document.getElementById('codePreviewModal').classList.remove('on')">✕</button>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
       <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div>
       <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e"></div>
       <div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div>
-      <span id="codePreviewTitle" style="font-family:var(--fco);font-size:12px;color:var(--text2);margin-left:6px"></span>
+      <span id="codePreviewTitle" style="font-family:var(--fco);font-size:12px;color:var(--t2);margin-left:6px"></span>
     </div>
-    <pre id="codePreviewContent" style="font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.9;overflow-x:auto;white-space:pre-wrap;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:20px;margin:0"></pre>
+    <pre id="codePreviewContent" style="font-family:var(--fco);font-size:12px;color:var(--accent);line-height:1.9;overflow-x:auto;white-space:pre-wrap;background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:20px;margin:0"></pre>
     <div style="display:flex;gap:8px;margin-top:14px">
       <button onclick="copyCode()" style="background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;padding:7px 14px;font-size:11px;cursor:pointer;font-family:var(--fco)">📋 복사하기</button>
-      <button onclick="document.getElementById('codePreviewModal').classList.remove('on')" style="background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:4px;padding:7px 14px;font-size:11px;cursor:pointer;font-family:var(--fco)">닫기</button>
+      <button onclick="document.getElementById('codePreviewModal').classList.remove('on')" style="background:transparent;color:var(--t2);border:1px solid var(--b1);border-radius:4px;padding:7px 14px;font-size:11px;cursor:pointer;font-family:var(--fco)">닫기</button>
     </div>
   </div>
 </div>
@@ -1184,36 +1409,20 @@ def process_order(order_id: str) -> dict:
 
 <script>
 const P=[
-  {id:1,type:'workflow',ti:'스마트스토어 주문 자동 처리 봇',ds:'하루 100건+ 주문을 자동 처리해요. 운송장 입력, 재고 차감, 이메일 알림까지.',pr:29000,tags:['py'],tb:'bwf',tl:'자동화 워크플로우',lang:'Python 3.11',env:'Windows/Mac',lv:'누구나',lic:'일반 상업용',sl:'dev_kim',sc:'#7c6fff',rt:4.9,ss:142,em:'🤖',
-   cd:`def process_orders():\n    orders = get_pending_orders()\n    for order in orders:\n        update_tracking(order)\n        notify_buyer(order)\n    return {"done": len(orders)}`,
-   ft:['주문 자동 분류 및 처리','운송장 번호 자동 입력','재고 수량 자동 차감','구매자 이메일 자동 발송','에러 시 Slack 알림'],rq:['Python 3.8 이상','스마트스토어 API 키','requests, selenium']},
-  {id:2,type:'workflow',ti:'유튜브 쇼츠 자동 업로드 스크립트',ds:'영상 파일만 넣으면 제목·태그·썸네일 자동 설정 후 예약 업로드.',pr:19000,tags:['py'],tb:'bwf',tl:'자동화 워크플로우',lang:'Python 3.11',env:'모두',lv:'기본 지식 필요',lic:'일반 상업용',sl:'youtube_pro',sc:'#ff6b6b',rt:4.8,ss:89,em:'🎬',
-   cd:`def auto_upload(video_path):\n    meta = ai_generate_meta(video_path)\n    uploader = YouTubeUploader()\n    uploader.set_metadata(meta)\n    return uploader.publish()`,
-   ft:['AI 자동 제목/태그 생성','썸네일 자동 생성','예약 업로드 지원','여러 채널 동시 업로드','업로드 성과 리포트'],rq:['Python 3.8 이상','YouTube Data API v3 키','Pillow, google-auth']},
-  {id:3,type:'workflow',ti:'n8n 인스타그램 자동 포스팅',ds:'블로그 RSS → AI 카드뉴스 변환 → 인스타그램 예약 포스팅 전자동.',pr:22000,tags:['n8'],tb:'bwf',tl:'자동화 워크플로우',lang:'n8n Workflow',env:'웹브라우저',lv:'누구나',lic:'일반 상업용',sl:'flow_wizard',sc:'#ff6b9d',rt:4.6,ss:55,em:'📱',
-   cd:`{\n  "nodes": [\n    {"type": "RSS Feed"},\n    {"type": "OpenAI Chat"},\n    {"type": "Instagram Post"}\n  ]\n}`,
-   ft:['RSS 피드 자동 수집','GPT-4o 카드뉴스 변환','예약 포스팅','해시태그 자동 최적화','성과 분석'],rq:['n8n 계정 (무료)','OpenAI API 키','Instagram Graph API']},
-  {id:4,type:'function',ti:'GPT-4o 고객 응대 챗봇 모듈',ds:'쇼핑몰에 바로 붙이는 GPT-4o 기반 고객 응대 모듈. FAQ 학습 기능 포함.',pr:49000,tags:['js','gpt'],tb:'bfn',tl:'기능 모듈',lang:'JavaScript (Node.js)',env:'서버/Vercel',lv:'기본 지식 필요',lic:'일반 상업용',sl:'ai_builder',sc:'#00d4aa',rt:5.0,ss:203,em:'💬',
-   cd:`class ShopChatbot {\n  constructor(apiKey, faqData) {\n    this.openai = new OpenAI({apiKey});\n    this.faq = embedFAQ(faqData);\n  }\n  async chat(msg) {\n    const ctx = await this.faq.search(msg);\n    return this.openai.chat(ctx, msg);\n  }\n}`,
-   ft:['GPT-4o-mini 기반 응답','FAQ 벡터 임베딩','멀티턴 대화 지원','REST API 연동','대화 로그 저장'],rq:['Node.js 18 이상','OpenAI API 키','Express.js']},
-  {id:5,type:'function',ti:'Google Sheets 재고 관리 자동화',ds:'구글 시트 ↔ 스마트스토어 실시간 재고 동기화. 품절 자동 처리.',pr:15000,tags:['sh'],tb:'bfn',tl:'기능 모듈',lang:'Google Apps Script',env:'웹브라우저',lv:'누구나',lic:'오픈소스',sl:'sheets_master',sc:'#ffd166',rt:4.7,ss:67,em:'📊',
-   cd:`function syncInventory() {\n  const data = getInventoryData();\n  data.forEach(([sku, qty]) => {\n    if (qty <= 0) setSoldOut(sku);\n    else if (qty < 5) alertLowStock(sku);\n  });\n}`,
-   ft:['실시간 재고 동기화','자동 품절 처리','재고 5개 미만 알림','월별 판매량 집계','여러 쇼핑몰 연동'],rq:['Google 계정','스마트스토어 API 키','설치 불필요']},
-  {id:6,type:'function',ti:'이미지 자동 리사이징 + 워터마크',ds:'상품 이미지 업로드 시 자동 리사이징, 워터마크 삽입, WebP 변환.',pr:12000,tags:['py'],tb:'bfn',tl:'기능 모듈',lang:'Python 3.11',env:'모두',lv:'누구나',lic:'일반 상업용',sl:'image_dev',sc:'#ff6b9d',rt:4.5,ss:44,em:'🖼',
-   cd:`def process_image(path, cfg):\n    img = Image.open(path)\n    img = img.resize(cfg['size'])\n    img = add_watermark(img, cfg['text'])\n    img.save(path+'.webp', 'WebP', quality=85)`,
-   ft:['자동 리사이징 (여러 사이즈)','텍스트/이미지 워터마크','WebP 자동 변환','EXIF 데이터 처리','배치 처리'],rq:['Python 3.8 이상','Pillow 라이브러리','config.json']},
-  {id:7,type:'template',ti:'쇼핑몰 일일 매출 리포트 템플릿',ds:'쿠팡/스마트스토어 데이터를 구글 시트에 자동 정리하는 리포트 템플릿.',pr:9000,tags:['sh','no'],tb:'btpl',tl:'템플릿',lang:'Google Sheets',env:'웹브라우저',lv:'누구나',lic:'일반 상업용',sl:'report_king',sc:'#7c6fff',rt:4.6,ss:112,em:'📈',
-   cd:`function dailyReport() {\n  const sales = fetchSalesData();\n  updateDashboard(sales);\n  sendEmailSummary(sales);\n}`,
-   ft:['일별/주별/월별 집계','플랫폼별 비교 차트','반품률 자동 계산','이메일 자동 발송','커스텀 KPI 설정'],rq:['Google 계정','쇼핑몰 API 키 (선택)','설치 불필요']},
-  {id:8,type:'template',ti:'크리에이터 수익 관리 Excel 템플릿',ds:'유튜브/인스타/쇼핑몰 수익을 한 곳에서 관리하는 엑셀 자동화 템플릿.',pr:7000,tags:['no'],tb:'btpl',tl:'템플릿',lang:'Microsoft Excel',env:'Windows/Mac',lv:'누구나',lic:'일반 상업용',sl:'excel_pro',sc:'#00d4aa',rt:4.4,ss:88,em:'💹',
-   cd:`Sub UpdateRevenue()\n    ImportYouTubeData\n    ImportInstagramData\n    CalculateTax ' 3.3%\n    UpdateDashboard\nEnd Sub`,
-   ft:['플랫폼별 수익 집계','세금 자동 계산 (3.3%)','월별 트렌드 차트','목표 달성률 표시','PDF 내보내기'],rq:['Excel 2016 이상','VBA 매크로 허용','설치 불필요']},
-  {id:9,type:'tool',ti:'쿠팡 파트너스 수익 크롤러',ds:'쿠팡 파트너스 수익을 자동 집계해 구글 시트에 저장. 일간/월간 리포트.',pr:14000,tags:['py'],tb:'btol',tl:'도구',lang:'Python 3.11',env:'Windows',lv:'기본 지식 필요',lic:'일반 상업용',sl:'coupang_dev',sc:'#ff6b6b',rt:4.5,ss:38,em:'💰',
-   cd:`def collect_revenue(date_range):\n    driver = setup_driver()\n    login(driver)\n    data = scrape_dashboard(driver, date_range)\n    save_to_sheets(data)\n    return summarize(data)`,
-   ft:['자동 로그인 (2FA 지원)','일간/월간 수익 집계','구글 시트 자동 기록','이메일 리포트 발송','수익 추이 그래프'],rq:['Python 3.8 이상','Chrome 브라우저','쿠팡 파트너스 계정']},
-  {id:10,type:'tool',ti:'네이버 블로그 SEO 자동 분석 도구',ds:'경쟁 블로그 키워드, 발행 시간, 조회수 패턴을 자동 분석해 인사이트 제공.',pr:18000,tags:['py'],tb:'btol',tl:'도구',lang:'Python 3.11',env:'모두',lv:'기본 지식 필요',lic:'일반 상업용',sl:'seo_master',sc:'#7c6fff',rt:4.7,ss:61,em:'🔍',
-   cd:`def analyze_blog(blog_id, keywords):\n    posts = scrape_posts(blog_id)\n    return {\n        "best_time": find_peak_hour(posts),\n        "top_kw": extract_keywords(posts),\n        "avg_views": calc_avg(posts)\n    }`,
-   ft:['경쟁 블로그 키워드 분석','최적 발행 시간 추출','조회수 패턴 분석','SEO 개선 추천','CSV 리포트 내보내기'],rq:['Python 3.8 이상','BeautifulSoup4, pandas','네이버 API 키 (선택)']},
+  {id:'demo',type:'workflow',ti:'스마트스토어 주문 자동 처리 봇 (예시)',
+   ds:'하루 100건+ 주문을 자동 처리해요. 운송장 입력, 재고 차감, 이메일 알림까지 전자동.',
+   pr:29000,tags:['py'],tb:'bwf',tl:'자동화 워크플로우',
+   lang:'Python 3.11',env:'Windows/Mac',lv:'누구나',lic:'일반 상업용',
+   sl:'CodeGame',sc:'#00f5c4',rt:4.9,ss:142,em:'🤖',
+   isDemo:true,
+   cd:`def process_orders():
+    orders = get_pending_orders()
+    for order in orders:
+        update_tracking(order)
+        notify_buyer(order)
+    return {"done": len(orders)}`,
+   ft:['주문 자동 분류 및 처리','운송장 번호 자동 입력','재고 수량 자동 차감','구매자 이메일 자동 발송','에러 시 텔레그램 알림'],
+   rq:['Python 3.8 이상','스마트스토어 API 키','requests, selenium']},
 ];
 
 const FAQS=[
@@ -1232,8 +1441,8 @@ const POSTS=[
   {ti:'쿠팡 파트너스 크롤러 — 셀레니움 버전 충돌 해결법',us:'coupang_dev',tm:'3일 전',tgs:['팁','Python'],ex:'Chrome 134 업데이트 이후 selenium 4.18 이하에서 오류 나는 분들 보세요.',lk:89,cm:28,vw:1567,cl:'#ff6b6b'},
 ];
 
-const RANKS=[{nm:'ai_builder',sb:'GPT 전문 모듈',vl:'₩2.4M',top:true},{nm:'dev_kim',sb:'스마트스토어 자동화',vl:'₩1.8M',top:true},{nm:'flow_wizard',sb:'n8n 워크플로우',vl:'₩1.2M',top:true},{nm:'seo_master',sb:'SEO 분석 도구',vl:'₩890K',top:false},{nm:'sheets_master',sb:'Google Sheets',vl:'₩650K',top:false}];
-const NOTICES=['🎉 CodeGame 베타 오픈 — 첫 등록 수수료 면제','📢 4월 판매왕 이벤트 — 1등 상금 10만원','🔧 검수 기준 업데이트 안내 (2026.03)','💡 AI 코드 표기 의무화 안내'];
+const RANKS=[];
+const NOTICES=['🎉 CodeGame 베타 오픈 — 지금 무료로 시작하세요','🔧 Code Risk Scanner로 안전한 코드만 판매됩니다'];
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function tname(t){return{py:'Python',js:'JavaScript',sh:'Sheets',n8:'n8n',gpt:'GPT',no:'노코드'}[t]||t;}
@@ -1241,25 +1450,36 @@ function tcls(t){return{py:'tpy',js:'tjs',sh:'tsh',n8:'tn8',gpt:'tgpt',no:'tno'}
 function gcol(t){return{py:'#00d4aa',js:'#ffd166',sh:'#7c6fff',n8:'#ff6b9d',gpt:'#ff6b6b',no:'#ff6b9d'}[t]||'#7c6fff';}
 
 function rend(data){
-  document.getElementById('pg').innerHTML=data.map(p=>`
-    <div class="pc">
-      <div class="ctop" style="background:linear-gradient(135deg,${gcol(p.tags[0])}22,${gcol(p.tags[0])}08)" onclick="det(${p.id})">
-        <div class="ctbdg ${p.tb}">${p.tl}</div>
-        <div class="ccode">${esc(p.cd).split('\n').slice(0,4).join('\n')}</div>
+  const items = data.map(p=>{
+    const id = p.id;
+    const isFirebase = p._source === 'firebase';
+    const clickFn = isFirebase ? `openFirebaseProduct('${id}')` : `det('${id}')`;
+    const previewFn = isFirebase ? `event.stopPropagation();openFirebaseProduct('${id}')` : `event.stopPropagation();previewById('${id}')`;
+    const tagColor = gcol((p.tags||['py'])[0]);
+    const demoLabel = p.isDemo ? '<span style="position:absolute;top:10px;left:10px;background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.25);padding:2px 8px;border-radius:99px;font-size:9px;font-family:var(--fm);backdrop-filter:blur(8px)">예시 상품</span>' : '';
+    return `
+    <div class="pc" onclick="${clickFn}">
+      <div class="ctop" style="background:linear-gradient(135deg,${tagColor}18,${tagColor}06,transparent)">
+        ${demoLabel}
+        <div class="ctbdg ${p.tb||'bwf'}" style="position:absolute;top:10px;right:10px">${p.tl||'자동화'}</div>
+        <div class="ccode" style="position:absolute;bottom:14px;left:16px;right:16px">${esc(p.cd||'').split('\n').slice(0,4).join('\n')}</div>
       </div>
       <div class="cbody">
-        <div class="ctags">${p.tags.map(t=>`<span class="tag ${tcls(t)}">${tname(t)}</span>`).join('')}</div>
-        <div class="ctitle" onclick="det(${p.id})" style="cursor:pointer">${p.em} ${p.ti}</div>
-        <div class="cdesc" onclick="det(${p.id})" style="cursor:pointer">${p.ds}</div>
+        <div class="ctags">${(p.tags||[]).map(t=>`<span class="tag ${tcls(t)}">${tname(t)}</span>`).join('')}</div>
+        <div class="ctitle">${p.em||'📦'} ${p.ti}</div>
+        <div class="cdesc">${p.ds}</div>
         <div class="cfoot">
-          <div onclick="det(${p.id})" style="cursor:pointer"><div class="cprice">₩${p.pr.toLocaleString()}</div><div class="csub">${p.lic}</div></div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span class="cmeta">⭐${p.rt} · ${p.ss}판매</span>
-            <button onclick="event.stopPropagation();previewById(${p.id})" style="background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:3px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:var(--fco)">미리보기</button>
+          <div><div class="cprice">₩${(p.pr||0).toLocaleString()}</div><div class="csub">${p.lic||'일반 상업용'}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="cmeta" style="font-size:11px;color:var(--t2)">⭐${p.rt||'—'} · ${p.ss||0}판매</span>
+            <button onclick="${previewFn}" style="background:rgba(0,245,196,.07);color:var(--accent);border:1px solid rgba(0,245,196,.18);border-radius:99px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--fm);transition:all .18s" onmouseover="this.style.background='rgba(0,245,196,.14)'" onmouseout="this.style.background='rgba(0,245,196,.07)'">미리보기</button>
           </div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  });
+  document.getElementById('pg').innerHTML = items.join('') ||
+    '<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--t2)"><div style="font-size:48px;margin-bottom:16px">🛒</div><p style="font-size:14px">아직 등록된 상품이 없어요</p><p style="font-size:12px;margin-top:6px;opacity:.6">첫 번째 판매자가 되어보세요!</p></div>';
 }
 
 function det(id){
@@ -1269,26 +1489,116 @@ function det(id){
   document.getElementById('dti').textContent=p.em+' '+p.ti;
   document.getElementById('dds').textContent=p.ds;
   document.getElementById('dft').innerHTML=p.ft.map(f=>`<div class="fi"><span class="fck">✓</span><span>${f}</span></div>`).join('');
-  document.getElementById('drq').innerHTML=p.rq.map(r=>`<div class="fi"><span style="color:var(--text3)">•</span><span>${r}</span></div>`).join('');
-  document.getElementById('dpr').innerHTML=`₩${p.pr.toLocaleString()} <small style="font-size:12px;color:var(--text2);font-weight:400">일회성 구매</small>`;
+  document.getElementById('drq').innerHTML=p.rq.map(r=>`<div class="fi"><span style="color:var(--t3)">•</span><span>${r}</span></div>`).join('');
+  document.getElementById('dpr').innerHTML=`₩${p.pr.toLocaleString()} <small style="font-size:12px;color:var(--t2);font-weight:400">일회성 구매</small>`;
   document.getElementById('drw').innerHTML=[['언어/도구',p.lang],['실행 환경',p.env],['난이도',p.lv],['라이선스',p.lic],['평점',`⭐ ${p.rt} (${p.ss}건)`]].map(([k,v])=>`<div class="brow"><span>${k}</span><span>${v}</span></div>`).join('');
   const av=document.getElementById('dsa');av.textContent=p.sl.slice(0,2).toUpperCase();av.style.background=`linear-gradient(135deg,${p.sc},${p.sc}88)`;
   document.getElementById('dsn').textContent=p.sl;
-  // ✅ FIX #7: 구매 버튼에 가격 표시
   const buyPriceEl=document.getElementById('dBuyPrice');
   if(buyPriceEl) buyPriceEl.textContent=`— ₩${p.pr.toLocaleString()}`;
-  // 미리보기 버튼 추가
-  const previewBtn = document.getElementById('dPreviewBtn');
-  if(previewBtn) previewBtn.onclick = ()=>openCodePreview(p.cd, p.ti);
-  // 현재 상품 전역 저장 (구매 버튼용)
-  window._currentProduct = {
-    uploadId: p.id,
-    id: p.id,
-    price: p.pr||0,
-    title: p.ti||p.em||'상품',
-    fileUrl: p.fu||p.fileUrl||''
+  const previewBtn=document.getElementById('dPreviewBtn');
+  if(previewBtn) previewBtn.onclick=()=>openCodePreview(p.cd,p.ti);
+  const sellerAvEl=document.getElementById('dsa');
+  if(sellerAvEl){
+    if(p.isDemo){
+      sellerAvEl.style.cursor='default';
+      sellerAvEl.onclick=null;
+    } else {
+      sellerAvEl.style.cursor='pointer';
+      sellerAvEl.onclick=()=>openSellerProfile(p.uid,p.sl);
+    }
+  }
+  window._currentProduct={
+    uploadId:p.id, id:p.id,
+    price:p.pr||0,
+    title:p.ti||p.em||'상품',
+    fileUrl:p.fu||p.fileUrl||''
   };
   go('detail');
+}
+
+async function loadApprovedProducts(){
+  try{
+    const fb=window._fb;
+    if(!fb?.db) return;
+    const q=fb.query(
+      fb.collection(fb.db,'uploads'),
+      fb.where('status','==','approved'),
+      fb.orderBy('createdAt','desc')
+    );
+    const snap=await fb.getDocs(q);
+    const fbProducts=snap.docs.map(d=>{
+      const v=d.data();
+      return {
+        id:d.id, _source:'firebase',
+        type:v.category||'workflow',
+        ti:v.title||'상품',
+        ds:v.description||'',
+        pr:v.price||0,
+        tags:[(v.language||'py').toLowerCase().substring(0,2)],
+        tb:'bwf', tl:v.category||'자동화',
+        lang:v.language||'Python',
+        env:'모두',lv:'누구나',
+        lic:v.license||'일반 상업용',
+        sl:v.nickname||v.uid?.substring(0,8)||'판매자',
+        sc:'#00f5c4',rt:'—',ss:v.salesCount||0,
+        em:'📦',cd:v.description||'',
+        fileUrl:v.fileUrl||'',
+        uid:v.uid,
+        fileName:v.fileName||'',
+        fileSize:v.fileSize||0,
+        createdAt:v.createdAt
+      };
+    });
+    const allProducts=[...P,...fbProducts];
+    rend(allProducts);
+    const total = fbProducts.length;
+    const el = document.getElementById('statProducts');
+    if(el) el.innerHTML=`<b>${total}</b>`;
+    const hudA=document.getElementById('hudAssets');
+    if(hudA) hudA.textContent=`💾 ${total} ASSETS`;
+    const sellers=new Set(fbProducts.map(p=>p.uid)).size;
+    const selEl=document.getElementById('statSellers');
+    if(selEl) selEl.innerHTML=`<b>${sellers}</b>+`;
+    const hudD=document.getElementById('hudDevs');
+    if(hudD) hudD.textContent=`⚡ ${sellers} DEVS`;
+    const mktC=document.getElementById('mktCount');
+    if(mktC) mktC.textContent=`· ${allProducts.length}`;
+    if(fbProducts.length>0){
+      const notice=document.getElementById('demoNotice');
+      if(notice) notice.style.display='none';
+    }
+  }catch(e){
+    console.log('상품 로드 실패:',e);
+    rend(P);
+  }
+}
+
+async function openFirebaseProduct(uploadId){
+  try{
+    const fb=window._fb;
+    if(!fb?.db){toast('로그인 후 이용해주세요','⚠️');return;}
+    const snap=await fb.getDoc(fb.doc(fb.db,'uploads',uploadId));
+    if(!snap.exists()){toast('상품을 찾을 수 없어요','❌');return;}
+    const v={id:snap.id,...snap.data()};
+    document.getElementById('dc').innerHTML=`<span style="color:var(--accent)"># ${v.fileName||'파일'}
+# ${v.description||''}</span>`;
+    document.getElementById('dtg').innerHTML=`<span class="tag tpy">${v.language||'코드'}</span><span class="tag" style="background:rgba(0,245,196,.07);color:var(--accent);border:1px solid rgba(0,245,196,.15)">${v.category||'자동화'}</span>`;
+    document.getElementById('dti').textContent='📦 '+v.title;
+    document.getElementById('dds').textContent=v.description||'';
+    document.getElementById('dft').innerHTML='<div class="fi"><span class="fck">✓</span><span>'+v.fileName+'</span></div>';
+    document.getElementById('drq').innerHTML='<div class="fi"><span style="color:var(--t3)">•</span><span>'+( v.language||'Python')+'</span></div>';
+    document.getElementById('dpr').innerHTML=`₩${(v.price||0).toLocaleString()} <small style="font-size:12px;color:var(--t2);font-weight:300">일회성 구매</small>`;
+    document.getElementById('drw').innerHTML=[['언어/도구',v.language||'—'],['파일명',v.fileName||'—'],['라이선스',v.license||'일반 상업용'],['판매',`${v.salesCount||0}건`]].map(([k,vv])=>`<div class="brow"><span>${k}</span><span>${vv}</span></div>`).join('');
+    const av=document.getElementById('dsa');av.textContent=(v.nickname||'판매자').slice(0,2).toUpperCase();av.style.background='linear-gradient(135deg,#00f5c4,#00d4ff)';
+    document.getElementById('dsn').textContent=v.nickname||'판매자';
+    document.getElementById('dBuyPrice').textContent=`— ₩${(v.price||0).toLocaleString()}`;
+    const sellerBtn=document.getElementById('dsa');
+    sellerBtn.style.cursor='pointer';
+    sellerBtn.onclick=()=>openSellerProfile(v.uid,v.nickname||'판매자');
+    window._currentProduct={uploadId:snap.id,id:snap.id,price:v.price||0,title:v.title,fileUrl:v.fileUrl||''};
+    go('detail');
+  }catch(e){toast('상품 로드 실패: '+e.message,'❌');}
 }
 
 function filt(btn,cat){
@@ -1306,7 +1616,6 @@ function go(pg){
   window.scrollTo(0,0);
 }
 
-// ── 코드 라이브 프리뷰 모달 ──
 function openCodePreview(code, title){
   const m = document.getElementById('codePreviewModal');
   document.getElementById('codePreviewTitle').textContent = title || 'CODE PREVIEW';
@@ -1319,7 +1628,6 @@ function previewById(id){
   if(p) openCodePreview(p.cd, p.ti);
 }
 
-// ── 요청하기 ──
 function openRequestModal(){
   const user = window._fb?.auth?.currentUser;
   if(!user){ openL('login'); toast('로그인이 필요해요','⚠️'); return; }
@@ -1340,7 +1648,7 @@ async function submitRequest(){
       description: desc,
       category: document.getElementById('reqCat').value,
       budget: parseInt(document.getElementById('reqBudget').value)||0,
-      status: 'open',  // open / in_progress / completed
+      status: 'open', 
       likes: 0,
       createdAt: fb.serverTimestamp()
     });
@@ -1356,14 +1664,14 @@ async function loadRequests(cat='all'){
   const fb = window._fb;
   const el = document.getElementById('reqList');
   if(!el) return;
-  el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
     const q = fb.query(fb.collection(fb.db,'requests'), fb.orderBy('createdAt','desc'));
     const snap = await fb.getDocs(q);
     let docs = snap.docs;
     if(cat !== 'all') docs = docs.filter(d => d.data().category === cat);
     if(!docs.length){
-      el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text2);font-family:var(--fco)"><div style="font-size:48px;margin-bottom:14px">💡</div><p>요청이 없어요. 첫 번째 요청자가 되어보세요!</p></div>';
+      el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--t2);font-family:var(--fco)"><div style="font-size:48px;margin-bottom:14px">💡</div><p>요청이 없어요. 첫 번째 요청자가 되어보세요!</p></div>';
       return;
     }
     const stColor = {'open':'var(--accent)','in_progress':'var(--yellow)','completed':'var(--text2)'};
@@ -1371,20 +1679,20 @@ async function loadRequests(cat='all'){
     el.innerHTML = docs.map(d=>{
       const v = d.data();
       const dt = v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
-      return `<div style="background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:18px;margin-bottom:12px;transition:all .18s" onmouseover="this.style.borderColor='rgba(0,245,196,.3)'" onmouseout="this.style.borderColor='var(--border2)'">
+      return `<div style="background:var(--g1);border:1px solid var(--b1);border-radius:8px;padding:18px;margin-bottom:12px;transition:all .18s" onmouseover="this.style.borderColor='rgba(0,245,196,.3)'" onmouseout="this.style.borderColor='var(--b1)'">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px">
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
               <span style="font-size:10px;color:${stColor[v.status]||'var(--accent)'};background:rgba(0,245,196,.08);border:1px solid rgba(0,245,196,.2);padding:2px 8px;border-radius:3px;font-family:var(--fco);letter-spacing:.06em">${stLabel[v.status]||v.status}</span>
-              <span style="font-size:10px;color:var(--text2);background:var(--bg3);padding:2px 8px;border-radius:3px;font-family:var(--fco)">${v.category}</span>
+              <span style="font-size:10px;color:var(--t2);background:var(--g1);padding:2px 8px;border-radius:3px;font-family:var(--fco)">${v.category}</span>
               ${v.budget?`<span style="font-size:10px;color:var(--yellow);font-family:var(--fco)">예산 ₩${v.budget.toLocaleString()}</span>`:''}
             </div>
             <div style="font-size:14px;font-weight:700;margin-bottom:4px">${v.title}</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7">${v.description}</div>
+            <div style="font-size:12px;color:var(--t2);line-height:1.7">${v.description}</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--fco)">${v.nickname} · ${dt}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)">
+          <div style="font-size:11px;color:var(--t3);font-family:var(--fco)">${v.nickname} · ${dt}</div>
           <button onclick="likeRequest('${d.id}',${v.likes||0})" style="background:rgba(0,245,196,.06);color:var(--accent);border:1px solid rgba(0,245,196,.15);border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--fco)">👍 ${v.likes||0}</button>
         </div>
       </div>`;
@@ -1428,17 +1736,12 @@ function rcComm(){
 function rcFAQ(){document.getElementById('faqL').innerHTML=FAQS.map(f=>`<div class="faq" onclick="tfaq(this)"><div class="faqq"><span>${f.q}</span><span>+</span></div><div class="faqa">${f.a}</div></div>`).join('');}
 function tfaq(el){const a=el.querySelector('.faqa');const s=el.querySelector('.faqq span:last-child');a.classList.toggle('on');s.textContent=a.classList.contains('on')?'−':'+';}
 
-// ── 모달 열기/닫기 ──
 function openL(mode){
   switchAuthTab(mode||'login');
   document.getElementById('lo').classList.add('on');
 }
 function closeL(){document.getElementById('lo').classList.remove('on');}
-// ✅ 외부 클릭으로 로그인 모달 닫기 완전 비활성화 — X 버튼으로만 닫힘
-// document.getElementById('lo').addEventListener('click', ...) 제거됨
-// myPageModal 바깥 클릭 닫힘 비활성화 (의도치 않은 닫힘 방지)
 
-// ── 로그인/회원가입 탭 전환 ──
 function switchAuthTab(mode){
   const isLogin=mode==='login';
   document.getElementById('authLogin').style.display=isLogin?'block':'none';
@@ -1449,12 +1752,10 @@ function switchAuthTab(mode){
   document.getElementById('regErr').style.display='none';
 }
 
-// ── 에러 코드 한국어 ──
 function authErrMsg(code){
   return({'auth/email-already-in-use':'이미 사용 중인 이메일이에요','auth/weak-password':'비밀번호는 6자 이상이어야 해요','auth/user-not-found':'존재하지 않는 계정이에요','auth/wrong-password':'비밀번호가 틀렸어요','auth/invalid-email':'올바른 이메일 형식이 아니에요','auth/invalid-credential':'이메일 또는 비밀번호가 틀렸어요','auth/too-many-requests':'잠시 후 다시 시도해주세요','auth/requires-recent-login':'보안을 위해 다시 로그인해주세요'}[code]||'오류가 발생했어요. 다시 시도해주세요.');
 }
 
-// ── Firebase 로그인 ──
 async function fbLogin(){
   const email=document.getElementById('loginEmail').value.trim();
   const pw=document.getElementById('loginPw').value;
@@ -1471,7 +1772,6 @@ async function fbLogin(){
   finally{btn.disabled=false;btn.textContent='로그인';}
 }
 
-// ── Firebase 회원가입 ──
 async function fbRegister(){
   const nick=document.getElementById('regNick').value.trim();
   const email=document.getElementById('regEmail').value.trim();
@@ -1494,8 +1794,49 @@ async function fbRegister(){
   finally{btn.disabled=false;btn.textContent='회원가입';}
 }
 
-// ── 로그아웃 ──
-// ── 관리자 확인 — Firestore config/admin 문서에서 이메일 읽어 비교 ──
+async function openSellerProfile(uid, nickname){
+  const fb=window._fb;
+  document.getElementById('sellerModal').classList.add('on');
+  const av=document.getElementById('spAvatar');
+  const nm=document.getElementById('spName');
+  av.textContent=(nickname||'판매자').slice(0,2).toUpperCase();
+  nm.textContent=nickname||'판매자';
+  document.getElementById('spSales').textContent='...';
+  document.getElementById('spProducts').textContent='...';
+  document.getElementById('spXp').textContent='...';
+  document.getElementById('spProducts-list').innerHTML='<div style="color:var(--t2);font-size:12px;padding:20px;text-align:center">불러오는 중...</div>';
+  try{
+    if(!fb?.db||!uid) return;
+    const userSnap=await fb.getDoc(fb.doc(fb.db,'users',uid));
+    if(userSnap.exists()){
+      const u=userSnap.data();
+      document.getElementById('spXp').textContent=(u.xp||0)+'';
+    }
+    const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',uid),fb.where('status','==','approved'),fb.orderBy('createdAt','desc'));
+    const snap=await fb.getDocs(q);
+    const products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('spProducts').textContent=products.length+'';
+    const totalSales=products.reduce((a,p)=>a+(p.salesCount||0),0);
+    document.getElementById('spSales').textContent=totalSales+'건';
+    if(!products.length){
+      document.getElementById('spProducts-list').innerHTML='<div style="color:var(--t2);font-size:12px;padding:20px;text-align:center">등록된 상품이 없어요</div>';
+      return;
+    }
+    document.getElementById('spProducts-list').innerHTML=products.map(p=>`
+      <div onclick="document.getElementById('sellerModal').classList.remove('on');openFirebaseProduct('${p.id}')"
+        style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--g1);border:1px solid var(--b1);border-radius:12px;cursor:pointer;transition:all .2s;gap:12px"
+        onmouseover="this.style.background='var(--g2)'" onmouseout="this.style.background='var(--g1)'">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px">${p.title}</div>
+          <div style="font-size:11px;color:var(--t2);font-family:var(--fm)">${p.salesCount||0}판매 · ${p.license||'일반 상업용'}</div>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--accent);font-family:var(--fe);white-space:nowrap">₩${(p.price||0).toLocaleString()}</div>
+      </div>`).join('');
+  }catch(e){
+    document.getElementById('spProducts-list').innerHTML='<div style="color:var(--t2);font-size:12px;padding:20px;text-align:center">불러오기 실패</div>';
+  }
+}
+
 async function checkAdminRole(userEmail){
   try{
     const db=window._fb?.db;
@@ -1503,9 +1844,7 @@ async function checkAdminRole(userEmail){
     const snap=await window._fb.getDoc(window._fb.doc(db,'config','admin'));
     const adminEmail=snap.exists()?snap.data()?.email:null;
     const isAdmin=(adminEmail&&userEmail===adminEmail);
-    // 전역 저장 — 마이페이지 열릴 때마다 적용
     window._isAdmin=isAdmin;
-    // 지금 바로 탭 업데이트
     applyAdminTab();
   }catch(e){
     window._isAdmin=false;
@@ -1518,7 +1857,6 @@ function applyAdminTab(){
   if(adminTab) adminTab.style.display=window._isAdmin?'block':'none';
 }
 
-// ── 댓글 달기 — 비로그인 시 안내 메시지 표시 ──
 function submitCommentSafe(){
   const user=window._fb?.auth?.currentUser;
   const msg=document.getElementById('cmtLoginMsg');
@@ -1535,7 +1873,6 @@ async function doLogout(){
   toast('로그아웃됐어요 👋','');
 }
 
-// ── XP 추가 ──
 async function addXP(uid,amount){
   try{
     await window._fb.updateDoc(window._fb.doc(window._fb.db,'users',uid),{xp:window._fb.increment(amount)});
@@ -1543,7 +1880,6 @@ async function addXP(uid,amount){
   }catch(e){}
 }
 
-// ── 마이페이지 열기 ──
 function openMyPage(){
   document.getElementById('myPageModal').classList.add('on');
   mpTab('upload');
@@ -1558,7 +1894,6 @@ function openMyPage(){
     document.getElementById('settingsEmailDisplay').textContent=user.email;
     document.getElementById('settingsAvatar').textContent=initial;
     loadMpXp(user.uid);
-    // 마이페이지 열릴 때마다 관리자 탭 상태 적용
     applyAdminTab();
   }
 }
@@ -1581,7 +1916,6 @@ async function loadMpXp(uid){
       document.getElementById('mpStatUp').textContent=d.totalUploads||0;
       document.getElementById('mpStatSale').textContent=d.totalSales||0;
       document.getElementById('mpStatRev').textContent='₩'+(d.totalRevenue||0).toLocaleString();
-      // 설정 탭 통계도 업데이트
       document.getElementById('statUploads').textContent=d.totalUploads||0;
       document.getElementById('statSales').textContent=d.totalSales||0;
       document.getElementById('statRevenue').textContent='₩'+(d.totalRevenue||0).toLocaleString();
@@ -1589,13 +1923,11 @@ async function loadMpXp(uid){
   }catch(e){}
 }
 
-// ── 코드 복사 ──
 function copyCode(){
   const code=document.getElementById('codePreviewContent').textContent;
   navigator.clipboard.writeText(code).then(()=>toast('복사됐어요!','📋')).catch(()=>toast('복사 실패','❌'));
 }
 
-// ── 마이페이지 탭 전환 ──
 function mpTab(name){
   ['upload','myfiles','purchases','settings','admin'].forEach((t,i)=>{
     document.getElementById('mpPanel_'+t).style.display=t===name?'block':'none';
@@ -1605,9 +1937,6 @@ function mpTab(name){
   if(name==='purchases') loadPurchases();
 }
 
-// ─────────────────────────────────────
-// 파일 업로드
-// ─────────────────────────────────────
 let _upFile=null;
 function setUpFile(file){
   if(file.size>50*1024*1024){toast('50MB 이하 파일만 가능해요','⚠️');return;}
@@ -1664,7 +1993,7 @@ async function doUpload2(){
   <div style="padding:18px;text-align:center">
     <div style="font-size:42px">✅</div>
     <h3 style="margin:10px 0">검수 신청이 완료되었습니다</h3>
-    <p style="font-size:12px;color:var(--text2)">
+    <p style="font-size:12px;color:var(--t2)">
       관리자 검토 후 승인되면 판매 목록에 자동 등록됩니다.
     </p>
   </div>
@@ -1679,25 +2008,22 @@ document.getElementById('upProgress').style.display='none';
   }catch(e){toast('오류: '+e.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';}
 }
 
-// ─────────────────────────────────────
-// 내 판매 목록
-// ─────────────────────────────────────
 async function loadMyFiles(){
   const fb=window._fb;const user=fb?.auth?.currentUser;
   if(!user)return;
   const el=document.getElementById('myFilesList');
-  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
     const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('uid','==',user.uid),fb.orderBy('createdAt','desc'));
     const snap=await fb.getDocs(q);
-    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p></div>';return;}
+    if(!snap.docs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">📁</div><p>업로드한 파일이 없어요</p></div>';return;}
     const stBadge={'pending':'<span style="color:var(--yellow)">⏳ 검수중</span>','approved':'<span style="color:var(--accent)">✅ 승인</span>','rejected':'<span style="color:var(--red)">❌ 반려</span>'};
     let tRev=0,tSales=0;
     el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';tRev+=v.revenue||0;tSales+=v.salesCount||0;
-      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      return`<div style="background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
-        <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${v.category} · ${fmtSz(v.fileSize)} · ${dt} · ${stBadge[v.status]||v.status}</div>
-        <div style="font-size:11px;color:var(--text2);font-family:var(--fco);margin-top:2px">판매 ${v.salesCount||0}건 · 수익 ₩${(v.revenue||0).toLocaleString()}</div></div>
+        <div style="font-size:11px;color:var(--t2);font-family:var(--fco)">${v.category} · ${fmtSz(v.fileSize)} · ${dt} · ${stBadge[v.status]||v.status}</div>
+        <div style="font-size:11px;color:var(--t2);font-family:var(--fco);margin-top:2px">판매 ${v.salesCount||0}건 · 수익 ₩${(v.revenue||0).toLocaleString()}</div></div>
         <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
           <span style="font-size:13px;font-weight:700;font-family:var(--fen);color:var(--accent)">₩${(v.price||0).toLocaleString()}</span>
           <a href="${v.fileUrl}" target="_blank" style="padding:5px 10px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco)">DL</a>
@@ -1720,24 +2046,17 @@ async function deleteUpload(docId,storagePath){
   }catch(e){toast('삭제 실패: '+e.message,'❌');}
 }
 
-// ─────────────────────────────────────
-// 구매 처리 & 내역
-// ─────────────────────────────────────
-// ── 현재 열린 상품 전역 변수 ──
 window._currentProduct = null;
 
-// ── 상품 상세에서 구매 버튼 클릭 시 호출 ──
 function buyItem(){
   const p = window._currentProduct;
   if(!p){toast('상품 정보를 불러오는 중이에요','⚠️');return;}
   buyAsset(p.uploadId||p.id, p.price||p.pr||0, p.title||p.ti||'상품', p.fileUrl||p.fu||'');
 }
 
-// ── 라이선스 키 생성 (UUID v4 방식) ──
 function generateLicenseKey(){
   const s=()=>Math.floor((1+Math.random())*0x10000).toString(16).substring(1).toUpperCase();
   return `CG-${s()}${s()}-${s()}${s()}-${s()}${s()}-${s()}${s()}`;
-  // 예: CG-A1B2C3D4-E5F6G7H8-I9J0K1L2-M3N4O5P6
 }
 
 async function buyAsset(uploadId,price,title,fileUrl){
@@ -1745,7 +2064,6 @@ async function buyAsset(uploadId,price,title,fileUrl){
   if(!user){openL('login');toast('로그인이 필요해요','⚠️');return;}
   if(!confirm(`"${title}"\n₩${price.toLocaleString()}에 구매할까요?\n\n구매 후 마이페이지에서 라이선스 키와 다운로드 링크를 확인하세요.`))return;
 
-  // 이미 구매했는지 확인
   try{
     const dupQ=fb.query(fb.collection(fb.db,'purchases'),
       fb.where('buyerUid','==',user.uid),
@@ -1755,22 +2073,20 @@ async function buyAsset(uploadId,price,title,fileUrl){
   }catch(e){}
 
   try{
-    // 라이선스 키 자동 생성
     const licenseKey=generateLicenseKey();
-    const expiresAt=null; // 영구 (구독형은 나중에)
+    const expiresAt=null;
 
     await fb.addDoc(fb.collection(fb.db,'purchases'),{
       buyerUid:user.uid,
       buyerNick:user.displayName||user.email,
       uploadId,title,price,fileUrl,
-      licenseKey,         // 고유 라이선스 키
-      expiresAt,          // 유효기간 (null = 영구)
-      isActive:true,      // 키 활성화 상태
-      downloadCount:0,    // 다운로드 횟수
+      licenseKey,        
+      expiresAt,         
+      isActive:true,     
+      downloadCount:0,   
       purchasedAt:fb.serverTimestamp()
     });
 
-    // 판매자 통계 업데이트
     const uploadRef=fb.doc(fb.db,'uploads',uploadId);
     const uploadSnap=await fb.getDoc(uploadRef);
     if(uploadSnap.exists()){
@@ -1784,7 +2100,6 @@ async function buyAsset(uploadId,price,title,fileUrl){
     await addXP(user.uid,5);
 
     toast('구매 완료! 라이선스 키가 발급됐어요 🎉','✅');
-    // 마이페이지 구매내역 탭으로 이동
     setTimeout(()=>{openMyPage();mpTab('purchases');},800);
   }catch(e){toast('구매 실패: '+e.message,'❌');}
 }
@@ -1793,12 +2108,12 @@ async function loadPurchases(){
   const fb=window._fb;const user=fb?.auth?.currentUser;
   if(!user)return;
   const el=document.getElementById('purchasesList');
-  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
     const q=fb.query(fb.collection(fb.db,'purchases'),fb.where('buyerUid','==',user.uid),fb.orderBy('purchasedAt','desc'));
     const snap=await fb.getDocs(q);
     if(!snap.docs.length){
-      el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p></div>';
+      el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t2);font-family:var(--fco)"><div style="font-size:40px;margin-bottom:12px">🛒</div><p>구매한 항목이 없어요</p></div>';
       return;
     }
     el.innerHTML=snap.docs.map(d=>{
@@ -1808,30 +2123,30 @@ async function loadPurchases(){
       const active=v.isActive!==false;
       const expires=v.expiresAt?v.expiresAt.toDate?.()?.toLocaleDateString('ko-KR'):'영구';
       return`
-      <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:10px;padding:16px;margin-bottom:12px">
-        <!-- 상품 제목 + 날짜 -->
+      <div style="background:var(--g1);border:1px solid var(--acc3);border-radius:10px;padding:16px;margin-bottom:12px">
+        
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-size:13px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title||'제목 없음'}</div>
-            <div style="font-size:11px;color:var(--text2)">구매일: ${dt} · ₩${(v.price||0).toLocaleString()}</div>
+            <div style="font-size:11px;color:var(--t2)">구매일: ${dt} · ₩${(v.price||0).toLocaleString()}</div>
           </div>
           <span style="font-size:10px;padding:2px 8px;border-radius:99px;background:${active?'rgba(0,245,196,.1)':'rgba(255,100,100,.1)'};color:${active?'var(--acc)':'#ff6464'};border:1px solid ${active?'rgba(0,245,196,.2)':'rgba(255,100,100,.2)'}">
             ${active?'● 활성':'● 만료'}
           </span>
         </div>
-        <!-- 라이선스 키 -->
-        <div style="background:var(--bg3);border:1px solid var(--acc3);border-radius:6px;padding:10px 12px;margin-bottom:10px">
-          <div style="font-size:10px;color:var(--text2);margin-bottom:4px">🔑 라이선스 키</div>
+        
+        <div style="background:var(--g1);border:1px solid var(--acc3);border-radius:6px;padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:var(--t2);margin-bottom:4px">🔑 라이선스 키</div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
             <code style="font-size:12px;color:var(--acc);font-family:var(--fco);letter-spacing:.05em">${key}</code>
             <button onclick="navigator.clipboard.writeText('${key}').then(()=>toast('키 복사됨!','📋'))"
-              style="background:none;border:1px solid var(--acc3);color:var(--text2);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;white-space:nowrap">
+              style="background:none;border:1px solid var(--acc3);color:var(--t2);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;white-space:nowrap">
               복사
             </button>
           </div>
-          <div style="font-size:10px;color:var(--text2);margin-top:4px">유효기간: ${expires}</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:4px">유효기간: ${expires}</div>
         </div>
-        <!-- 다운로드 버튼 -->
+        
         <a href="${v.fileUrl||'#'}" target="_blank"
           onclick="recordDownload('${d.id}')"
           style="display:block;text-align:center;padding:9px;background:var(--acc);color:#000;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;font-family:var(--fco)">
@@ -1844,7 +2159,6 @@ async function loadPurchases(){
   }
 }
 
-// 다운로드 횟수 기록
 async function recordDownload(purchaseId){
   try{
     const fb=window._fb;
@@ -1855,9 +2169,6 @@ async function recordDownload(purchaseId){
   }catch(e){}
 }
 
-// ─────────────────────────────────────
-// 설정
-// ─────────────────────────────────────
 async function updateNick(){
   const nick=document.getElementById('newNick').value.trim();
   const fb=window._fb;const user=fb?.auth?.currentUser;
@@ -1910,24 +2221,21 @@ async function loadMyStats(uid){
   }catch(e){}
 }
 
-// ─────────────────────────────────────
-// 관리자 패널
-// ─────────────────────────────────────
 async function loadAdminQueue(status='pending'){
   const fb=window._fb;const el=document.getElementById('adminQueue');
-  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-family:var(--fco)">LOADING...</div>';
+  el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t2);font-family:var(--fco)">LOADING...</div>';
   try{
     const q=fb.query(fb.collection(fb.db,'uploads'),fb.where('status','==',status),fb.orderBy('createdAt','desc'));
     const snap=await fb.getDocs(q);
-    if(!snap.docs.length){el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--text2);font-family:var(--fco)">${status} 항목이 없어요</div>`;return;}
+    if(!snap.docs.length){el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--t2);font-family:var(--fco)">${status} 항목이 없어요</div>`;return;}
     el.innerHTML=snap.docs.map(d=>{const v=d.data();const dt=v.createdAt?.toDate?.()?.toLocaleDateString('ko-KR')||'-';
-      return`<div style="background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:12px 14px;margin-bottom:8px">
+      return`<div style="background:var(--g1);border:1px solid var(--b1);border-radius:6px;padding:12px 14px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">
           <div><div style="font-size:12px;font-weight:700;font-family:var(--fco);margin-bottom:3px">${v.title}</div>
-          <div style="font-size:11px;color:var(--text2);font-family:var(--fco)">${v.nickname} · ${v.category} · ₩${(v.price||0).toLocaleString()} · ${dt}</div></div>
+          <div style="font-size:11px;color:var(--t2);font-family:var(--fco)">${v.nickname} · ${v.category} · ₩${(v.price||0).toLocaleString()} · ${dt}</div></div>
           <a href="${v.fileUrl}" target="_blank" style="padding:5px 10px;background:rgba(0,245,196,.08);color:var(--accent);border:1px solid rgba(0,245,196,.2);border-radius:4px;font-size:11px;text-decoration:none;font-family:var(--fco);flex-shrink:0">파일 확인</a>
         </div>
-        ${v.description?`<div style="font-size:11px;color:var(--text2);margin-bottom:8px;padding:8px;background:var(--bg3);border-radius:4px;font-family:var(--fco)">${v.description}</div>`:''}
+        ${v.description?`<div style="font-size:11px;color:var(--t2);margin-bottom:8px;padding:8px;background:var(--g1);border-radius:4px;font-family:var(--fco)">${v.description}</div>`:''}
         <div style="display:flex;gap:6px">
           <button onclick="adminAction('${d.id}','${v.uid}','approved')" style="padding:5px 12px;background:rgba(0,245,196,.1);color:var(--accent);border:1px solid rgba(0,245,196,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">✅ 승인</button>
           <button onclick="adminAction('${d.id}','${v.uid}','rejected')" style="padding:5px 12px;background:rgba(255,59,59,.1);color:var(--red);border:1px solid rgba(255,59,59,.3);border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fco)">❌ 반려</button>
@@ -1954,12 +2262,10 @@ function toast(msg,icon){
   setTimeout(()=>el.classList.remove('on'),3000);
 }
 
-// ── 검색 ──
 let searchOpen = false;
 function toggleSearch() {
   if (searchOpen) { closeSearch(); return; }
   searchOpen = true;
-  // 홈 페이지로 이동
   go('home');
   const wrap = document.getElementById('searchBarWrap');
   wrap.classList.add('open');
@@ -1972,15 +2278,12 @@ function closeSearch() {
   document.getElementById('searchResultWrap').style.display = 'none';
   document.getElementById('searchInput').value = '';
   document.getElementById('searchBtn').textContent = '🔍 검색';
-  // 마켓 원상복구
   document.getElementById('ms').style.display = 'block';
 }
 function doSearch() {
   const q = document.getElementById('searchInput').value.trim();
   if (!q) { toast('검색어를 입력해주세요!', '⚠️'); return; }
-  // 마켓 숨기기
   document.getElementById('ms').style.display = 'none';
-  // 검색
   const kw = q.toLowerCase();
   const results = P.filter(p =>
     p.ti.toLowerCase().includes(kw) ||
@@ -1997,7 +2300,7 @@ function doSearch() {
     label.innerHTML = `<b>"${q}"</b> 검색 결과가 없어요`;
     grid.innerHTML = `<div class="no-result" style="grid-column:1/-1"><div class="nr-icon">🔎</div><p><b>"${q}"</b>에 맞는 코드 자산이 없어요.<br>다른 키워드로 검색해보세요.</p></div>`;
   } else {
-    label.innerHTML = `<b>"${q}"</b> 검색 결과 · <b style="color:var(--text)">${results.length}개</b>`;
+    label.innerHTML = `<b>"${q}"</b> 검색 결과 · <b style="color:var(--t1)">${results.length}개</b>`;
     grid.innerHTML = results.map(p=>`
       <div class="pc" onclick="det(${p.id})">
         <div class="ctop" style="background:linear-gradient(135deg,${gcol(p.tags[0])}22,${gcol(p.tags[0])}08)">
@@ -2015,36 +2318,64 @@ function doSearch() {
   rw.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-rend(P);rcComm();rcFAQ();uc();
+rend(P);
+rcComm();rcFAQ();uc();
 
-// ══════════════════════════════════════════
-// HACKER INTRO ANIMATION
-// ══════════════════════════════════════════
+(function(){
+  const bgCanvas = document.createElement('canvas');
+  bgCanvas.style.cssText = 'position:fixed;inset:0;z-index:0;opacity:0.04;pointer-events:none;';
+  bgCanvas.id = 'bgMatrix';
+  document.body.appendChild(bgCanvas);
+  const bgCtx = bgCanvas.getContext('2d');
+  function resizeBg(){ bgCanvas.width=window.innerWidth; bgCanvas.height=window.innerHeight; }
+  resizeBg();
+  window.addEventListener('resize', resizeBg);
+  const bgChars = '01アイウエオ<>{}0110ABCDEF9287564310';
+  const bgFs = 14;
+  let bgCols, bgDrops;
+  function initBg(){ bgCols=Math.floor(bgCanvas.width/bgFs); bgDrops=Array(bgCols).fill(0).map(()=>Math.random()*-100); }
+  initBg();
+  setInterval(()=>{
+    bgCtx.fillStyle='rgba(2,3,10,0.12)';
+    bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
+    bgCtx.font=bgFs+'px Share Tech Mono,monospace';
+    for(let i=0;i<bgDrops.length;i++){
+      const alpha = Math.random()*0.8+0.2;
+      bgCtx.fillStyle=`rgba(0,245,196,${alpha})`;
+      bgCtx.fillText(bgChars[Math.floor(Math.random()*bgChars.length)],i*bgFs,bgDrops[i]*bgFs);
+      if(bgDrops[i]*bgFs>bgCanvas.height && Math.random()>0.98) bgDrops[i]=Math.random()*-20;
+      bgDrops[i]+=0.5;
+    }
+  },60);
+})();
+
 (function(){
   const canvas = document.getElementById('matrixCanvas');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[];,./|\\!@#$%^&*';
+  const chars = 'アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}|!@#$%';
   const fontSize = 13;
   const cols = Math.floor(canvas.width / fontSize);
   const drops = Array(cols).fill(1);
 
   function drawMatrix(){
-    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillStyle = 'rgba(0,0,0,0.06)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.font = fontSize+'px Share Tech Mono, monospace';
     for(let i=0;i<drops.length;i++){
-      ctx.fillStyle = `rgba(0,245,196,${Math.random()*.8+.2})`;
+      const r = Math.random();
+      if(r > 0.95) ctx.fillStyle = '#fff';
+      else if(r > 0.8) ctx.fillStyle = `rgba(0,255,255,${Math.random()*.9+.1})`;
+      else ctx.fillStyle = `rgba(0,245,196,${Math.random()*.8+.2})`;
       ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, drops[i]*fontSize);
       if(drops[i]*fontSize > canvas.height && Math.random() > .975) drops[i]=0;
       drops[i]++;
     }
   }
-  const matrixInterval = setInterval(drawMatrix, 50);
+  const matrixInterval = setInterval(drawMatrix, 45);
 
-  // 타이핑 애니메이션
   const titleText = 'CODEGAME';
   let tIdx = 0;
   const typeTitle = setInterval(()=>{
@@ -2053,7 +2384,6 @@ rend(P);rcComm();rcFAQ();uc();
     if(tIdx > titleText.length) clearInterval(typeTitle);
   }, 100);
 
-  // 터미널 메시지
   const lines = [
     {cls:'t-dim',    t:'> INITIALIZING CODEGAME SYSTEM v1.0...'},
     {cls:'t-green',  t:'> [OK] CODE ASSET MARKETPLACE ENGINE LOADED'},
@@ -2096,12 +2426,11 @@ rend(P);rcComm();rcFAQ();uc();
 
   function launchApp(){
     clearInterval(matrixInterval);
-    sessionStorage.setItem('cg_intro_shown','1'); // ✅ FIX #4
+    sessionStorage.setItem('cg_intro_shown','1');
     const intro = document.getElementById('intro');
     intro.classList.add('out');
     document.getElementById('hudBar').style.display='flex';
     setTimeout(()=>{intro.style.display='none';}, 900);
-    // XP 올라가는 효과
     let xp = 0;
     const xpTimer = setInterval(()=>{
       xp = Math.min(xp+2, 12);
@@ -2114,7 +2443,7 @@ rend(P);rcComm();rcFAQ();uc();
   function skipIntro(){
     clearInterval(matrixInterval);
     clearInterval(typeTitle);
-    sessionStorage.setItem('cg_intro_shown','1'); // ✅ FIX #4
+    sessionStorage.setItem('cg_intro_shown','1');
     const intro = document.getElementById('intro');
     intro.classList.add('out');
     document.getElementById('hudBar').style.display='flex';
@@ -2125,30 +2454,14 @@ rend(P);rcComm();rcFAQ();uc();
 })();
 </script>
 
-<!-- ================================================================
-     저작권 등록 안내 (한국저작권위원회 cros.or.kr)
-     ----------------------------------------------------------------
-     등록 절차:
-     1. cros.or.kr 접속 → 회원가입
-     2. 저작물 등록 신청 → 컴퓨터 프로그램 선택
-     3. 저작물명: "CodeGame 웹 플랫폼"
-     4. 창작 완성일: 2026년 4월
-     5. 본 HTML 파일 업로드
-     6. 등록 수수료 납부 (약 2~3만원)
-     7. 등록증 발급 (2~4주 소요)
-     ================================================================ -->
-
-<!-- ══════════════════════════════════════
-     글쓰기 모달
-══════════════════════════════════════ -->
 <div id="writeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px">
-  <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:560px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
-    <button onclick="closeWriteModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+  <div style="background:var(--g1);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:560px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeWriteModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer">✕</button>
     <h2 style="font-family:var(--fen);font-size:18px;margin-bottom:20px;color:var(--acc)">✏️ 글쓰기</h2>
 
     <div style="margin-bottom:14px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">카테고리</label>
-      <select id="wCat" style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px">
+      <label style="font-size:12px;color:var(--t2);display:block;margin-bottom:6px">카테고리</label>
+      <select id="wCat" style="width:100%;background:var(--g1);border:1px solid var(--acc3);color:var(--t1);padding:10px 12px;border-radius:8px;font-size:14px">
         <option value="질문">질문·답변</option>
         <option value="후기">후기 공유</option>
         <option value="자유">자유게시판</option>
@@ -2156,21 +2469,21 @@ rend(P);rcComm();rcFAQ();uc();
     </div>
 
     <div style="margin-bottom:14px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">제목</label>
+      <label style="font-size:12px;color:var(--t2);display:block;margin-bottom:6px">제목</label>
       <input id="wTitle" type="text" placeholder="제목을 입력하세요" maxlength="60"
-        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
+        style="width:100%;background:var(--g1);border:1px solid var(--acc3);color:var(--t1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
     </div>
 
     <div style="margin-bottom:14px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">내용</label>
+      <label style="font-size:12px;color:var(--t2);display:block;margin-bottom:6px">내용</label>
       <textarea id="wContent" placeholder="내용을 입력하세요 (최대 2000자)" maxlength="2000" rows="8"
-        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box;resize:vertical;font-family:inherit"></textarea>
+        style="width:100%;background:var(--g1);border:1px solid var(--acc3);color:var(--t1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box;resize:vertical;font-family:inherit"></textarea>
     </div>
 
     <div style="margin-bottom:20px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">태그 (쉼표로 구분, 최대 3개)</label>
+      <label style="font-size:12px;color:var(--t2);display:block;margin-bottom:6px">태그 (쉼표로 구분, 최대 3개)</label>
       <input id="wTags" type="text" placeholder="예: 파이썬, 자동화, 스마트스토어"
-        style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
+        style="width:100%;background:var(--g1);border:1px solid var(--acc3);color:var(--t1);padding:10px 12px;border-radius:8px;font-size:14px;box-sizing:border-box">
     </div>
 
     <div id="wErr" style="display:none;color:#ff6b6b;font-size:13px;margin-bottom:12px"></div>
@@ -2179,24 +2492,21 @@ rend(P);rcComm();rcFAQ();uc();
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     게시글 상세 모달
-══════════════════════════════════════ -->
 <div id="postDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;align-items:center;justify-content:center;padding:16px">
-  <div style="background:var(--bg2);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:640px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
-    <button onclick="closePostDetail()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+  <div style="background:var(--g1);border:1px solid var(--acc3);border-radius:16px;width:100%;max-width:640px;padding:28px;position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closePostDetail()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer">✕</button>
     <div id="postDetailContent"></div>
 
-    <!-- 댓글 영역 -->
+    
     <div style="margin-top:24px;border-top:1px solid var(--acc3);padding-top:20px">
-      <h3 style="font-size:14px;margin-bottom:16px;color:var(--text1)">💬 댓글</h3>
+      <h3 style="font-size:14px;margin-bottom:16px;color:var(--t1)">💬 댓글</h3>
       <div id="commentList" style="margin-bottom:16px"></div>
       <div id="commentWrite">
         <textarea id="cmtInput" placeholder="댓글을 입력하세요" rows="3" maxlength="500"
-          style="width:100%;background:var(--bg3);border:1px solid var(--acc3);color:var(--text1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
+          style="width:100%;background:var(--g1);border:1px solid var(--acc3);color:var(--t1);padding:10px 12px;border-radius:8px;font-size:13px;box-sizing:border-box;resize:none;font-family:inherit;margin-bottom:8px"></textarea>
         <div style="display:flex;gap:8px;align-items:center">
           <button onclick="submitCommentSafe()" style="background:var(--acc);color:#000;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">댓글 달기</button>
-          <span id="cmtLoginMsg" style="font-size:12px;color:var(--text2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="closePostDetail();openL('login');" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
+          <span id="cmtLoginMsg" style="font-size:12px;color:var(--t2);display:none">로그인 후 댓글을 달 수 있어요. <span onclick="closePostDetail();openL('login');" style="color:var(--acc);cursor:pointer;text-decoration:underline">로그인</span></span>
         </div>
       </div>
     </div>
@@ -2204,9 +2514,6 @@ rend(P);rcComm();rcFAQ();uc();
 </div>
 
 <script>
-// ══════════════════════════════════════
-// 글쓰기 모달
-// ══════════════════════════════════════
 let _currentPostId = null;
 
 function openWriteModal(){
@@ -2221,7 +2528,6 @@ function openWriteModal(){
 function closeWriteModal(){
   document.getElementById('writeModal').style.display='none';
 }
-// writeModal 바깥 클릭 닫힘 비활성화
 
 async function submitPost(){
   const user=window._fb?.auth?.currentUser;
@@ -2259,9 +2565,6 @@ async function submitPost(){
   }finally{btn.disabled=false;btn.textContent='게시하기';}
 }
 
-// ══════════════════════════════════════
-// Firestore 게시글 불러오기
-// ══════════════════════════════════════
 async function loadFirestorePosts(){
   const db=window._fb?.db;
   if(!db) return;
@@ -2302,29 +2605,25 @@ function renderFirestorePosts(posts){
   }
 
   const allHtml=posts.map(card).join('');
-  document.getElementById('pl1').innerHTML=allHtml||'<p style="color:var(--text2);text-align:center;padding:40px">아직 게시글이 없어요. 첫 글을 작성해보세요!</p>';
+  document.getElementById('pl1').innerHTML=allHtml||'<p style="color:var(--t2);text-align:center;padding:40px">아직 게시글이 없어요. 첫 글을 작성해보세요!</p>';
 
   ['ct2','ct3','ct4'].forEach(ct=>{
     const catKey=ct==='ct2'?'질문':ct==='ct3'?'후기':'자유';
     const filtered=posts.filter(p=>p.cat===catKey);
     const el=document.getElementById(ct.replace('ct','pl'));
-    if(el)el.innerHTML=filtered.map(card).join('')||'<p style="color:var(--text2);text-align:center;padding:40px">게시글이 없어요</p>';
+    if(el)el.innerHTML=filtered.map(card).join('')||'<p style="color:var(--t2);text-align:center;padding:40px">게시글이 없어요</p>';
   });
 }
 
-// ══════════════════════════════════════
-// 게시글 상세 + 댓글
-// ══════════════════════════════════════
 async function openPostDetail(postId){
   _currentPostId=postId;
   const db=window._fb?.db;
   if(!db) return;
   const modal=document.getElementById('postDetailModal');
   modal.style.display='flex';
-  document.getElementById('postDetailContent').innerHTML='<p style="text-align:center;padding:40px;color:var(--text2)">불러오는 중...</p>';
+  document.getElementById('postDetailContent').innerHTML='<p style="text-align:center;padding:40px;color:var(--t2)">불러오는 중...</p>';
 
   try{
-    // 조회수 증가
     const ref=window._fb.doc(db,'posts',postId);
     await window._fb.updateDoc(ref,{views:window._fb.increment(1)});
     const snap=await window._fb.getDoc(ref);
@@ -2341,7 +2640,7 @@ async function openPostDetail(postId){
         ${tags}
       </div>
       <h2 style="font-size:18px;margin:10px 0 6px;line-height:1.4">${p.title}</h2>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:20px">${p.author||'익명'} · ${p.views||0}회 조회</p>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:20px">${p.author||'익명'} · ${p.views||0}회 조회</p>
       <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-bottom:20px">${p.content||''}</div>
       <button onclick="toggleLike('${postId}')"
         style="background:${liked?'var(--acc)':'var(--bg3)'};color:${liked?'#000':'var(--text1)'};border:1px solid var(--acc3);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px" id="likeBtn">
@@ -2349,7 +2648,6 @@ async function openPostDetail(postId){
       </button>
     `;
 
-    // 댓글 불러오기
     const cmtMsg=document.getElementById('cmtLoginMsg');
     if(cmtMsg) cmtMsg.style.display='none';
     loadComments(postId);
@@ -2361,9 +2659,8 @@ async function openPostDetail(postId){
 function closePostDetail(){
   document.getElementById('postDetailModal').style.display='none';
   _currentPostId=null;
-  loadFirestorePosts(); // 새로고침
+  loadFirestorePosts();
 }
-// postDetailModal 바깥 클릭 닫힘 비활성화
 
 async function toggleLike(postId){
   const user=window._fb?.auth?.currentUser;
@@ -2376,7 +2673,6 @@ async function toggleLike(postId){
   await window._fb.updateDoc(ref,{
     likes:already?window._fb.arrayRemove(user.uid):window._fb.arrayUnion(user.uid)
   });
-  // 버튼 즉시 업데이트
   const newLikes=already?likes.filter(id=>id!==user.uid):[...likes,user.uid];
   const btn=document.getElementById('likeBtn');
   if(btn){
@@ -2390,19 +2686,19 @@ async function loadComments(postId){
   const db=window._fb?.db;
   if(!db)return;
   const list=document.getElementById('commentList');
-  list.innerHTML='<p style="color:var(--text2);font-size:13px">댓글 불러오는 중...</p>';
+  list.innerHTML='<p style="color:var(--t2);font-size:13px">댓글 불러오는 중...</p>';
   try{
     const snap=await window._fb.getDocs(
       window._fb.query(window._fb.collection(db,'posts',postId,'comments'),window._fb.orderBy('createdAt','asc'))
     );
-    if(snap.empty){list.innerHTML='<p style="color:var(--text2);font-size:13px">아직 댓글이 없어요. 첫 댓글을 달아보세요!</p>';return;}
+    if(snap.empty){list.innerHTML='<p style="color:var(--t2);font-size:13px">아직 댓글이 없어요. 첫 댓글을 달아보세요!</p>';return;}
     function timeAgo(ts){if(!ts)return '방금 전';const sec=Math.floor((Date.now()-ts.toMillis())/1000);if(sec<60)return '방금 전';if(sec<3600)return Math.floor(sec/60)+'분 전';if(sec<86400)return Math.floor(sec/3600)+'시간 전';return Math.floor(sec/86400)+'일 전';}
     list.innerHTML=snap.docs.map(d=>{
       const c=d.data();
       return `<div style="border-bottom:1px solid var(--acc3);padding:12px 0">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
           <span style="font-size:13px;font-weight:700;color:var(--acc)">${c.author||'익명'}</span>
-          <span style="font-size:11px;color:var(--text2)">${timeAgo(c.createdAt)}</span>
+          <span style="font-size:11px;color:var(--t2)">${timeAgo(c.createdAt)}</span>
         </div>
         <p style="font-size:13px;line-height:1.6;white-space:pre-wrap">${c.content}</p>
       </div>`;
@@ -2422,7 +2718,6 @@ async function submitComment(){
     await window._fb.addDoc(window._fb.collection(db,'posts',_currentPostId,'comments'),{
       content,uid:user.uid,author:nick,createdAt:window._fb.serverTimestamp()
     });
-    // 댓글 수 증가
     await window._fb.updateDoc(window._fb.doc(db,'posts',_currentPostId),{commentCount:window._fb.increment(1)});
     document.getElementById('cmtInput').value='';
     toast('댓글이 등록됐어요!','✅');
@@ -2430,13 +2725,70 @@ async function submitComment(){
   }catch(e){toast('댓글 등록 실패: '+e.message,'❌');}
 }
 
-// 페이지 로드 시 게시글 불러오기
 setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
+
+(function(){
+  const c=document.getElementById('bgMatrix');
+  if(!c) return;
+  const x=c.getContext('2d');
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  const ch='01アイウ<>{}|#$0110ABEF9876';
+  const fs=15; let cols,drops;
+  function init(){ cols=Math.floor(c.width/fs); drops=Array(cols).fill(0).map(()=>Math.random()*-80); }
+  init();
+  setInterval(()=>{
+    x.fillStyle='rgba(3,4,11,0.14)';
+    x.fillRect(0,0,c.width,c.height);
+    x.font=fs+'px JetBrains Mono,monospace';
+    for(let i=0;i<drops.length;i++){
+      x.fillStyle=`rgba(0,245,196,${Math.random()*.7+.15})`;
+      x.fillText(ch[Math.floor(Math.random()*ch.length)],i*fs,drops[i]*fs);
+      if(drops[i]*fs>c.height&&Math.random()>.978) drops[i]=Math.random()*-20;
+      drops[i]+=.45;
+    }
+  },55);
+})();
 </script>
 
-<!-- ✅ FIX #7: 기업 문의 모달 -->
+<div class="overlay" id="sellerModal">
+  <div class="modal" style="max-width:520px;width:95vw;padding:0">
+    <div style="padding:28px 28px 0">
+      <button class="mx" onclick="document.getElementById('sellerModal').classList.remove('on')">✕</button>
+      
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+        <div id="spAvatar" style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#000;font-family:var(--fe);flex-shrink:0"></div>
+        <div>
+          <div id="spName" style="font-size:18px;font-weight:700;margin-bottom:4px;font-family:var(--fs)"></div>
+          <div id="spBadge" style="font-size:11px;color:var(--accent);font-family:var(--fm)">✓ 인증 판매자</div>
+        </div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+        <div style="background:var(--g1);border:1px solid var(--b1);border-radius:12px;padding:14px;text-align:center;backdrop-filter:blur(12px)">
+          <div id="spSales" style="font-size:20px;font-weight:700;color:var(--accent);font-family:var(--fe)">—</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:3px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em">총 판매</div>
+        </div>
+        <div style="background:var(--g1);border:1px solid var(--b1);border-radius:12px;padding:14px;text-align:center;backdrop-filter:blur(12px)">
+          <div id="spProducts" style="font-size:20px;font-weight:700;color:var(--t1);font-family:var(--fe)">—</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:3px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em">상품 수</div>
+        </div>
+        <div style="background:var(--g1);border:1px solid var(--b1);border-radius:12px;padding:14px;text-align:center;backdrop-filter:blur(12px)">
+          <div id="spXp" style="font-size:20px;font-weight:700;color:var(--purple);font-family:var(--fe)">—</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:3px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em">XP</div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="border-top:1px solid var(--b1);padding:20px 28px 28px">
+      <div style="font-size:11px;color:var(--t3);font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px">등록 상품</div>
+      <div id="spProducts-list" style="display:flex;flex-direction:column;gap:10px;max-height:280px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="enterpriseModal">
-  <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:480px">
     <button class="mx" onclick="closeEnterpriseModal()">✕</button>
     <div class="mtitle" style="color:#a78bff">🏢 기업 문의</div>
     <div class="msub">대량 라이선스, 맞춤 개발, 파트너십 문의</div>
@@ -2470,16 +2822,12 @@ setTimeout(()=>{ if(window._fb?.db) loadFirestorePosts(); }, 1500);
       <button class="bsub" onclick="submitEnterprise()" style="font-family:var(--fco);letter-spacing:.06em;background:linear-gradient(135deg,#7c3fff,#a78bff);color:#fff;border:none">
         📨 문의 접수하기
       </button>
-      <p style="font-size:11px;color:var(--text3);text-align:center;font-family:var(--fco)">영업일 기준 1~2일 내 담당자가 연락드려요</p>
+      <p style="font-size:11px;color:var(--t3);text-align:center;font-family:var(--fco)">영업일 기준 1~2일 내 담당자가 연락드려요</p>
     </div>
   </div>
 </div>
 
-<!-- ✅ FIX #1: 소셜 로그인 UI (구글만 실제 연동 가능, 나머지는 준비중 안내) -->
-<!-- 로그인 모달에 소셜 버튼 추가는 JS로 처리 -->
-
 <script>
-// ── 기업 문의 모달 ──
 function openEnterpriseModal(){
   document.getElementById('enterpriseModal').classList.add('on');
 }
@@ -2508,15 +2856,12 @@ async function submitEnterprise(){
   }catch(e){toast('접수 실패: '+e.message,'❌');}
 }
 
-// ✅ FIX #1/#6: 소셜 로그인 UI를 로그인 모달에 동적 삽입
-// 구글 로그인은 Firebase GoogleAuthProvider로 실제 연동 가능
-// 카카오/네이버는 백엔드 필요 → UI만 표시 + 안내 토스트
 document.addEventListener('DOMContentLoaded', function(){
   const authLoginDiv = document.getElementById('authLogin');
   if(authLoginDiv){
     const socialHtml = `
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,245,196,.1)">
-        <div style="font-size:10px;color:var(--text3);font-family:var(--fco);text-align:center;margin-bottom:10px;letter-spacing:.08em">소셜 로그인</div>
+        <div style="font-size:10px;color:var(--t3);font-family:var(--fco);text-align:center;margin-bottom:10px;letter-spacing:.08em">소셜 로그인</div>
         <div class="msocial">
           <button class="socb" onclick="socialLogin('google')" style="border-color:rgba(66,133,244,.3);color:#4285f4">
             <div style="font-size:16px;margin-bottom:2px">G</div>구글
@@ -2535,14 +2880,11 @@ document.addEventListener('DOMContentLoaded', function(){
 
 async function socialLogin(provider){
   if(provider==='google'){
-    // ✅ 구글 로그인 실제 구현 (Firebase GoogleAuthProvider)
-    // TODO: Firebase 콘솔 → Authentication → 로그인 방법 → Google 활성화 필요
     try{
       const {GoogleAuthProvider, signInWithPopup} = await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js');
       const gProvider = new GoogleAuthProvider();
       const result = await signInWithPopup(window._fb.auth, gProvider);
       const user = result.user;
-      // Firestore에 유저 없으면 생성
       const db = window._fb.db;
       const snap = await window._fb.getDoc(window._fb.doc(db,'users',user.uid));
       if(!snap.exists()){
@@ -2561,24 +2903,14 @@ async function socialLogin(provider){
         toast('구글 로그인 실패: '+e.message,'❌');
     }
   } else if(provider==='kakao'){
-    // TODO: 카카오 로그인은 Kakao SDK + 백엔드 서버 필요
-    // 1. https://developers.kakao.com 에서 앱 생성
-    // 2. REST API 키 발급
-    // 3. 서버에서 OAuth 처리 후 Firebase Custom Token 발급
+   
     toast('카카오 로그인은 백엔드 서버 연동 후 사용 가능해요 (준비 중)','ℹ️');
   } else if(provider==='naver'){
-    // TODO: 네이버 로그인은 네이버 개발자센터 + 백엔드 서버 필요
-    // 1. https://developers.naver.com 에서 앱 등록
-    // 2. Client ID/Secret 발급
-    // 3. 서버에서 OAuth 처리 후 Firebase Custom Token 발급
+   
     toast('네이버 로그인은 백엔드 서버 연동 후 사용 가능해요 (준비 중)','ℹ️');
   }
 }
 
-// ✅ FIX #6: 관리자 탭 — 로그인 상태에서 관리자 이메일이면 자동 표시됨
-// Firebase 콘솔에서 해당 이메일 계정 생성 필요:
-// 관리자 이메일은 Firestore > config > admin > email 필드에 저장하세요.
-// 이후 해당 계정으로 로그인하면 관리자 탭이 활성화됩니다
 </script>
 </body>
 </html>
