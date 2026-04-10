@@ -2085,62 +2085,86 @@ async function doUpload2(){
   document.getElementById('upProgress').style.display='block';
   document.getElementById('upSuccess').style.display='none';
   try{
+    const nick=(user.displayName||user.email.split('@')[0]).replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,15);
     const safeName=title.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,30);
-    const path=`uploads/${user.uid}/${safeName}_${Date.now()}_${_upFile.name}`;
-    const task=fb.uploadBytesResumable(fb.ref(fb.storage,path),_upFile);
-    task.on('state_changed',
-      snap=>{
-        const p=Math.round(snap.bytesTransferred/snap.totalBytes*100);
-        const bar=document.getElementById('upBar');
-        const pct=document.getElementById('upPct');
-        const msg=document.getElementById('upStatusMsg');
-        if(bar) bar.style.width=p+'%';
-        if(pct) pct.textContent=p+'%';
-        if(msg){
-          const kb=Math.round(snap.bytesTransferred/1024);
-          const total=Math.round(snap.totalBytes/1024);
-          msg.textContent=`${kb}KB / ${total}KB 업로드 중...`;
-        }
-        if(btn) btn.textContent=`UPLOADING... ${p}%`;
-      },
-      err=>{toast('업로드 실패: '+err.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';},
-      async()=>{
-        const url=await fb.getDownloadURL(task.snapshot.ref).catch(async()=>{
-          const freshSnap=await task;
-          return fb.getDownloadURL(freshSnap.ref);
-        });
-        const ssUrls=[];
-        for(let i=0;i<_ssFiles.length;i++){
-          const sf=_ssFiles[i];
-          const sPath=`screenshots/${user.uid}_${Date.now()}_${i}_${sf.name}`;
-          const sRef=fb.ref(fb.storage,sPath);
-          const sTask=await new Promise((res,rej)=>{
-            const t=fb.uploadBytesResumable(sRef,sf);
-            t.on('state_changed',null,rej,()=>res(t));
-          });
-          ssUrls.push(await fb.getDownloadURL(sTask.snapshot.ref));
-        }
-        await fb.addDoc(fb.collection(fb.db,'uploads'),{
-          uid:user.uid,nickname:user.displayName||user.email,
-          title,
-          description:descEl?.value||'',
-          category:catEl?.value||'기타',
-          license:licEl?.value||'일반 상업용',
-          price:parseInt(priceEl?.value)||0,
-          fileName:_upFile.name,fileSize:_upFile.size,fileUrl:url,
-          storagePath:path,screenshots:ssUrls,
-          status:'pending',salesCount:0,revenue:0,
-          createdAt:fb.serverTimestamp()
-        });
-        try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
-        await addXP(user.uid,20);
-        const upProg=document.getElementById('upProgress')||document.getElementById('mpUpProgress');if(upProg)upProg.style.display='none';
-        if(btn){btn.disabled=false;btn.textContent='검수 신청하기 🚀';}
-        clearUpFile();[titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
-        document.getElementById('submitSuccessModal').classList.add('on');
-      }
-    );
-  }catch(e){toast('오류: '+e.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';}
+    const ts=Date.now();
+    const path=`uploads/${nick}_${safeName}_${ts}_${_upFile.name}`;
+
+    const url=await new Promise((resolve,reject)=>{
+      const storageRef=fb.ref(fb.storage,path);
+      const task=fb.uploadBytesResumable(storageRef,_upFile);
+      task.on('state_changed',
+        snap=>{
+          const p=Math.round(snap.bytesTransferred/snap.totalBytes*100);
+          const bar=document.getElementById('upBar');
+          const pct=document.getElementById('upPct');
+          const msg=document.getElementById('upStatusMsg');
+          if(bar) bar.style.width=p+'%';
+          if(pct) pct.textContent=p+'%';
+          if(msg){
+            const kb=Math.round(snap.bytesTransferred/1024);
+            const total=Math.round(snap.totalBytes/1024);
+            msg.textContent=`${kb}KB / ${total}KB 업로드 중...`;
+          }
+          if(btn) btn.textContent=`UPLOADING... ${p}%`;
+        },
+        err=>reject(err),
+        ()=>fb.getDownloadURL(storageRef).then(resolve).catch(reject)
+      );
+    });
+
+    const ssUrls=[];
+    for(let i=0;i<_ssFiles.length;i++){
+      const sf=_ssFiles[i];
+      const sPath=`screenshots/${nick}_${safeName}_${ts}_${i}_${sf.name}`;
+      const sRef=fb.ref(fb.storage,sPath);
+      const ssUrl=await new Promise((res,rej)=>{
+        const t=fb.uploadBytesResumable(sRef,sf);
+        t.on('state_changed',null,rej,
+          ()=>fb.getDownloadURL(sRef).then(res).catch(rej)
+        );
+      });
+      ssUrls.push(ssUrl);
+    }
+
+    await fb.addDoc(fb.collection(fb.db,'uploads'),{
+      uid:user.uid,
+      nickname:user.displayName||user.email,
+      title,
+      description:descEl?.value||'',
+      category:catEl?.value||'기타',
+      license:licEl?.value||'일반 상업용',
+      price:parseInt(priceEl?.value)||0,
+      fileName:_upFile.name,
+      fileSize:_upFile.size,
+      fileUrl:url,
+      storagePath:path,
+      screenshots:ssUrls,
+      status:'pending',
+      salesCount:0,
+      revenue:0,
+      createdAt:fb.serverTimestamp()
+    });
+
+    try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
+    await addXP(user.uid,20);
+
+    const upProg=document.getElementById('upProgress');
+    if(upProg) upProg.style.display='none';
+    if(btn){btn.disabled=false;btn.textContent='검수 신청하기 🚀';}
+    clearUpFile();
+    [titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
+    _ssFiles=[];
+    document.getElementById('ssPreviews').innerHTML='';
+    document.getElementById('submitSuccessModal').classList.add('on');
+
+  }catch(e){
+    console.error('업로드 오류:',e);
+    toast('업로드 실패: '+e.message,'❌');
+    if(btn){btn.disabled=false;btn.textContent='검수 신청하기 🚀';}
+    const upProg=document.getElementById('upProgress');
+    if(upProg) upProg.style.display='none';
+  }
 }
 
 async function loadMyFiles(){
