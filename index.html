@@ -878,29 +878,54 @@ nav {
         <div class="fg"><label class="fl">판매 가격 (원) *</label><input class="fi2" type="number" id="upPrice" placeholder="예: 29000" oninput="ce()"><div class="fhint">추천: 자동화 워크플로우 15,000~50,000원 / 기능 모듈 5,000~20,000원</div></div>
         <div class="fg"><label class="fl">할인 이벤트 (선택)</label><input class="fi2" placeholder="예: 출시 기념 20% 할인"></div>
       </div>
-      <div id="ep" style="background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:none;">
-        <div style="font-size:13px;color:var(--t2);margin-bottom:12px">수익 예상</div>
+      <div id="ep" style="background:var(--g1);border:1px solid rgba(0,245,196,.15);border-radius:14px;padding:20px;display:none;backdrop-filter:blur(12px)">
+        <div style="font-size:11px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">수익 예상</div>
         <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--accent)" id="ep1">-</div><div style="font-size:11px;color:var(--t2)">건당 수익(80%)</div></div>
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--teal)" id="ep10">-</div><div style="font-size:11px;color:var(--t2)">10건 판매시</div></div>
-          <div><div style="font-size:22px;font-weight:800;font-family:var(--fen);color:var(--pink)" id="ep100">-</div><div style="font-size:11px;color:var(--t2)">100건 판매시</div></div>
+          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--accent)" id="ep1">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">건당 수익(80%)</div></div>
+          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep10">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">10건 판매시</div></div>
+          <div><div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--t1)" id="ep100">-</div><div style="font-size:10px;color:var(--t2);margin-top:3px">100건 판매시</div></div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:20px"><button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button><button class="bsub" id="submitBtn" onclick="doUpload()">검수 신청하기 🚀</button></div>
-    </div>
-    <div id="s4" class="spanel">
-      <div class="ecalc">
-        <h3>💰 월 수익 시뮬레이션</h3>
-        <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
-        <div class="fg"><label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent)">50건</span></label><input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()"></div>
-        <div class="eres">
-          <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
-          <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
-          <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
-        </div>
-        <div style="margin-top:16px;padding:12px 16px;background:rgba(0,212,170,.07);border-radius:8px;font-size:12.5px;color:var(--t2)">💡 <strong style="color:var(--teal)">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--teal)">₩2,400,000</strong> 이상 수익을 올리고 있어요.</div>
+      <div style="display:flex;gap:10px;margin-top:24px;align-items:center">
+        <button class="bg" onclick="stab(document.querySelectorAll('.ssb')[1],'s2')">← 이전</button>
+        <button class="bg" onclick="openCalcModal()" style="border-color:rgba(139,92,246,.3);color:#a78bff">📊 수익 계산기</button>
+        <button class="bsub" id="submitBtn" onclick="doUpload()" style="flex:1">검수 신청하기 🚀</button>
       </div>
     </div>
+    <div id="s4" class="spanel" style="display:none"></div>
+  </div>
+</div>
+
+<div class="overlay" id="calcModal">
+  <div class="modal" style="max-width:460px;width:95vw">
+    <button class="mx" onclick="document.getElementById('calcModal').classList.remove('on')">✕</button>
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">📊 수익 시뮬레이션</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:22px;font-weight:300">예상 판매량을 설정하고 수익을 미리 계산해보세요</div>
+    <div class="fg"><label class="fl">예상 판매가 (원)</label><input class="fi2" type="number" id="cp" value="29000" oninput="uc()"></div>
+    <div class="fg">
+      <label class="fl">예상 월 판매량 <span id="ql" style="color:var(--accent);font-family:var(--fm)">50건</span></label>
+      <input type="range" class="eslider" id="cq" min="1" max="500" value="50" oninput="uc()">
+    </div>
+    <div class="eres" style="margin-top:8px">
+      <div class="eitem"><div class="enum" id="c1">₩1,160,000</div><div class="elbl">월 수익</div></div>
+      <div class="eitem"><div class="enum" id="c2">₩13,920,000</div><div class="elbl">연 수익</div></div>
+      <div class="eitem"><div class="enum" id="c3">₩23,200</div><div class="elbl">건당 수익</div></div>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(0,245,196,.05);border:1px solid rgba(0,245,196,.12);border-radius:12px;font-size:12px;color:var(--t2);font-weight:300">
+      💡 <strong style="color:var(--accent);font-weight:500">상위 10% 판매자</strong>는 월 평균 <strong style="color:var(--accent);font-weight:500">₩2,400,000</strong> 이상 수익을 올리고 있어요.
+    </div>
+    <button onclick="document.getElementById('calcModal').classList.remove('on')" style="width:100%;margin-top:18px;padding:12px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer">확인</button>
+  </div>
+</div>
+
+<div class="overlay" id="submitSuccessModal">
+  <div class="modal" style="max-width:380px;width:90vw;text-align:center;padding:44px 36px">
+    <div style="font-size:56px;margin-bottom:18px">✅</div>
+    <div style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px">완료되었습니다</div>
+    <div style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:28px;font-weight:300">
+      관리자 검토 후 1~2일 내에<br>판매 목록에 자동 등록됩니다.
+    </div>
+    <button onclick="document.getElementById('submitSuccessModal').classList.remove('on');go('home')" style="width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">메인으로 돌아가기</button>
   </div>
 </div>
 
@@ -1726,6 +1751,11 @@ async function likeRequest(docId, current){
   }catch(e){}
 }
 
+function openCalcModal(){
+  uc();
+  document.getElementById('calcModal').classList.add('on');
+}
+
 function stab(btn,id){document.querySelectorAll('.ssb').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));btn.classList.add('on');document.getElementById(id)?.classList.add('on');}
 function slic(el){
   document.querySelectorAll('.lo').forEach(o=>o.classList.remove('on'));
@@ -1944,6 +1974,7 @@ function copyCode(){
 }
 
 function mpTab(name){
+  if(name==='admin') setTimeout(()=>loadAdminQueue('pending'),100);
   ['upload','myfiles','purchases','settings','admin'].forEach((t,i)=>{
     document.getElementById('mpPanel_'+t).style.display=t===name?'block':'none';
     document.getElementById('mpT'+(i+1)).classList.toggle('on',t===name);
@@ -2048,25 +2079,10 @@ async function doUpload2(){
         });
         try{await fb.updateDoc(fb.doc(fb.db,'users',user.uid),{totalUploads:fb.increment(1)});}catch(e){}
         await addXP(user.uid,20);
-        document.getElementById('upLink').href=url;
         document.getElementById('upProgress').style.display='none';
-        clearUpFile();[titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
         btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';
-        toast('검수 신청 완료! +20 XP 🚀','✅');
-        setTimeout(()=>{
-          go('home');
-          const notice = document.createElement('div');
-          notice.style.cssText='position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px)';
-          notice.innerHTML=`
-            <div style="background:rgba(8,9,18,0.95);border:1px solid rgba(0,245,196,0.25);border-radius:24px;padding:40px;text-align:center;max-width:380px;width:90%;box-shadow:0 40px 100px rgba(0,0,0,.8)">
-              <div style="font-size:52px;margin-bottom:16px">✅</div>
-              <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;font-family:'Sora',sans-serif">검수 신청 완료</div>
-              <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:24px;font-weight:300">관리자 검토 후 1~2일 내에<br>판매 목록에 자동 등록됩니다.</div>
-              <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,245,196,.9),rgba(0,212,255,.85));color:#000;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif">확인</button>
-            </div>`;
-          document.body.appendChild(notice);
-          notice.addEventListener('click',e=>{if(e.target===notice)notice.remove();});
-        },400);
+        clearUpFile();[titleEl,descEl,priceEl].forEach(el=>{if(el)el.value='';});
+        document.getElementById('submitSuccessModal').classList.add('on');
       }
     );
   }catch(e){toast('오류: '+e.message,'❌');btn.disabled=false;btn.textContent='SUBMIT FOR REVIEW 🚀';}
@@ -2311,8 +2327,13 @@ async function loadAdminQueue(status='pending'){
         </div>
       </div>`;}).join('');
   }catch(e){
-    console.error('관리자 큐 오류:',e);
-    el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fm);font-size:12px">오류: ${e.message||'불러오기 실패'}<br><small style="opacity:.6">Firebase 인덱스 설정이 필요할 수 있어요</small></div>`;
+    console.error('관리자 큐 오류:', e);
+    const errMsg = e.code === 'permission-denied'
+      ? 'Firestore 보안 규칙을 확인해주세요'
+      : e.code === 'failed-precondition'
+      ? 'Firebase 콘솔에서 색인을 생성해주세요'
+      : e.message||'불러오기 실패';
+    el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--red);font-family:var(--fm);font-size:12px;line-height:1.8">⚠️ ${errMsg}<br><small style="opacity:.5;font-size:10px">${e.code||''}</small></div>`;
   }
 }
 
